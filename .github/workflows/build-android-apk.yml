@@ -49,6 +49,9 @@ jobs:
       - name: Add structural safety, conflicts and Unknown signal states
         run: python scripts/patch_structural_safety.py
 
+      - name: Guard Results screen against missing result fields
+        run: python scripts/patch_results_crash_guard.py
+
       - name: Validate routed legal-question interface
         run: python scripts/validate_patched_app.py
 
