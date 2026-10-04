@@ -43,6 +43,9 @@ jobs:
       - name: Add intent router and WA legal information checks
         run: python scripts/patch_intent_legal.py
 
+      - name: Validate routed legal-question interface
+        run: python scripts/validate_patched_app.py
+
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
