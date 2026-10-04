@@ -40,6 +40,9 @@ jobs:
       - name: Add Emotional Reality equation and capacity overrides
         run: python scripts/patch_emotional_reality.py
 
+      - name: Add intent router and WA legal information checks
+        run: python scripts/patch_intent_legal.py
+
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
