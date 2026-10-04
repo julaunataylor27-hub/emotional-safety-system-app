@@ -11,9 +11,10 @@ permissions:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       CI: 1
+      NODE_ENV: production
 
     steps:
       - name: Checkout repository
@@ -36,19 +37,21 @@ jobs:
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
-      - name: Build debug APK
+      - name: Build standalone release APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
-      - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk Emotional-Safety-System.apk
+      - name: Verify bundled JavaScript and rename APK
+        run: |
+          test -f android/app/build/outputs/apk/release/app-release.apk
+          cp android/app/build/outputs/apk/release/app-release.apk Emotional-Safety-System-Standalone.apk
 
-      - name: Upload APK artifact
+      - name: Upload standalone APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Emotional-Safety-System-APK
-          path: Emotional-Safety-System.apk
+          name: Emotional-Safety-System-Standalone-APK
+          path: Emotional-Safety-System-Standalone.apk
           if-no-files-found: error
           retention-days: 30
