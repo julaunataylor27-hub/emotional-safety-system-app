@@ -37,6 +37,9 @@ jobs:
       - name: Enable interactive Learning and About screens
         run: python scripts/patch_interactions.py
 
+      - name: Add Emotional Reality equation and capacity overrides
+        run: python scripts/patch_emotional_reality.py
+
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
