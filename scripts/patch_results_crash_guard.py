@@ -18,7 +18,7 @@ if not returns:
 target = returns[-1]
 fields_text = target.group(1)
 fields = [x.strip() for x in fields_text.replace('\n',' ').split(',') if x.strip()]
-for required_field in ['signalDisplay','structuralSafety','inputConflicts']:
+for required_field in ['signalDisplay','structuralSafety','inputConflicts','coercionCheck']:
     if required_field not in fields:
         fields.append(required_field)
 
@@ -45,13 +45,14 @@ if not check_returns:
     raise SystemExit('Results crash guard: patched return object missing')
 returned = check_returns[-1].group(1)
 required_markers = [
-    'signalDisplay', 'structuralSafety', 'inputConflicts', 'emotionalReality', 'legalContext',
-    'let signalDisplay =', 'const structuralSafety =', 'const inputConflicts =',
-    'Object.entries(result.signalDisplay||{}).map', '(result.inputConflicts||[]).length>0'
+    'signalDisplay', 'structuralSafety', 'inputConflicts', 'coercionCheck', 'emotionalReality', 'legalContext',
+    'let signalDisplay =', 'const structuralSafety =', 'const inputConflicts =', 'const coercionCheck =',
+    'Object.entries(result.signalDisplay||{}).map', '(result.inputConflicts||[]).length>0', 'COERCION CHECK'
 ]
-missing = [x for x in required_markers if x not in (returned if x in ['signalDisplay','structuralSafety','inputConflicts','emotionalReality','legalContext'] else s)]
+return_fields = ['signalDisplay','structuralSafety','inputConflicts','coercionCheck','emotionalReality','legalContext']
+missing = [x for x in required_markers if x not in (returned if x in return_fields else s)]
 if missing:
     raise SystemExit('Results crash guard failed; missing: ' + ', '.join(missing))
 
 p.write_text(s)
-print('Results crash fixed: result shape and renderer validated.')
+print('Results crash fixed: result shape, coercion layer and renderer validated.')
