@@ -52,6 +52,9 @@ jobs:
       - name: Add coercion detection and consent-safety layer
         run: python scripts/patch_coercion.py
 
+      - name: Add WA sexual coercion legal references
+        run: python scripts/patch_coercion_legal.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
