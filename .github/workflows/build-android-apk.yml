@@ -43,6 +43,9 @@ jobs:
       - name: Add intent router and WA legal information checks
         run: python scripts/patch_intent_legal.py
 
+      - name: Clean question-mode form
+        run: python scripts/patch_question_ui_cleanup.py
+
       - name: Validate routed legal-question interface
         run: python scripts/validate_patched_app.py
 
