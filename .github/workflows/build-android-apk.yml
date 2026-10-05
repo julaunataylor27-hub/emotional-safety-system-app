@@ -61,6 +61,9 @@ jobs:
       - name: Apply approved riders cultural-tech brand design
         run: python scripts/patch_brand_redesign.py
 
+      - name: Put exact Australia code artwork on Home screen
+        run: python scripts/patch_exact_home_art.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
