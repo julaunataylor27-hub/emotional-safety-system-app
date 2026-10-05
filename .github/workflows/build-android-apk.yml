@@ -73,6 +73,9 @@ jobs:
       - name: Build next-generation Humanity Philosophy experience
         run: python scripts/patch_nextgen_humanity_app.py
 
+      - name: Repair next-generation source syntax
+        run: python scripts/patch_nextgen_syntax_fix.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
