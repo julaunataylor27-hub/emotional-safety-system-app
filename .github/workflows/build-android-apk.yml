@@ -67,6 +67,9 @@ jobs:
       - name: Build interactive Humanity Philosophy journey
         run: python scripts/patch_humanity_philosophy.py
 
+      - name: Apply premium Humanity Philosophy visual design
+        run: python scripts/patch_premium_humanity_design.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
