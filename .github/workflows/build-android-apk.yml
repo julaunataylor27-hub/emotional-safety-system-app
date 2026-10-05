@@ -64,6 +64,9 @@ jobs:
       - name: Put exact Australia code artwork on Home screen
         run: python scripts/patch_exact_home_art.py
 
+      - name: Build interactive Humanity Philosophy journey
+        run: python scripts/patch_humanity_philosophy.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
