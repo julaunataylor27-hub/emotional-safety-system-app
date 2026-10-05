@@ -58,6 +58,9 @@ jobs:
       - name: Add WA sexual coercion legal references
         run: python scripts/patch_coercion_legal.py
 
+      - name: Apply approved riders cultural-tech brand design
+        run: python scripts/patch_brand_redesign.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
