@@ -47,12 +47,15 @@ returned = check_returns[-1].group(1)
 required_markers = [
     'signalDisplay', 'structuralSafety', 'inputConflicts', 'coercionCheck', 'emotionalReality', 'legalContext',
     'let signalDisplay =', 'const structuralSafety =', 'const inputConflicts =', 'const coercionCheck =',
-    'Object.entries(result.signalDisplay||{}).map', '(result.inputConflicts||[]).length>0', 'COERCION CHECK'
+    'Object.entries(result.signalDisplay||{}).map', '(result.inputConflicts||[]).length>0'
 ]
 return_fields = ['signalDisplay','structuralSafety','inputConflicts','coercionCheck','emotionalReality','legalContext']
 missing = [x for x in required_markers if x not in (returned if x in return_fields else s)]
 if missing:
     raise SystemExit('Results crash guard failed; missing: ' + ', '.join(missing))
 
+if 'COERCION CHECK' not in s and 'COERCION / GROOMING INDICATORS' not in s:
+    raise SystemExit('Results crash guard failed; coercion/grooming result card missing')
+
 p.write_text(s)
-print('Results crash fixed: result shape, coercion layer and renderer validated.')
+print('Results crash guard passed: result shape, coercion layer and renderer validated.')
