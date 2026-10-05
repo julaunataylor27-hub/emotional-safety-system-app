@@ -76,6 +76,12 @@ jobs:
       - name: Repair next-generation source syntax
         run: python scripts/patch_nextgen_syntax_fix.py
 
+      - name: Expand to full seven-stage Humanity experience
+        run: python scripts/patch_full_humanity_experience.py
+
+      - name: Apply cinematic image compatibility and polish
+        run: python scripts/patch_full_humanity_fix.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
