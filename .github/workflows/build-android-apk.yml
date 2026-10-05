@@ -52,6 +52,9 @@ jobs:
       - name: Add coercion detection and consent-safety layer
         run: python scripts/patch_coercion.py
 
+      - name: Strengthen child-parent safeguarding and secrecy indicators
+        run: python scripts/patch_child_parent_safeguard.py
+
       - name: Add WA sexual coercion legal references
         run: python scripts/patch_coercion_legal.py
 
