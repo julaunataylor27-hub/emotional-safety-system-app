@@ -70,6 +70,9 @@ jobs:
       - name: Apply premium Humanity Philosophy visual design
         run: python scripts/patch_premium_humanity_design.py
 
+      - name: Build next-generation Humanity Philosophy experience
+        run: python scripts/patch_nextgen_humanity_app.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
