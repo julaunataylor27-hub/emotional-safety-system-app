@@ -11,32 +11,83 @@ const CHOICE_CHECKS = [
   'Uses known information and acknowledges uncertainty',
   'Leaves room to pause or get appropriate support'
 ];
+const EXPLANATION_CHECKS = [
+  'Has support in what I directly observed or was told',
+  'Separates observations from assumptions about motives',
+  'Considers another possible explanation',
+  'Identifies missing or conflicting information',
+  'Can be clarified with appropriate support, without confrontation'
+];
+const TRIANGLE_PROMPTS = {
+  care:{title:'Care / connection',question:'Is care, affection or a caring responsibility part of this situation?',prompt:'Which actions or words suggest care? Affection alone cannot establish safety or consent.'},
+  pressure:{title:'Pressure / pain',question:'Is pressure, control or fear being reported?',prompt:'Describe the specific behaviour. Emotional pain matters, but does not by itself establish coercion.'},
+  freedom:{title:'Choice / boundaries',question:'Can the person freely say no or set boundaries?',prompt:'Whose choices and boundaries are involved? A reflection answer cannot establish legal capacity to consent.'}
+};
+const TRIANGLE_QUESTIONS = {...TRIANGLE_PROMPTS, repeated:{title:'Pattern over time',question:'Is there firsthand information about this happening repeatedly?'}};
 function emptyDiamond() {
   return {truth:'',unknowns:'',values:'',beliefs:'',faith:'',purpose:'',nextStep:'',supportStep:'',
-    choices:[{text:'',checks:Array(5).fill('Unsure')},{text:'',checks:Array(5).fill('Unsure')}],chosen:null};
+    choices:[{text:'',checks:Array(5).fill('Unsure')},{text:'',checks:Array(5).fill('Unsure')}],chosen:null,
+    comparisonType:'actions',reviewKey:null,
+    triangle:{care:'Unsure',pressure:'Unsure',freedom:'Unsure',repeated:'Unsure',evidence:'',unknowns:'',impact:''}};
 }
 function cornerAtPoint(x,y,size) {
   const dx=x-size/2, dy=y-size/2;
   if(Math.abs(dx)>Math.abs(dy)) return dx<0?'values':'beliefs';
   return dy<0?'truth':'faith';
 }
-function compareChoice(choice) {
+function triangleCornerAtPoint(x,y,width,height=250) {
+  const points={care:[width/2,40],pressure:[36,height-40],freedom:[width-36,height-40]};
+  return Object.keys(points).reduce((best,key)=>Math.hypot(x-points[key][0],y-points[key][1])<Math.hypot(x-points[best][0],y-points[best][1])?key:best,'care');
+}
+function compareChoice(choice,type='actions') {
   return {supported:choice.checks.filter(value=>value==='Yes').length,
     unsure:choice.checks.filter(value=>value==='Unsure').length,
     needsAttention:choice.checks.filter(value=>value==='No').length,
-    safetyGap:choice.checks.slice(0,2).includes('No'),
-    safetyUnclear:choice.checks.slice(0,2).includes('Unsure')};
+    safetyGap:type==='actions'&&choice.checks.slice(0,2).includes('No'),
+    safetyUnclear:type==='actions'&&choice.checks.slice(0,2).includes('Unsure')};
+}
+function comparisonKey(draft) {
+  return JSON.stringify([draft.comparisonType||'actions',draft.choices.map(({text,checks})=>[text.trim(),checks])]);
+}
+function analyseOptions(draft) {
+  if(draft.choices.length!==2||draft.choices.some(choice=>!choice.text.trim())) throw Error('Write both options before analysing them. You do not need to choose one.');
+  const type=draft.comparisonType||'actions',labels=type==='explanations'?EXPLANATION_CHECKS:CHOICE_CHECKS;
+  return {key:comparisonKey(draft),type,options:draft.choices.map((choice,index)=>({index,text:choice.text.trim(),...compareChoice(choice,type),
+    attention:labels.filter((_,i)=>choice.checks[i]==='No'),unknowns:labels.filter((_,i)=>choice.checks[i]==='Unsure')}))};
+}
+function reflectTriangle(triangle={}) {
+  const answers=Object.fromEntries(Object.keys(TRIANGLE_QUESTIONS).map(key=>[key,['Yes','No'].includes(triangle[key])?triangle[key]:'Unsure']));
+  let phrase='Pattern unclear',equation='Care + pressure + choice + context → a question to explore';
+  if(answers.pressure==='Yes'&&answers.freedom==='No') {
+    phrase=answers.care==='Yes'?(answers.repeated==='Yes'?'Possible coercive caretaking':'Care under pressure'):'Possible pressure and control';
+    equation=answers.care==='Yes'?'Reported care + pressure − free choice → care under pressure':'Reported pressure − free choice → a control concern to explore';
+  } else if(answers.freedom==='No') {
+    phrase='Boundaries need attention';equation='Reduced choice + unclear context → boundaries to clarify';
+  } else if(answers.care==='Yes'&&answers.pressure==='No'&&answers.freedom==='Yes') {
+    phrase='Reported care with choice';equation='Reported care + choice + boundaries → a reflection on agency';
+  } else if(answers.pressure==='Yes') {
+    phrase='Pressure to explore';equation='Reported pressure + context → a concern to clarify';
+  }
+  return {phrase,equation,answers,
+    unknowns:Object.entries(answers).filter(([,value])=>value==='Unsure').map(([key])=>TRIANGLE_QUESTIONS[key].title),
+    basis:Object.entries(answers).map(([key,value])=>`${TRIANGLE_QUESTIONS[key].question} ${value}`)};
 }
 function needsProtectiveSupport(result) {
   return !!(result && (['critical','warning'].includes(result.structuralSafety?.level) || result.high || ['critical','high'].includes(result.coercionCheck?.level)));
 }
 function buildDiamondPlan(draft,result) {
-  const choice=draft.choices[draft.chosen];
-  if(!choice?.text.trim() || !draft.nextStep.trim()) throw Error('Choose a written option and add one next step.');
-  const check=compareChoice(choice);
-  if(check.safetyGap) throw Error('This option has a harm or boundary check marked No. Revise it or choose another option before building your plan.');
+  if(!draft.nextStep.trim()) throw Error('Add one manageable next step. You can stay undecided about the options.');
+  const hasOptions=draft.choices.some(choice=>choice.text.trim());
+  const comparison=hasOptions?analyseOptions(draft):null;
+  if(comparison&&draft.reviewKey!==comparison.key) throw Error('Analyse both options first. You can keep both open while building your plan.');
+  const type=draft.comparisonType||'actions';
+  const choice=type==='actions'&&Number.isInteger(draft.chosen)?draft.choices[draft.chosen]:null;
+  const check=choice?compareChoice(choice):null;
+  if(check?.safetyGap) throw Error('This option has a harm or boundary check marked No. Revise it or keep both options open before building your plan.');
   if(needsProtectiveSupport(result) && !draft.supportStep.trim()) throw Error('Include a protective support step while a safeguarding concern is active.');
   const text=value=>value.trim()||'Not written yet.';
+  const triangle=reflectTriangle(draft.triangle);
+  const labels=type==='explanations'?EXPLANATION_CHECKS:CHOICE_CHECKS;
   return [
     'MY DIAMOND EFFECT — NEXT STEP',
     'My worth is not a score. I can pause, learn and choose one manageable step.',
@@ -44,14 +95,23 @@ function buildDiamondPlan(draft,result) {
     'WHAT I DO NOT KNOW\n'+text(draft.unknowns),
     'VALUES\n'+text(draft.values), 'BELIEFS — interpretations to examine\n'+text(draft.beliefs),
     'FAITH / HOPE\n'+text(draft.faith), 'MY PURPOSE\n'+text(draft.purpose),
-    'MY OPTION TO REVIEW\n'+choice.text.trim(),
-    `My checks: ${check.supported} of 5 supported; ${check.unsure} unsure; ${check.needsAttention} need attention. These are my own answers, not a prediction or confirmation of safety.`,
-    ...CHOICE_CHECKS.map((label,index)=>`${label}: ${choice.checks[index]}`),
-    check.safetyUnclear?'Safety or boundaries remain uncertain: pause and clarify them before acting.':null,
+    'TRIANGLE REFLECTION — '+triangle.phrase+'\n'+triangle.equation,
+    'Symbolic reflection only. This is not a validated emotional equation, diagnosis, proof of coercion or assessment of consent. “Coercive caretaking” is an app reflection phrase.',
+    ...triangle.basis,
+    'BEHAVIOUR BEHIND MY TRIANGLE ANSWERS\n'+text(draft.triangle?.evidence||''),
+    'TRIANGLE UNKNOWNS\n'+text(draft.triangle?.unknowns||'')+(triangle.unknowns.length?'\nUnanswered areas: '+triangle.unknowns.join(', '):''),
+    'REPORTED EMOTIONAL IMPACT\n'+text(draft.triangle?.impact||''),
+    comparison?'BOTH OPTIONS REVIEWED — '+(type==='explanations'?'POSSIBLE EXPLANATIONS':'POSSIBLE NEXT STEPS'):null,
+    ...(comparison?comparison.options.map(option=>`OPTION ${option.index+1}\n${option.text}\nMy checks: ${option.supported} of 5 supported; ${option.unsure} unsure; ${option.needsAttention} need attention.\n`+labels.map((label,i)=>`${label}: ${draft.choices[option.index].checks[i]}`).join('\n')):[]),
+    'These counts reflect my own checks. They are not a probability, truth score, outcome prediction or confirmation of safety.',
+    type==='explanations'?'EXPLANATIONS REMAIN UNCONFIRMED\nNeither explanation is adopted as a fact. My next step can focus on clarifying information and getting appropriate support.':
+      choice?'MY NEXT STEP TO CONSIDER\nOption '+(draft.chosen+1)+': '+choice.text.trim():'I AM STILL UNDECIDED\nI can pause, revise the options or ask for support without choosing either.',
+    comparison?.options.some(option=>option.safetyGap)?'Harm or boundary checks need attention in the comparison. Do not adopt those options unchanged.':null,
+    check?.safetyUnclear?'Safety or boundaries remain uncertain: pause and clarify them before acting.':null,
     'ONE MANAGEABLE NEXT STEP\n'+draft.nextStep.trim(),
     'PROTECTIVE SUPPORT STEP\n'+text(draft.supportStep),
     needsProtectiveSupport(result)?'SAFEGUARDING STILL APPLIES\n'+(result.structuralSafety?.summary||result.level):null,
     'This reflection is a planning aid. It does not establish another person’s intentions, a diagnosis or a legal finding.'
   ].filter(Boolean).join('\n\n');
 }
-module.exports = {CORNERS,CHOICE_CHECKS,emptyDiamond,cornerAtPoint,compareChoice,needsProtectiveSupport,buildDiamondPlan};
+module.exports = {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,TRIANGLE_PROMPTS,TRIANGLE_QUESTIONS,emptyDiamond,cornerAtPoint,triangleCornerAtPoint,compareChoice,comparisonKey,analyseOptions,reflectTriangle,needsProtectiveSupport,buildDiamondPlan};

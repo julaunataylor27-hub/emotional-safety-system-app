@@ -1,7 +1,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {reviewStructuralSafety}=require('../src/structuralReview');
-const {emptyDiamond,compareChoice,buildDiamondPlan,cornerAtPoint}=require('../src/diamondEffect');
+const {emptyDiamond,compareChoice,buildDiamondPlan,cornerAtPoint,triangleCornerAtPoint,analyseOptions,reflectTriangle}=require('../src/diamondEffect');
 
 const input=changes=>({age:'16+',text:'',familyRelation:'Unsure',sexualConduct:'Unsure',childSafety:'Unsure',sexualSafety:'Unsure',immediateSafety:'Unsure',...changes});
 test('selected parent-child details and standalone sexual wording no longer fall through the structural check',()=>{
@@ -38,6 +38,8 @@ test('diamond movement selects prompts and does not change assessment facts',()=
 test('comparison counts self-reported checks; safety gaps and active safeguards cannot be averaged away',()=>{
   const draft=emptyDiamond();
   draft.choices[0]={text:'Pause and ask for safeguarding advice.',checks:['Yes','Yes','Yes','Unsure','Yes']};
+  draft.choices[1]={text:'Keep a factual note while clarifying unknowns.',checks:Array(5).fill('Unsure')};
+  draft.reviewKey=analyseOptions(draft).key;
   draft.chosen=0;draft.nextStep='Write down what I observed.';draft.purpose='Act with care.';
   assert.deepEqual(compareChoice(draft.choices[0]),{supported:4,unsure:1,needsAttention:0,safetyGap:false,safetyUnclear:false});
   const result={structuralSafety:{level:'critical',summary:'A reported concern still needs safeguarding advice.'}};
@@ -47,7 +49,60 @@ test('comparison counts self-reported checks; safety gaps and active safeguards 
   assert.ok(plan.includes('SAFEGUARDING STILL APPLIES'));
   assert.ok(plan.includes('My worth is not a score'));
   draft.choices[0].checks[0]='No';
+  draft.reviewKey=analyseOptions(draft).key;
   assert.throws(()=>buildDiamondPlan(draft,result),/harm or boundary/);
   draft.choices[0].checks[0]='Unsure';
+  draft.reviewKey=analyseOptions(draft).key;
   assert.ok(buildDiamondPlan(draft,result).includes('Safety or boundaries remain uncertain'));
+});
+test('both options can be analysed and kept undecided; edits require a fresh review',()=>{
+  const draft=emptyDiamond();draft.nextStep='Pause and ask what information is missing.';
+  assert.ok(buildDiamondPlan(draft,{}).includes('I AM STILL UNDECIDED'));
+  draft.choices[0].text='One possible action.';
+  assert.throws(()=>analyseOptions(draft),/Write both options/);
+  draft.choices[1].text='Another possible action.';
+  draft.choices[0].checks=Array(5).fill('Yes');draft.choices[0].checks[0]='No';
+  draft.choices[1].checks=Array(5).fill('No');
+  assert.throws(()=>buildDiamondPlan(draft,{}),/Analyse both options first/);
+  const report=analyseOptions(draft);
+  assert.equal(report.options[0].supported,4);assert.equal(report.options[0].safetyGap,true);
+  assert.equal(report.options[0].attention[0],'Avoids exposing anyone to harm or pressure');
+  draft.reviewKey=report.key;
+  const plan=buildDiamondPlan(draft,{});
+  assert.ok(plan.includes('One possible action.'));assert.ok(plan.includes('Another possible action.'));
+  assert.ok(plan.includes('I AM STILL UNDECIDED'));assert.ok(plan.includes('Harm or boundary checks need attention'));
+  draft.choices[1].text='A revised action.';
+  assert.throws(()=>buildDiamondPlan(draft,{}),/Analyse both options first/);
+  draft.reviewKey=analyseOptions(draft).key;draft.choices[1].checks[2]='Yes';
+  assert.throws(()=>buildDiamondPlan(draft,{}),/Analyse both options first/);
+});
+test('explanations use evidence checks and are never adopted as verified facts or ranked as truth',()=>{
+  const draft=emptyDiamond();draft.comparisonType='explanations';draft.nextStep='Ask an appropriate service how to clarify this.';
+  draft.choices=[{text:'One unconfirmed explanation.',checks:['No','No','Yes','Unsure','Yes']},{text:'A different unconfirmed explanation.',checks:Array(5).fill('Yes')}];
+  const report=analyseOptions(draft);draft.reviewKey=report.key;draft.chosen=1;
+  assert.equal(report.options[0].safetyGap,false);assert.ok(report.options[0].attention[0].includes('directly observed'));
+  const plan=buildDiamondPlan(draft,{});
+  assert.ok(plan.includes('EXPLANATIONS REMAIN UNCONFIRMED'));assert.ok(plan.includes('Neither explanation is adopted as a fact'));
+  assert.ok(plan.includes('not a probability'));assert.ok(!plan.includes('MY NEXT STEP TO CONSIDER'));
+  draft.comparisonType='actions';assert.throws(()=>buildDiamondPlan(draft,{}),/Analyse both options first/);
+});
+test('triangle phrases expose their reported basis and unknowns without clearing safeguards',()=>{
+  const draft=emptyDiamond();
+  assert.equal(reflectTriangle(draft.triangle).phrase,'Pattern unclear');
+  assert.equal(reflectTriangle({care:'Yes'}).unknowns.length,3);
+  draft.triangle={...draft.triangle,care:'Yes',pressure:'Yes',freedom:'No'};
+  assert.equal(reflectTriangle(draft.triangle).phrase,'Care under pressure');
+  draft.triangle.repeated='Yes';
+  const reflection=reflectTriangle(draft.triangle);
+  assert.equal(reflection.phrase,'Possible coercive caretaking');assert.equal(reflection.basis.length,4);
+  assert.equal(triangleCornerAtPoint(140,40,280),'care');assert.equal(triangleCornerAtPoint(36,210,280),'pressure');
+  assert.equal(triangleCornerAtPoint(244,210,280),'freedom');
+  draft.triangle.pressure='No';draft.triangle.freedom='Yes';
+  assert.equal(reflectTriangle(draft.triangle).phrase,'Reported care with choice');
+  draft.nextStep='Pause and clarify.';
+  const result={structuralSafety:{level:'critical',summary:'A reported safeguarding concern remains.'}};
+  assert.throws(()=>buildDiamondPlan(draft,result),/protective support step/);
+  draft.supportStep='Ask for qualified safeguarding advice.';
+  assert.ok(buildDiamondPlan(draft,result).includes('SAFEGUARDING STILL APPLIES'));
+  assert.equal(result.structuralSafety.level,'critical');
 });
