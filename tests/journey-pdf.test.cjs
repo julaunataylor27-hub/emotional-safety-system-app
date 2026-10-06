@@ -68,3 +68,14 @@ test('cancelled folder selection creates no file and a failed save removes its e
   await assert.rejects(failed.service.save({uri:'file:///cache/a.pdf',name:'a.pdf'}),/full disk/);
   assert.ok(failed.calls.some(call=>call[0]==='delete'&&call[1]==='content://my-chosen-folder/new-pdf'));
 });
+
+test('Diamond plans produce a separate named PDF that escapes text and can be saved', async()=>{
+  const {calls,service}=fixture();
+  const plan='MY DIAMOND EFFECT\nMy step: <pause> & ask for help.\nUnknowns stay unknown.';
+  const document=await service.createPlan(plan);
+  assert.ok(document.name.startsWith('My-Diamond-Next-Step-'));
+  const html=calls.find(call=>call[0]==='print')[1].html;
+  assert.ok(html.includes('&lt;pause&gt; &amp; ask for help.'));
+  assert.ok(html.includes('Unknowns stay unknown.'));
+  assert.equal((await service.save(document)).saved,true);
+});

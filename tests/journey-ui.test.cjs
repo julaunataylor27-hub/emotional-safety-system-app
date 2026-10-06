@@ -37,6 +37,7 @@ const native = {
   SafeAreaView: 'SafeAreaView', ScrollView: 'ScrollView', View: 'View', Text: 'Text', TextInput: 'TextInput',
   Pressable: 'Pressable', Image: 'Image', ImageBackground: 'ImageBackground',
   StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android'}, Linking: {},
+  PanResponder:{create:handlers=>({panHandlers:{onResponderGrant:handlers.onPanResponderGrant,onResponderMove:handlers.onPanResponderMove,onResponderRelease:handlers.onPanResponderRelease}})},
   Animated: {Value: class {interpolate() {return '0deg';} setValue() {}}, View: 'AnimatedView',
     timing:()=>({}), loop:()=>({start(){},stop(){}})},
   Share: {share: async content => { if (failShare) throw Error('share failure'); shares.push(content); return {action: 'sharedAction'}; }},
@@ -56,7 +57,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -296,5 +297,80 @@ test('explanation tabs preserve Unknown witness emotions and unscored general qu
   assert.ok(textOf(tree.root).includes('LEGAL & SAFETY CONTEXT'));
   await press(tree,'Signals');
   assert.ok(textOf(tree.root).includes('Six Safety Signals — context only'));
+  await act(async()=>tree.unmount());
+});
+
+test('Diamond flow supports dragging, comparison, safety guards and keeping a personal plan as PDF', async context=>{
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();
+  await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  await describe(tree,'I want advice about a reported sexual concern.');
+  async function labelled(label) {
+    const button=tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label);
+    assert.ok(button,'Missing control '+label);await act(async()=>button.props.onPress());
+  }
+  await labelled('Is anyone involved under 18? Yes');
+  await labelled('Is there a sexual contact or sexual-boundary concern? Yes');
+  await assessAndExplain(tree,context);
+  await press(tree,'Context');
+  assert.ok(textOf(tree.root).includes('Priority child-safety concern to review'));
+  await press(tree,'EXPLORE MY DIAMOND EFFECT');
+  assert.ok(textOf(tree.root).includes('Protective support comes first'));
+  const field=label=>tree.root.findAllByType('TextInput').find(node=>node.props.accessibilityLabel===label);
+  async function fill(label,value) {assert.ok(field(label),label);await act(async()=>field(label).props.onChangeText(value));}
+  await fill('My observations','I heard a concern and wrote down the details.');
+  await fill('What I still do not know','I do not know what occurred.');
+  const canvas=()=>tree.root.findAllByType('View').find(node=>node.props.testID==='diamond-canvas');
+  await act(async()=>{canvas().props.onResponderGrant();canvas().props.onResponderMove({}, {dx:-100,dy:0});canvas().props.onResponderRelease();});
+  assert.ok(field('Values reflection'),'Dragging left must open Values');
+  await fill('Values reflection','Care, respect and clear boundaries.');
+  await press(tree,'Faith / Hope');await fill('Faith / Hope reflection','I can ask for support.');
+  await press(tree,'Truth');assert.equal(field('My observations').props.value,'I heard a concern and wrote down the details.');
+  await act(async()=>canvas().props.onAccessibilityAction({nativeEvent:{actionName:'increment'}}));
+  assert.ok(field('Values reflection'),'Accessible adjustment must change the corner');
+  await fill('Option 1','Pause and ask for safeguarding advice.');
+  await fill('Option 2','Write my observations and clarify unknowns.');
+  for(let check=1;check<=5;check++) await labelled(`Option 1, check ${check}, Yes`);
+  assert.ok(textOf(tree.root).includes('5 of 5 checks supported'));
+  await labelled('Option 2, check 1, No');
+  const blocked=tree.root.findAllByType('Pressable').find(node=>textOf(node)==='Use option 2 in my plan');
+  assert.equal(blocked.props.disabled,true);
+  await press(tree,'Use option 1 in my plan');
+  await fill('My purpose','Act with care without judging my worth.');
+  await fill('One manageable next step','Write a short factual note.');
+  await press(tree,'Build my next-step plan');
+  assert.ok(textOf(tree.root).includes('Include a protective support step'));
+  await fill('My protective support step','Ask an appropriate safeguarding service for advice.');
+  await press(tree,'Build my next-step plan');
+  assert.ok(textOf(tree.root).includes('SAFEGUARDING STILL APPLIES'));
+  const printCount=pdfPrints.length,writeCount=pdfWrites.length,shareCount=shares.length;
+  await press(tree,'Save my plan as PDF');
+  assert.equal(pdfPrints.length,printCount+1);assert.equal(pdfWrites.length,writeCount+1);
+  assert.ok(pdfPrints.at(-1).html.includes('Act with care without judging my worth.'));
+  assert.ok(textOf(tree.root).includes('Your Diamond plan was saved'));
+  assert.equal(shares.length,shareCount,'Writing and saving must not share automatically');
+  pdfSaveGranted=false;await press(tree,'Save my plan as PDF');
+  assert.ok(textOf(tree.root).includes('Saving cancelled'));pdfSaveGranted=true;
+  await press(tree,'Share my plan as text');
+  assert.ok(shares.at(-1).message.includes('SAFEGUARDING STILL APPLIES'));
+  await press(tree,'Back to my assessment');
+  assert.ok(textOf(tree.root).includes('Priority child-safety concern to review'));
+  await act(async()=>tree.unmount());
+});
+
+test('an adult immediate-danger report gets priority without inventing a child-parent sexual pattern',async context=>{
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'18+');
+  await describe(tree,'This situation needs urgent assistance.');
+  for(const label of ['Is anyone involved under 18? No','Is there a sexual contact or sexual-boundary concern? No','Is anyone in immediate danger now? Yes']) {
+    const button=tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label);
+    assert.ok(button);await act(async()=>button.props.onPress());
+  }
+  await assessAndExplain(tree,context);await press(tree,'Context');
+  assert.ok(textOf(tree.root).includes('Immediate safety needs attention'));
+  assert.ok(!textOf(tree.root).includes('A child-parent/caregiver sexual context'));
+  await press(tree,'EXPLORE MY DIAMOND EFFECT');
+  assert.ok(textOf(tree.root).includes('Call emergency 000'));
+  assert.ok(!textOf(tree.root).includes('WA Child Protection ·'));
   await act(async()=>tree.unmount());
 });

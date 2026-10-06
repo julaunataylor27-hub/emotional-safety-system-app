@@ -46,16 +46,24 @@ function createJourneyPdfService({print, fileSystem, sharing, intentLauncher, pl
     if (!await sharing.isAvailableAsync()) throw new Error('PDF sharing is unavailable');
     await sharing.shareAsync(document.uri, {mimeType: PDF_MIME, UTI: 'com.adobe.pdf', dialogTitle: 'Save or share my journey PDF'});
   }
-  return {
-    async create(answers) {
-      const date = now();
-      const result = await print.printToFileAsync({html: buildJourneyPdfHtml(answers, date), width: 595, height: 842});
+  async function createDocument(html, prefix, date) {
+      const result = await print.printToFileAsync({html, width: 595, height: 842});
       if (!result.uri || !fileSystem.cacheDirectory) throw new Error('PDF could not be created');
-      const name = 'My-Humanity-Summary-' + date.toISOString().replace(/[:.]/g, '-') + '.pdf';
+      const name = prefix + date.toISOString().replace(/[:.]/g, '-') + '.pdf';
       const uri = fileSystem.cacheDirectory + name;
       await fileSystem.copyAsync({from: result.uri, to: uri});
       await fileSystem.deleteAsync(result.uri, {idempotent: true}).catch(() => {});
       return {uri, name, pages: result.numberOfPages};
+  }
+  return {
+    async create(answers) {
+      const date = now();
+      return createDocument(buildJourneyPdfHtml(answers,date),'My-Humanity-Summary-',date);
+    },
+    async createPlan(text) {
+      const date=now();
+      const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>My Diamond Next Step</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#173e2a;font-size:12pt;line-height:1.55}h1{font-size:22pt}p{white-space:pre-wrap;overflow-wrap:anywhere;orphans:3;widows:3}</style></head><body><h1>My Diamond Effect</h1><p>'+escapeHtml(text)+'</p></body></html>';
+      return createDocument(html,'My-Diamond-Next-Step-',date);
     },
     share,
     async open(document) {
