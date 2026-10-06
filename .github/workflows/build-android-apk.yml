@@ -88,7 +88,10 @@ jobs:
       - name: Connect summary and device-local journey memory
         run: python scripts/patch_journey_memory.py
 
-      - name: Test journey memory and summary flow
+      - name: Connect personal PDF documents and save controls
+        run: python scripts/patch_journey_pdf.py
+
+      - name: Test journey memory, PDF export and summary flow
         run: NODE_ENV=test npm test
 
       - name: Validate routed legal-question interface
