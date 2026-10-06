@@ -1,6 +1,6 @@
 import React, {useRef,useState} from 'react';
 import {View,Text,TextInput,Pressable,PanResponder,StyleSheet,Share,Linking} from 'react-native';
-import {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,cornerAtPoint,compareChoice,comparisonKey,analyseOptions,needsProtectiveSupport,buildDiamondPlan} from './diamondEffect';
+import {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,cornerAtPoint,compareChoice,comparisonKey,analyseOptions,needsProtectiveSupport,buildDiamondPlan,buildDiamondDraft} from './diamondEffect';
 import journeyPdfService from './journeyPdfService';
 import ReflectionTriangle from './ReflectionTriangle';
 import LegalDecisionReview, {LegalReviewFields} from './LegalDecisionReview';
@@ -23,6 +23,8 @@ export default function DiamondEffectScreen({result,draft,onChange,onBack,onRevi
   const [comparisonNotice,setComparisonNotice]=useState('');
   const [showContext,setShowContext]=useState(false);
   const busyRef=useRef(false);
+  const pdfCache=useRef(null);
+  const [preparedPdf,setPreparedPdf]=useState(null);
   const drag=useRef({size:280,point:{x:140,y:140},start:{x:140,y:140},corner:'truth'});
   drag.current.size=size; drag.current.point=point; drag.current.corner=corner;
   const selectCorner=key=>{
@@ -64,23 +66,49 @@ export default function DiamondEffectScreen({result,draft,onChange,onBack,onRevi
   const explanationMode=draft.comparisonType==='explanations';
   const checkLabels=explanationMode?EXPLANATION_CHECKS:CHOICE_CHECKS;
   const protective=needsProtectiveSupport(result);
-  let plan='',planError='';
+  let plan='';
   const finalReview=buildLegalReview(draft,result);
-  try {plan=buildDiamondPlan(draft,result);} catch(error) {planError=error.message;}
-  const build=()=>{setPlanVisible(true);setNotice(planError||'Your next-step plan is ready. Read it before saving or sharing.');};
+  try {plan=buildDiamondPlan(draft,result);} catch {}
+  const pdfText=plan||buildDiamondDraft(draft,result);
+  const pdfIsDraft=!plan;
+  const build=()=>{
+    let next=draft;
+    if(draft.choices.every(choice=>choice.text.trim())&&!analysed) {
+      const review=analyseOptions(draft);
+      next={...draft,reviewKey:review.key,chosen:null};
+      onChange(next);setComparisonNotice('Both written options have been reviewed together. Read the comparison; you can keep both open.');
+    }
+    let error='';
+    try {buildDiamondPlan(next,result);} catch(failure) {error=failure.message;}
+    setPlanVisible(true);
+    setNotice(error?error+' Your gathered writing is shown as a draft below, and you can save it as PDF.':'Your next-step plan is ready. Read it before saving or sharing.');
+  };
   const exportPlan=async action=>{
-    if(busyRef.current||!plan) return;
+    if(busyRef.current||(action==='share'&&!plan)) return;
     busyRef.current=true;setBusy(true);setNotice('');
     try {
       if(action==='share') {
         await Share.share({title:'My Diamond Next Step',message:plan});
         setNotice('Your plan is ready in the sharing menu. Choose where to keep or share it.');
       } else {
-        const document=await journeyPdfService.createPlan(plan);
-        const outcome=await journeyPdfService.save(document);
-        setNotice(outcome.saved?'Your Diamond plan was saved to the folder you chose.':outcome.cancelled?'Saving cancelled. Your plan is still here.':'Choose Save to Files in the sharing menu to keep your plan.');
+        let document=pdfCache.current?.text===pdfText?pdfCache.current.document:null;
+        if(!document) {
+          document=await journeyPdfService.createPlan(pdfText,{draft:pdfIsDraft});
+          pdfCache.current={text:pdfText,document};
+        }
+        setPreparedPdf({text:pdfText,name:document.name});
+        if(action==='openPdf') {
+          await journeyPdfService.open(document);
+          setNotice('PDF opened in your reader. To keep a copy, use Save my '+(pdfIsDraft?'writing':'plan')+' as PDF.');
+        } else if(action==='sharePdf') {
+          await journeyPdfService.share(document);
+          setNotice('The PDF sharing menu opened. Choose a destination to keep or share your document.');
+        } else {
+          const outcome=await journeyPdfService.save(document);
+          setNotice(outcome.saved?(pdfIsDraft?'Your draft PDF was saved to the folder you chose. Unfinished checks still need review.':'Your Diamond plan was saved to the folder you chose.'):outcome.cancelled?'Saving cancelled. Your PDF is ready; use Open my PDF, Share PDF or try saving again.':'Choose Save to Files in the sharing menu to keep your PDF.');
+        }
       }
-    } catch {setNotice('Your plan could not be exported. Your words are still here; try again or press and hold the plan to copy it.');}
+    } catch {setNotice(action==='openPdf'?'Could not open your PDF reader. Try Save as PDF or Share PDF instead. Your writing is still here.':action==='sharePdf'?'Could not open PDF sharing. Try saving or opening the PDF instead. Your writing is still here.':'Your PDF or text could not be exported. Your writing is still here; try Open my PDF, Share PDF or save again.');}
     finally {busyRef.current=false;setBusy(false);}
   };
   return <View>
@@ -166,16 +194,28 @@ export default function DiamondEffectScreen({result,draft,onChange,onBack,onRevi
     </View>
     <LegalReviewFields value={draft.legal} onChange={value=>update('legal',value)}/>
     <View style={styles.card}>
-      <Button onPress={build}>Build my next-step plan</Button>
-      <Text accessibilityLiveRegion="polite" style={styles.body}>{busy?'Preparing your plan…':notice}</Text>
+      <Button disabled={busy} onPress={build}>Build my next-step plan</Button>
+      <Text accessibilityLiveRegion="polite" style={styles.body}>{busy?'Preparing your PDF…':notice}</Text>
+      {planVisible&&<View testID="build-result">
+        <Text style={styles.heading}>{pdfIsDraft?'Draft ready · review remains':'Plan ready · both options can stay open'}</Text>
+        <Text style={styles.body}>My next step: {draft.nextStep.trim()||'Not written yet. You can still keep your current writing.'}</Text>
+        {comparison&&comparison.options.map(option=><Text key={option.index} style={styles.body}>Option {option.index+1}: {option.supported} supported · {option.unsure} unsure · {option.needsAttention} need attention</Text>)}
+      </View>}
+      <Text style={styles.body}>Build reviews both written options together and gathers your answers below. Unfinished writing stays labelled as a draft; saving it does not approve an action.</Text>
+      <Text style={styles.heading}>Keep my writing as a PDF</Text>
+      <Text style={styles.body}>{pdfIsDraft?'You can save now, even with unfinished options. The PDF is labelled Draft and lists what still needs review.':'Your current plan is ready to keep as a PDF.'}</Text>
+      <Button disabled={busy} onPress={()=>exportPlan('openPdf')}>Open my PDF</Button>
+      <Button disabled={busy} onPress={()=>exportPlan('pdf')}>{pdfIsDraft?'Save my writing as PDF':'Save my plan as PDF'}</Button>
+      <Button disabled={busy} onPress={()=>exportPlan('sharePdf')}>Share PDF</Button>
+      {preparedPdf?.text===pdfText&&<Text selectable style={styles.body}>PDF prepared · {preparedPdf.name}</Text>}
+      <Text style={styles.body}>Save opens your folder picker. Choose a writable folder such as Documents, then allow access. Opening a PDF alone does not save it to your files.</Text>
     </View>
-    {planVisible&&plan&&<>
+    {planVisible&&<>
       <LegalDecisionReview report={finalReview}/>
       <View style={styles.card}>
-      <Text style={styles.heading}>My next-step plan</Text>
-      <Text selectable style={styles.body}>{plan}</Text>
-      <Button disabled={busy} onPress={()=>exportPlan('pdf')}>Save my plan as PDF</Button>
-      <Button disabled={busy} onPress={()=>exportPlan('share')}>Share my plan as text</Button>
+      <Text style={styles.heading}>{pdfIsDraft?'My gathered writing · Draft':'My next-step plan'}</Text>
+      <Text selectable style={styles.body}>{pdfText}</Text>
+      {plan&&<Button disabled={busy} onPress={()=>exportPlan('share')}>Share my plan as text</Button>}
       </View>
     </>}
     <Text style={styles.body}>These reflections stay in this app session. Save your PDF or copy your plan before closing the app. Your assessment writing is not added to GitHub or shared automatically.</Text>

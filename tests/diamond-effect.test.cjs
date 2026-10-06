@@ -165,3 +165,23 @@ test('reported control remains separate from feelings, and stale pair wording is
   assert.equal(result.structuralSafety.level,'critical');
   const fresh=emptyFeelingPair();fresh[0].who='A generic private label';assert.equal(emptyFeelingPair()[0].who,'');
 });
+
+test('draft export preserves incomplete and unreviewed options without adopting an action or clearing safeguarding',()=>{
+  const {buildDiamondDraft}=require('../src/diamondEffect');
+  const draft=emptyDiamond();draft.choices[0].text='A generic unfinished option.';
+  draft.legal.question='What further information is needed?';
+  const result={structuralSafety:{level:'critical',summary:'A reported concern needs safeguarding advice.'}};
+  const partial=buildDiamondDraft(draft,result);
+  for(const text of ['DRAFT — NOT A COMPLETED NEXT-STEP PLAN','A generic unfinished option.','Write both options','protective support step','SAFEGUARDING STILL APPLIES','ENCOURAGEMENT','What further information is needed?'])assert.ok(partial.includes(text),text);
+  draft.choices[1].text='Another generic option.';draft.choices[0].checks=['No','Yes','Yes','Yes','Yes'];draft.chosen=0;
+  draft.nextStep='A step to review.';
+  const unreviewed=buildDiamondDraft(draft,result);
+  assert.ok(unreviewed.includes('COMPARISON NOT REVIEWED'));
+  assert.ok(unreviewed.includes('NO ACTION ADOPTED IN THIS DRAFT'));
+  assert.ok(!unreviewed.includes('MY NEXT STEP TO CONSIDER'));
+  assert.throws(()=>buildDiamondPlan(draft,result),/Analyse both/);
+  draft.reviewKey=analyseOptions(draft).key;
+  assert.throws(()=>buildDiamondPlan(draft,result),/harm or boundary/);
+  assert.ok(buildDiamondDraft(draft,result).includes('harm or boundary check marked No'));
+  assert.equal(result.structuralSafety.level,'critical');
+});

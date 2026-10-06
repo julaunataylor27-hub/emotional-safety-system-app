@@ -79,3 +79,13 @@ test('Diamond plans produce a separate named PDF that escapes text and can be sa
   assert.ok(html.includes('Unknowns stay unknown.'));
   assert.equal((await service.save(document)).saved,true);
 });
+
+test('draft PDFs are named and labelled as drafts and preserve escaped unfinished writing',async()=>{
+  const {calls,service}=fixture();
+  const document=await service.createPlan('DRAFT\nUnfinished <writing> & unknowns.',{draft:true});
+  assert.ok(document.name.startsWith('My-Diamond-Draft-'));
+  const html=calls.find(call=>call[0]==='print')[1].html;
+  assert.ok(html.includes('<h1>My Diamond Effect · Draft</h1>'));
+  assert.ok(html.includes('Unfinished &lt;writing&gt; &amp; unknowns.'));
+  assert.equal((await service.save(document)).saved,true);
+});

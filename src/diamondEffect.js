@@ -78,16 +78,22 @@ function reflectTriangle(triangle={}) {
 function needsProtectiveSupport(result) {
   return !!(result && (['critical','warning'].includes(result.structuralSafety?.level) || result.high || ['critical','high'].includes(result.coercionCheck?.level)));
 }
-function buildDiamondPlan(draft,result) {
-  if(!draft.nextStep.trim()) throw Error('Add one manageable next step. You can stay undecided about the options.');
+function buildDiamondPlan(draft,result,{asDraft=false}={}) {
+  const unfinished=[];
+  if(!draft.nextStep.trim()) unfinished.push('Add one manageable next step. You can stay undecided about the options.');
   const hasOptions=draft.choices.some(choice=>choice.text.trim());
-  const comparison=hasOptions?analyseOptions(draft):null;
-  if(comparison&&draft.reviewKey!==comparison.key) throw Error('Analyse both options first. You can keep both open while building your plan.');
+  const bothWritten=draft.choices.every(choice=>choice.text.trim());
+  if(hasOptions&&!bothWritten) unfinished.push('Write both options before analysing them. You do not need to choose one.');
+  const comparison=hasOptions&&bothWritten?analyseOptions(draft):null;
+  const reviewed=!!comparison&&draft.reviewKey===comparison.key;
+  if(comparison&&!reviewed) unfinished.push('Analyse both options first. You can keep both open while building your plan.');
   const type=draft.comparisonType||'actions';
-  const choice=type==='actions'&&Number.isInteger(draft.chosen)?draft.choices[draft.chosen]:null;
-  const check=choice?compareChoice(choice):null;
-  if(check?.safetyGap) throw Error('This option has a harm or boundary check marked No. Revise it or keep both options open before building your plan.');
-  if(needsProtectiveSupport(result) && !draft.supportStep.trim()) throw Error('Include a protective support step while a safeguarding concern is active.');
+  const selected=type==='actions'&&Number.isInteger(draft.chosen)?draft.choices[draft.chosen]:null;
+  const check=selected?compareChoice(selected):null;
+  if(check?.safetyGap) unfinished.push('This option has a harm or boundary check marked No. Revise it or keep both options open before building your plan.');
+  if(needsProtectiveSupport(result) && !draft.supportStep.trim()) unfinished.push('Include a protective support step while a safeguarding concern is active.');
+  if(!asDraft&&unfinished.length) throw Error(unfinished[0]);
+  const choice=!asDraft&&reviewed?selected:null;
   const text=value=>value.trim()||'Not written yet.';
   const triangle=reflectTriangle(draft.triangle);
   let pair=null;
@@ -95,7 +101,9 @@ function buildDiamondPlan(draft,result) {
   const recordedPair=draft.triangle?.feelingPair?.some(item=>item.feeling!=='Unknown');
   const labels=type==='explanations'?EXPLANATION_CHECKS:CHOICE_CHECKS;
   return [
-    'MY DIAMOND EFFECT — NEXT STEP',
+    asDraft?'MY DIAMOND EFFECT — DRAFT WRITING':'MY DIAMOND EFFECT — NEXT STEP',
+    asDraft?'DRAFT — NOT A COMPLETED NEXT-STEP PLAN\nSaving preserves my writing. It does not complete a comparison, approve an action or clear safeguarding.':null,
+    asDraft?'STILL TO REVIEW\n'+(unfinished.join('\n')||'This copy is labelled as draft writing. Review the full plan before acting.'):null,
     'My worth is not a score. I can pause, learn and choose one manageable step.',
     'TRUTH — my own observations\n'+text(draft.truth),
     'WHAT I DO NOT KNOW\n'+text(draft.unknowns),
@@ -116,18 +124,19 @@ function buildDiamondPlan(draft,result) {
     'BEHAVIOUR BEHIND MY TRIANGLE ANSWERS\n'+text(draft.triangle?.evidence||''),
     'TRIANGLE UNKNOWNS\n'+text(draft.triangle?.unknowns||'')+(triangle.unknowns.length?'\nUnanswered areas: '+triangle.unknowns.join(', '):''),
     'REPORTED EMOTIONAL IMPACT\n'+text(draft.triangle?.impact||''),
-    comparison?'BOTH OPTIONS REVIEWED — '+(type==='explanations'?'POSSIBLE EXPLANATIONS':'POSSIBLE NEXT STEPS'):null,
-    ...(comparison?comparison.options.map(option=>`OPTION ${option.index+1}\n${option.text}\nMy checks: ${option.supported} of 5 supported; ${option.unsure} unsure; ${option.needsAttention} need attention.\n`+labels.map((label,i)=>`${label}: ${draft.choices[option.index].checks[i]}`).join('\n')):[]),
+    hasOptions?(reviewed?'BOTH OPTIONS REVIEWED — ':'OPTIONS RECORDED — COMPARISON NOT REVIEWED\n')+(type==='explanations'?'POSSIBLE EXPLANATIONS':'POSSIBLE NEXT STEPS'):null,
+    ...(hasOptions?draft.choices.map((option,index)=>`OPTION ${index+1}\n${text(option.text)}\nRecorded checks: ${compareChoice(option,type).supported} of 5 supported; ${compareChoice(option,type).unsure} unsure; ${compareChoice(option,type).needsAttention} need attention.\n`+labels.map((label,i)=>`${label}: ${option.checks[i]}`).join('\n')):[]),
     'These counts reflect my own checks. They are not a probability, truth score, outcome prediction or confirmation of safety.',
     type==='explanations'?'EXPLANATIONS REMAIN UNCONFIRMED\nNeither explanation is adopted as a fact. My next step can focus on clarifying information and getting appropriate support.':
-      choice?'MY NEXT STEP TO CONSIDER\nOption '+(draft.chosen+1)+': '+choice.text.trim():'I AM STILL UNDECIDED\nI can pause, revise the options or ask for support without choosing either.',
+      asDraft?'NO ACTION ADOPTED IN THIS DRAFT\nRecorded options and next-step writing remain for review.':choice?'MY NEXT STEP TO CONSIDER\nOption '+(draft.chosen+1)+': '+choice.text.trim():'I AM STILL UNDECIDED\nI can pause, revise the options or ask for support without choosing either.',
     comparison?.options.some(option=>option.safetyGap)?'Harm or boundary checks need attention in the comparison. Do not adopt those options unchanged.':null,
     check?.safetyUnclear?'Safety or boundaries remain uncertain: pause and clarify them before acting.':null,
-    'ONE MANAGEABLE NEXT STEP\n'+draft.nextStep.trim(),
+    'ONE MANAGEABLE NEXT STEP\n'+text(draft.nextStep),
     'PROTECTIVE SUPPORT STEP\n'+text(draft.supportStep),
     needsProtectiveSupport(result)?'SAFEGUARDING STILL APPLIES\n'+(result.structuralSafety?.summary||result.level):null,
     'This reflection is a planning aid. It does not establish another person’s intentions, a diagnosis or a legal finding.',
     legalReviewText(buildLegalReview(draft,result))
   ].filter(Boolean).join('\n\n');
 }
-module.exports = {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,TRIANGLE_PROMPTS,TRIANGLE_QUESTIONS,emptyDiamond,cornerAtPoint,triangleCornerAtPoint,compareChoice,comparisonKey,analyseOptions,reflectTriangle,needsProtectiveSupport,buildDiamondPlan};
+const buildDiamondDraft=(draft,result)=>buildDiamondPlan(draft,result,{asDraft:true});
+module.exports = {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,TRIANGLE_PROMPTS,TRIANGLE_QUESTIONS,emptyDiamond,cornerAtPoint,triangleCornerAtPoint,compareChoice,comparisonKey,analyseOptions,reflectTriangle,needsProtectiveSupport,buildDiamondPlan,buildDiamondDraft};
