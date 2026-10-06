@@ -1,3 +1,4 @@
+const {emptyFeelingPair,feelingPairKey,analyseFeelingPair}=require('./feelingPair');
 const CORNERS = {
   truth:{title:'Truth', prompt:'What did you observe or experience firsthand? What remains unknown?'},
   values:{title:'Values', prompt:'What matters to you here? Which boundaries and responsibilities do you want to honour?'},
@@ -28,7 +29,8 @@ function emptyDiamond() {
   return {truth:'',unknowns:'',values:'',beliefs:'',faith:'',purpose:'',nextStep:'',supportStep:'',
     choices:[{text:'',checks:Array(5).fill('Unsure')},{text:'',checks:Array(5).fill('Unsure')}],chosen:null,
     comparisonType:'actions',reviewKey:null,
-    triangle:{care:'Unsure',pressure:'Unsure',freedom:'Unsure',repeated:'Unsure',evidence:'',unknowns:'',impact:''}};
+    triangle:{care:'Unsure',pressure:'Unsure',freedom:'Unsure',repeated:'Unsure',evidence:'',unknowns:'',impact:'',
+      feelingPair:emptyFeelingPair(),pairScope:'Unsure',pairReviewKey:null}};
 }
 function cornerAtPoint(x,y,size) {
   const dx=x-size/2, dy=y-size/2;
@@ -87,6 +89,9 @@ function buildDiamondPlan(draft,result) {
   if(needsProtectiveSupport(result) && !draft.supportStep.trim()) throw Error('Include a protective support step while a safeguarding concern is active.');
   const text=value=>value.trim()||'Not written yet.';
   const triangle=reflectTriangle(draft.triangle);
+  let pair=null;
+  if(draft.triangle?.pairReviewKey===feelingPairKey(draft.triangle))pair=analyseFeelingPair(draft.triangle,triangle);
+  const recordedPair=draft.triangle?.feelingPair?.some(item=>item.feeling!=='Unknown');
   const labels=type==='explanations'?EXPLANATION_CHECKS:CHOICE_CHECKS;
   return [
     'MY DIAMOND EFFECT — NEXT STEP',
@@ -95,6 +100,15 @@ function buildDiamondPlan(draft,result) {
     'WHAT I DO NOT KNOW\n'+text(draft.unknowns),
     'VALUES\n'+text(draft.values), 'BELIEFS — interpretations to examine\n'+text(draft.beliefs),
     'FAITH / HOPE\n'+text(draft.faith), 'MY PURPOSE\n'+text(draft.purpose),
+    ...(pair?[
+      'TWO FEELINGS — A POSSIBLE MIDDLE WORD\n'+pair.equation,
+      'FEELING WORD TO EXPLORE\n'+pair.word+'\n'+pair.meaning,
+      ...pair.basis,
+      'QUESTIONS ABOUT THE POSSIBLE WHY\n'+pair.questions.join('\n'),
+      'WHAT REMAINS UNCONFIRMED\n'+(pair.unknowns.join('\n')||'No additional missing details were identified by this form. This does not verify the feelings or their causes.'),
+      pair.explanation+'\n'+pair.causeLimit,
+      pair.sourceUrl?'Word reference: '+pair.sourceUrl:null
+    ].filter(Boolean):recordedPair?['FEELINGS RECORDED — PAIR NOT REVIEWED\n'+draft.triangle.feelingPair.map((item,index)=>`Feeling ${index+1}: ${item.feeling}; whose: ${item.who?.trim()||'not recorded'}; source: ${item.source}`).join('\n'),'Explore the pair again before adopting a middle word. Earlier wording is not carried into this plan.']:[]),
     'TRIANGLE REFLECTION — '+triangle.phrase+'\n'+triangle.equation,
     'Symbolic reflection only. This is not a validated emotional equation, diagnosis, proof of coercion or assessment of consent. “Coercive caretaking” is an app reflection phrase.',
     ...triangle.basis,

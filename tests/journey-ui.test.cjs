@@ -409,6 +409,43 @@ test('triangle exploration and explanation comparison preserve uncertainty and a
   assert.equal(yes.props.accessibilityState.checked,false,'Checks must reset when their meaning changes');
   await act(async()=>tree.unmount());
 });
+test('paired feeling UI explains a middle word, exports its sources, and invalidates edited interpretations',async context=>{
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  await describe(tree,'A generic reported concern needing clarification.');
+  await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
+  await assessAndExplain(tree,context);await press(tree,'Context');await press(tree,'EXPLORE MY DIAMOND EFFECT');
+  const result=()=>tree.root.findAllByType('View').find(node=>node.props.testID==='feeling-pair-result');
+  const beforeShares=shares.length;
+  await press(tree,'Find a possible middle word');assert.ok(textOf(tree.root).includes('Choose Feeling 1 and Feeling 2 first'));
+  for(const [index,feeling] of [[1,'Love'],[2,'Anger']]){
+    await observationControl(tree,`Choose Feeling ${index}`);await observationControl(tree,`Feeling ${index}, ${feeling}`);
+    await observationControl(tree,`Feeling ${index} source, My own feeling`);
+    await observationField(tree,`Feeling ${index} belongs to`,'Me');
+  }
+  await observationControl(tree,'Feeling pair scope, One person, same situation');
+  await observationField(tree,'Specific behaviour behind these answers','I heard a generic upsetting message.');
+  await observationField(tree,'What remains uncertain in this pattern','Its intended meaning is not confirmed.');
+  await press(tree,'Find a possible middle word');assert.ok(result());
+  assert.ok(textOf(result()).includes('Ambivalence'));assert.ok(textOf(result()).includes('Why this word could fit'));
+  assert.ok(textOf(result()).includes('Questions about the possible why'));assert.ok(textOf(result()).includes('Its intended meaning is not confirmed.'));
+  const linkCount=openedLinks.length;await press(tree,'Read the meaning of ambivalence');
+  assert.equal(openedLinks.length,linkCount+1);assert.equal(openedLinks.at(-1),'https://dictionary.apa.org/ambivalence');
+  await observationField(tree,'One manageable next step','Write down the question I want help with.');
+  await observationField(tree,'My protective support step','Ask for safeguarding advice.');
+  await press(tree,'Build my next-step plan');const prints=pdfPrints.length;
+  await press(tree,'Save my plan as PDF');assert.equal(pdfPrints.length,prints+1);
+  assert.ok(pdfPrints.at(-1).html.includes('Ambivalence'));assert.ok(pdfPrints.at(-1).html.includes('source: My own feeling'));
+  assert.ok(pdfPrints.at(-1).html.includes('SAFEGUARDING STILL APPLIES'));
+  assert.equal(shares.length,beforeShares);
+  await observationControl(tree,'Feeling 2 source, My impression');assert.ok(!result(),'Changing a source must clear the earlier interpretation');
+  await press(tree,'Find a possible middle word');assert.ok(textOf(result()).includes('Mixed impressions'));
+  assert.ok(!textOf(result()).includes('Ambivalence'));assert.ok(textOf(result()).includes('actual feelings and motives remain unconfirmed'));
+  await observationControl(tree,'Feeling pair scope, Two people');await observationControl(tree,'Feeling 2 source, My own feeling');
+  await press(tree,'Find a possible middle word');assert.ok(textOf(result()).includes('Check who feels what'));
+  assert.ok(textOf(tree.root).includes('Protective support comes first'));
+  await act(async()=>tree.unmount());
+});
 
 async function observationControl(tree,label) {
   const control=tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label);

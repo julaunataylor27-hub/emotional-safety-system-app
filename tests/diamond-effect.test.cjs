@@ -2,6 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {reviewStructuralSafety}=require('../src/structuralReview');
 const {emptyDiamond,compareChoice,buildDiamondPlan,cornerAtPoint,triangleCornerAtPoint,analyseOptions,reflectTriangle}=require('../src/diamondEffect');
+const {PAIR_FEELINGS,emptyFeelingPair,feelingPairKey,analyseFeelingPair}=require('../src/feelingPair');
 
 const input=changes=>({age:'16+',text:'',familyRelation:'Unsure',sexualConduct:'Unsure',childSafety:'Unsure',sexualSafety:'Unsure',immediateSafety:'Unsure',...changes});
 test('selected parent-child details and standalone sexual wording no longer fall through the structural check',()=>{
@@ -105,4 +106,62 @@ test('triangle phrases expose their reported basis and unknowns without clearing
   draft.supportStep='Ask for qualified safeguarding advice.';
   assert.ok(buildDiamondPlan(draft,result).includes('SAFEGUARDING STILL APPLIES'));
   assert.equal(result.structuralSafety.level,'critical');
+});
+const paired=(first,second,changes={})=>({...emptyDiamond().triangle,
+  feelingPair:[{feeling:first,who:'Me',source:'My own feeling'},{feeling:second,who:'Me',source:'My own feeling'}],
+  pairScope:'One person, same situation',...changes});
+test('paired feelings distinguish ambivalence in one person from different feelings in two people',()=>{
+  const own=paired('Love','Anger',{evidence:'I received a generic upsetting message.'});
+  const found=analyseFeelingPair(own);
+  assert.equal(found.word,'Ambivalence');assert.ok(found.equation.startsWith('Love × Anger'));
+  assert.equal(found.sourceUrl,'https://dictionary.apa.org/ambivalence');
+  assert.equal(analyseFeelingPair(paired('Anger','Love')).word,found.word);
+  const two=paired('Love','Anger',{pairScope:'Two people',feelingPair:[{feeling:'Love',who:'Me',source:'My own feeling'},{feeling:'Anger',who:'Person B',source:'They told me'}]});
+  assert.equal(analyseFeelingPair(two).word,'Care meets anger');
+  assert.equal(analyseFeelingPair(two).sourceUrl,null);
+  assert.ok(analyseFeelingPair(two).causeLimit.includes('cannot establish that cause'));
+  assert.ok(found.questions.length>=2);
+});
+test('impressions, missing feelings and conflicting sources cannot establish another person’s emotion or cause',()=>{
+  assert.throws(()=>analyseFeelingPair(emptyDiamond().triangle),/Choose Feeling 1 and Feeling 2/);
+  const malformed=paired('not-a-feeling','Anger');
+  assert.throws(()=>analyseFeelingPair(malformed),/Choose Feeling 1 and Feeling 2/);
+  const impression=paired('Love','Anger');impression.feelingPair[1].source='My impression';
+  const report=analyseFeelingPair(impression);
+  assert.equal(report.word,'Mixed impressions');assert.equal(report.sourceUrl,null);
+  assert.ok(report.unknowns.some(item=>item.includes('actual')));
+  const conflict=paired('Love','Anger',{pairScope:'Two people'});
+  assert.equal(analyseFeelingPair(conflict).word,'Check who feels what');
+  const same=paired('Love','Anger');same.feelingPair[1].source='They told me';
+  assert.equal(analyseFeelingPair(same).word,'Check who feels what');
+  const unspecified=paired('Love','Fear',{feelingPair:[{feeling:'Love',who:'',source:'Unsure'},{feeling:'Fear',who:'',source:'Unsure'}],pairScope:'Unsure'});
+  assert.ok(analyseFeelingPair(unspecified).unknowns.length>=4);
+});
+test('every supported feeling pair stays descriptive and cannot infer coercion from feelings alone',()=>{
+  for(const first of PAIR_FEELINGS.filter(item=>item!=='Unknown'))for(const second of PAIR_FEELINGS.filter(item=>item!=='Unknown')){
+    const draft=paired(first,second,{pairScope:'Two people',feelingPair:[{feeling:first,who:'Me',source:'My own feeling'},{feeling:second,who:'Person B',source:'They told me'}]});
+    const report=analyseFeelingPair(draft,reflectTriangle(draft));
+    assert.ok(report.word);assert.equal(report.contextWord,null);
+    assert.ok(!report.centre.includes('coercive'));assert.ok(report.explanation.includes('not numerical multiplication'));
+    assert.ok(report.unknowns.some(item=>item.includes('specific action')));
+  }
+});
+test('reported control remains separate from feelings, and stale pair wording is excluded from plans',()=>{
+  const draft=emptyDiamond();draft.triangle=paired('Love','Anger',{care:'Yes',pressure:'Yes',freedom:'No',repeated:'Yes',evidence:'A generic reported restriction.',unknowns:'The duration remains uncertain.'});
+  const finding=analyseFeelingPair(draft.triangle,reflectTriangle(draft.triangle));
+  assert.equal(finding.word,'Ambivalence');assert.equal(finding.centre,'Possible coercive caretaking');
+  assert.ok(finding.basis.some(item=>item.includes('not from multiplying')));
+  draft.triangle.pairReviewKey=finding.key;draft.nextStep='Ask how to clarify a concern.';
+  const result={structuralSafety:{level:'critical',summary:'An active safeguarding concern.'}};
+  assert.throws(()=>buildDiamondPlan(draft,result),/protective support step/);
+  draft.supportStep='Ask for qualified safeguarding advice.';
+  const plan=buildDiamondPlan(draft,result);
+  assert.ok(plan.includes('Ambivalence'));assert.ok(plan.includes('QUESTIONS ABOUT THE POSSIBLE WHY'));
+  assert.ok(plan.includes('The duration remains uncertain.'));assert.ok(plan.includes('SAFEGUARDING STILL APPLIES'));
+  draft.triangle.feelingPair[1].feeling='Joy';
+  assert.notEqual(feelingPairKey(draft.triangle),finding.key);
+  const changed=buildDiamondPlan(draft,result);
+  assert.ok(changed.includes('PAIR NOT REVIEWED'));assert.ok(!changed.includes('Ambivalence'));
+  assert.equal(result.structuralSafety.level,'critical');
+  const fresh=emptyFeelingPair();fresh[0].who='A generic private label';assert.equal(emptyFeelingPair()[0].who,'');
 });
