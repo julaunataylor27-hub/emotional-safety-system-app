@@ -57,7 +57,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ObservedResponsesForm.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -355,6 +355,77 @@ test('Diamond flow supports dragging, comparison, safety guards and keeping a pe
   assert.ok(shares.at(-1).message.includes('SAFEGUARDING STILL APPLIES'));
   await press(tree,'Back to my assessment');
   assert.ok(textOf(tree.root).includes('Priority child-safety concern to review'));
+  await act(async()=>tree.unmount());
+});
+
+async function observationControl(tree,label) {
+  const control=tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label);
+  assert.ok(control,'Missing observation control '+label);
+  await act(async()=>control.props.onPress());
+}
+async function observationField(tree,label,value) {
+  const input=tree.root.findAllByType('TextInput').find(node=>node.props.accessibilityLabel===label);
+  assert.ok(input,'Missing observation field '+label);
+  await act(async()=>input.props.onChangeText(value));
+}
+test('multiple observations stay separate by person, keep safeguarding active, and snapshot notes without sharing',async context=>{
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  const checked=label=>tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label).props.accessibilityState.checked;
+  await observationControl(tree,'Person 1, feelings, Scared');await observationControl(tree,'Person 1, feelings, Confused');
+  assert.equal(checked('Person 1, feelings, Scared'),true);assert.equal(checked('Person 1, feelings, Confused'),true);
+  assert.equal(checked('Person 1, feelings, Unknown'),false);
+  await observationControl(tree,'Person 1, feelings, Unknown');
+  assert.equal(checked('Person 1, feelings, Scared'),false);assert.equal(checked('Person 1, feelings, Unknown'),true);
+  await observationControl(tree,'Person 1, feelings, Calm');await observationControl(tree,'Person 1, feelings, Happy / cheerful');
+  await observationControl(tree,'Person 1, behaviours, Smiling / laughing');await observationControl(tree,'Person 1, behaviours, Pulled away');
+  await observationField(tree,'Person 1 label','Person A');
+  await press(tree,'Add another person');await observationField(tree,'Person 2 label','Person B');
+  await observationControl(tree,'Person 2, behaviours, Asleep');
+  await observationField(tree,'Person 2 observation note','A private generic note for this assessment.');
+  await describe(tree,'Please help me review a reported situation.');
+  await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
+  const shareCount=shares.length;
+  await assessAndExplain(tree,context);await press(tree,'Emotion');
+  assert.ok(textOf(tree.root).includes('Observed response selected: Calm, Happy / cheerful'));
+  assert.ok(textOf(tree.root).includes('OBSERVED RESPONSES RECORDED — NOT AN EMOTION SCORE'));
+  assert.ok(textOf(tree.root).includes('2 appearance labels; 3 behaviour labels'));
+  assert.ok(textOf(tree.root).includes('Person B — seemed: Unknown; behaviours: Asleep'));
+  assert.ok(textOf(tree.root).includes('A private generic note for this assessment.'));
+  assert.ok(!textOf(tree.root).includes('/100'));
+  await press(tree,'Context');assert.ok(textOf(tree.root).includes('Priority child-safety concern to review'));
+  await press(tree,'EXPLORE MY DIAMOND EFFECT');
+  const screen=tree.root.findAll(node=>typeof node.type==='function'&&node.type.name==='DiamondEffectScreen')[0];
+  const snapshot=screen.props.result.assessmentInput.observedPeople;
+  assert.equal(screen.props.result.structuralSafety.capacityConcern,true);
+  await press(tree,'Back to my assessment');await press(tree,'Review My Answers');
+  assert.equal(checked('Person 1, feelings, Calm'),true);
+  await observationField(tree,'Person 2 observation note','A revised generic note.');
+  assert.equal(snapshot[1].details,'A private generic note for this assessment.');
+  await assessAndExplain(tree,context);await press(tree,'Emotion');
+  assert.ok(textOf(tree.root).includes('A revised generic note.'));
+  assert.ok(!textOf(tree.root).includes('A private generic note for this assessment.'));
+  assert.equal(shares.length,shareCount);
+  assert.ok(![...disk.values()].some(value=>value.includes('A revised generic note.')));
+  await act(async()=>tree.unmount());
+});
+test('observed sleep with an adult sexual concern gets capacity triage and is ignored when switching to a general question',async context=>{
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');await press(tree,'18+');
+  await describe(tree,'I would like to clarify what I observed.');
+  await observationControl(tree,'Person 1, feelings, Calm');await observationControl(tree,'Person 1, behaviours, Unresponsive');
+  for(const label of ['Is anyone involved under 18? No','Is there a sexual contact or sexual-boundary concern? Yes','Is anyone in immediate danger now? No']) await observationControl(tree,label);
+  await assessAndExplain(tree,context);await press(tree,'Context');
+  assert.ok(textOf(tree.root).includes('Priority capacity / consent concern to review'));
+  assert.ok(!textOf(tree.root).includes('Priority child-safety concern to review'));
+  await press(tree,'EXPLORE MY DIAMOND EFFECT');assert.ok(textOf(tree.root).includes('Protective support comes first'));
+  assert.ok(!textOf(tree.root).includes('WA Child Protection ·'));
+  await press(tree,'Back to my assessment');await press(tree,'Review My Answers');await press(tree,'A question / hypothetical');
+  assert.ok(!textOf(tree.root).includes('How did each person seem?'));
+  await describe(tree,'What do respectful boundaries mean?');
+  await assessAndExplain(tree,context,'Check My Question');await press(tree,'Context');
+  assert.ok(!textOf(tree.root).includes('Priority capacity / consent concern to review'));
+  assert.ok(!textOf(tree.root).includes('Observed behaviours: Unresponsive'));
   await act(async()=>tree.unmount());
 });
 

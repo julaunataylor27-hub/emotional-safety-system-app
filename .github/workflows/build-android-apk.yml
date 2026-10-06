@@ -100,7 +100,10 @@ jobs:
       - name: Connect structural fact review and Diamond Effect planner
         run: python scripts/patch_diamond_effect.py
 
-      - name: Test memory, PDFs, assessment tabs and Diamond Effect
+      - name: Connect multiple per-person observed responses
+        run: python scripts/patch_observed_responses.py
+
+      - name: Test memory, PDFs, assessment tabs, Diamond and observed responses
         run: NODE_ENV=test npm test
 
       - name: Validate routed legal-question interface
