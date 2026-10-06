@@ -1,6 +1,7 @@
 import React from 'react';
 import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
 import {FEELINGS,BEHAVIOURS,MAX_PEOPLE,emptyPerson,toggleObservation} from './observedResponses';
+import WaSupportCard from './WaSupportCard';
 
 export default function ObservedResponsesForm({people,onChange}) {
   const update=(index,changes)=>onChange(people.map((person,i)=>i===index?{...person,...changes}:person));
@@ -17,12 +18,24 @@ export default function ObservedResponsesForm({people,onChange}) {
       <Text style={styles.label}>What I noticed · select multiple</Text>
       {choices(index,'behaviours',BEHAVIOURS)}
       <Text style={styles.body}>Being asleep or unresponsive is a capacity detail, not a feeling. Smiling, excitement or affection cannot establish consent.</Text>
-      <Text style={styles.label}>What I saw or heard (optional)</Text>
+      <Text style={styles.label}>When was this? (optional)</Text>
+      <TextInput accessibilityLabel={`Person ${index+1} observation time`} maxLength={120} value={person.when||''} onChangeText={value=>update(index,{when:value})} placeholder="Date and time; write approximately if unsure" placeholderTextColor="#95A9B0" style={styles.input}/>
+      <Text style={styles.label}>What I directly saw or heard (optional)</Text>
       <TextInput accessibilityLabel={`Person ${index+1} observation note`} multiline maxLength={1000} textAlignVertical="top" value={person.details} onChangeText={value=>update(index,{details:value})} placeholder="Describe words or actions. Keep interpretations and unknowns separate." placeholderTextColor="#95A9B0" style={[styles.input,{minHeight:100}]}/>
-      <Text style={styles.body}>Notes are shown with your results. Only the selected safety facts and behaviour labels enter the additional checks.</Text>
+      <Text style={styles.body}>Record words and actions as you remember them. Use quotation marks only when you remember the exact words.</Text>
+      <Text style={styles.label}>My interpretation (not confirmed)</Text>
+      <TextInput accessibilityLabel={`Person ${index+1} interpretation note`} multiline maxLength={1000} textAlignVertical="top" value={person.interpretation||''} onChangeText={value=>update(index,{interpretation:value})} placeholder="What you think it might mean. Motives and family history may remain unknown." placeholderTextColor="#95A9B0" style={[styles.input,{minHeight:100}]}/>
+      <Text style={styles.label}>What I still do not know</Text>
+      <TextInput accessibilityLabel={`Person ${index+1} unknowns note`} multiline maxLength={1000} textAlignVertical="top" value={person.unknowns||''} onChangeText={value=>update(index,{unknowns:value})} placeholder="Details you cannot confirm or need help clarifying" placeholderTextColor="#95A9B0" style={[styles.input,{minHeight:100}]}/>
+      <Text style={styles.body}>These notes are shown with your results. Interpretations are not treated as verified facts. Use the safety questions and main description for concerns you want the app to check.</Text>
       {people.length>1&&<Pressable accessibilityRole="button" accessibilityLabel={`Remove person ${index+1}`} onPress={()=>onChange(people.filter((_,i)=>i!==index))} style={styles.pill}><Text style={styles.pillText}>Remove person {index+1}</Text></Pressable>}
     </View>)}
     {people.length<MAX_PEOPLE&&<Pressable accessibilityRole="button" onPress={()=>onChange([...people,emptyPerson()])} style={styles.pill}><Text style={styles.pillText}>+ Add another person</Text></Pressable>}
+    <View style={styles.card}>
+      <Text style={styles.heading}>One manageable next step</Text>
+      <Text style={styles.body}>Keep one dated record of your observations and uncertainties. You can ask for safeguarding advice without having to determine someone’s intentions or family history yourself. If you have already contacted a service and remain concerned, ask what additional firsthand information they need.</Text>
+    </View>
+    <WaSupportCard/>
     <Text style={styles.body}>This record stays in this app session. Copy your observations before closing. Nothing here is shared automatically.</Text>
   </View>;
 }
@@ -31,8 +44,14 @@ export function ObservedResponsesReadout({people}) {
     <Text style={styles.heading}>{person.name.trim()||`Person ${index+1}`}</Text>
     <Text style={styles.body}>Seemed: {person.feelings.join(', ')}</Text>
     <Text style={styles.body}>Observed behaviours: {person.behaviours.join(', ')}</Text>
-    <Text style={styles.label}>Recorded observation</Text>
+    <Text style={styles.label}>Recorded date / time</Text>
+    <Text selectable style={styles.body}>{person.when?.trim()||'Not recorded.'}</Text>
+    <Text style={styles.label}>Direct observation</Text>
     <Text selectable style={styles.body}>{person.details.trim()||'No observation note entered.'}</Text>
+    <Text style={styles.label}>Interpretation · not confirmed</Text>
+    <Text selectable style={styles.body}>{person.interpretation?.trim()||'No interpretation entered.'}</Text>
+    <Text style={styles.label}>Still unknown</Text>
+    <Text selectable style={styles.body}>{person.unknowns?.trim()||'No unknowns entered.'}</Text>
   </View>)}</View>;
 }
 const styles=StyleSheet.create({

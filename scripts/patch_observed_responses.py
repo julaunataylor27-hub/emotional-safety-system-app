@@ -40,6 +40,7 @@ position=s.index('          <Text style={styles.body}>{result.emotion}</Text>',s
 readout="          {result.assessmentInput?.intent==='Something I witnessed / was told'&&<ObservedResponsesReadout people={result.assessmentInput.observedPeople}/> }\n"
 s=s[:position]+readout+s[position:]
 replace_once("          <Text selectable style={styles.body}>{result.assessmentInput?.text?.trim()||'No description entered.'}</Text>", "          <Text selectable style={styles.body}>{result.assessmentInput?.text?.trim()||'No description entered.'}</Text>\n"+readout.rstrip())
-s="import ObservedResponsesForm, {ObservedResponsesReadout} from './src/ObservedResponsesForm';\nimport {emptyPerson,normalisePeople,hasCapacityObservation,observationSummary,observationReview} from './src/observedResponses';\n"+s
+replace_once('        <MenuRow icon="☎" title="Emergency — 000" subtitle="If someone is in immediate danger" onPress={()=>Linking.openURL(\'tel:000\')} accent={C.red}/>', '        <WaSupportCard/>')
+s="import WaSupportCard from './src/WaSupportCard';\nimport ObservedResponsesForm, {ObservedResponsesReadout} from './src/ObservedResponsesForm';\nimport {emptyPerson,normalisePeople,hasCapacityObservation,observationSummary,observationReview} from './src/observedResponses';\n"+s
 p.write_text(s)
 print('Multiple per-person observed feelings, behaviours and result snapshots connected.')

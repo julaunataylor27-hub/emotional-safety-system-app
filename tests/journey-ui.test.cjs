@@ -12,6 +12,8 @@ global.IS_REACT_ACT_ENVIRONMENT = true;
 const disk = new Map();
 const shares = [];
 const alerts = [];
+const openedLinks = [];
+let failLink = false;
 let failShare = false;
 let failRead = false;
 let failWrite = false;
@@ -36,7 +38,7 @@ const storage = {
 const native = {
   SafeAreaView: 'SafeAreaView', ScrollView: 'ScrollView', View: 'View', Text: 'Text', TextInput: 'TextInput',
   Pressable: 'Pressable', Image: 'Image', ImageBackground: 'ImageBackground',
-  StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android'}, Linking: {},
+  StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android'}, Linking: {openURL:async url=>{if(failLink)throw Error('Link unavailable');openedLinks.push(url);}},
   PanResponder:{create:handlers=>({panHandlers:{onResponderGrant:handlers.onPanResponderGrant,onResponderMove:handlers.onPanResponderMove,onResponderRelease:handlers.onPanResponderRelease}})},
   Animated: {Value: class {interpolate() {return '0deg';} setValue() {}}, View: 'AnimatedView',
     timing:()=>({}), loop:()=>({start(){},stop(){}})},
@@ -57,7 +59,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ObservedResponsesForm.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -383,6 +385,9 @@ test('multiple observations stay separate by person, keep safeguarding active, a
   await press(tree,'Add another person');await observationField(tree,'Person 2 label','Person B');
   await observationControl(tree,'Person 2, behaviours, Asleep');
   await observationField(tree,'Person 2 observation note','A private generic note for this assessment.');
+  await observationField(tree,'Person 2 observation time','Approximately 6 pm, date uncertain.');
+  await observationField(tree,'Person 2 interpretation note','A possible explanation that remains unconfirmed.');
+  await observationField(tree,'Person 2 unknowns note','I do not know the exact sequence.');
   await describe(tree,'Please help me review a reported situation.');
   await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
   const shareCount=shares.length;
@@ -392,6 +397,7 @@ test('multiple observations stay separate by person, keep safeguarding active, a
   assert.ok(textOf(tree.root).includes('2 appearance labels; 3 behaviour labels'));
   assert.ok(textOf(tree.root).includes('Person B — seemed: Unknown; behaviours: Asleep'));
   assert.ok(textOf(tree.root).includes('A private generic note for this assessment.'));
+  for(const value of ['Direct observation','Interpretation · not confirmed','Still unknown','Approximately 6 pm, date uncertain.','A possible explanation that remains unconfirmed.','I do not know the exact sequence.']) assert.ok(textOf(tree.root).includes(value));
   assert.ok(!textOf(tree.root).includes('/100'));
   await press(tree,'Context');assert.ok(textOf(tree.root).includes('Priority child-safety concern to review'));
   await press(tree,'EXPLORE MY DIAMOND EFFECT');
@@ -402,6 +408,7 @@ test('multiple observations stay separate by person, keep safeguarding active, a
   assert.equal(checked('Person 1, feelings, Calm'),true);
   await observationField(tree,'Person 2 observation note','A revised generic note.');
   assert.equal(snapshot[1].details,'A private generic note for this assessment.');
+  assert.equal(snapshot[1].interpretation,'A possible explanation that remains unconfirmed.');
   await assessAndExplain(tree,context);await press(tree,'Emotion');
   assert.ok(textOf(tree.root).includes('A revised generic note.'));
   assert.ok(!textOf(tree.root).includes('A private generic note for this assessment.'));
@@ -426,6 +433,21 @@ test('observed sleep with an adult sexual concern gets capacity triage and is ig
   await assessAndExplain(tree,context,'Check My Question');await press(tree,'Context');
   assert.ok(!textOf(tree.root).includes('Priority capacity / consent concern to review'));
   assert.ok(!textOf(tree.root).includes('Observed behaviours: Unresponsive'));
+  await act(async()=>tree.unmount());
+});
+
+test('WA support choices open only the requested dialler or official guidance and recover from link failure',async()=>{
+  const before=openedLinks.length;
+  const tree=await mount();await press(tree,'Support');
+  assert.ok(textOf(tree.root).includes('WA support choices'));assert.ok(textOf(tree.root).includes('Crisis Care · after hours'));
+  assert.equal(openedLinks.length,before,'Showing support must not call or open anything automatically');
+  await observationControl(tree,'Child Protection · 1800 273 889');assert.equal(openedLinks.at(-1),'tel:1800273889');
+  await observationControl(tree,'Crisis Care · 1800 199 008');assert.equal(openedLinks.at(-1),'tel:1800199008');
+  await observationControl(tree,'Emergency · 000');assert.equal(openedLinks.at(-1),'tel:000');
+  await observationControl(tree,'Read WA Crisis Care guidance');assert.equal(openedLinks.at(-1),'https://www.wa.gov.au/service/community-services/community-support/crisis-care');
+  await observationControl(tree,'Read WA child safety guidance');assert.equal(openedLinks.at(-1),'https://www.wa.gov.au/organisation/department-of-communities/concerns-the-safety-or-wellbeing-of-child-or-young-person');
+  failLink=true;await observationControl(tree,'Crisis Care · 1800 199 008');
+  assert.ok(textOf(tree.root).includes('Could not open this link'));assert.ok(textOf(tree.root).includes('1800 199 008'));failLink=false;
   await act(async()=>tree.unmount());
 });
 

@@ -1,7 +1,7 @@
 const FEELINGS = ['Unknown','Distressed','Confused','Scared','Worried','Sad','Angry','Overwhelmed','Withdrawn','Calm','Happy / cheerful','Excited','Affectionate','Embarrassed','Numb / detached','Other / mixed'];
 const BEHAVIOURS = ['Unknown','Asleep','Unresponsive','Crying','Smiling / laughing','Quiet / not speaking','Pulled away','Moved closer','Said no / stop','Asked for help','Other'];
 const MAX_PEOPLE = 4;
-const emptyPerson = () => ({name:'',feelings:['Unknown'],behaviours:['Unknown'],details:''});
+const emptyPerson = () => ({name:'',feelings:['Unknown'],behaviours:['Unknown'],when:'',details:'',interpretation:'',unknowns:''});
 function normaliseSelection(values, options) {
   const selected = [...new Set((Array.isArray(values)?values:[]).filter(value=>options.includes(value)&&value!=='Unknown'))];
   return selected.length ? selected : ['Unknown'];
@@ -18,7 +18,10 @@ function normalisePeople(people,legacyFeeling='Unknown') {
     name:typeof person?.name==='string'?person.name.slice(0,80):'',
     feelings:normaliseSelection(person?.feelings,FEELINGS),
     behaviours:normaliseSelection(person?.behaviours,BEHAVIOURS),
-    details:typeof person?.details==='string'?person.details.slice(0,1000):''
+    when:typeof person?.when==='string'?person.when.slice(0,120):'',
+    details:typeof person?.details==='string'?person.details.slice(0,1000):'',
+    interpretation:typeof person?.interpretation==='string'?person.interpretation.slice(0,1000):'',
+    unknowns:typeof person?.unknowns==='string'?person.unknowns.slice(0,1000):''
   }));
 }
 function hasCapacityObservation(people) {

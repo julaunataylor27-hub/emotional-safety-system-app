@@ -15,11 +15,12 @@ test('multi-selection toggles independently and Unknown is exclusive within each
 });
 test('each person retains separate appearances, behaviours and an independent assessment snapshot',()=>{
   const people=[{...emptyPerson(),name:'Observer A',feelings:['Calm','Happy / cheerful'],behaviours:['Smiling / laughing']},
-    {...emptyPerson(),name:'Observer B',behaviours:['Asleep'],details:'A generic observation note.'}];
+    {...emptyPerson(),name:'Observer B',behaviours:['Asleep'],details:'A generic observation note.',when:'Approx. 6 pm',interpretation:'An unconfirmed interpretation.',unknowns:'The exact time is uncertain.'}];
   const snapshot=normalisePeople(people);
-  people[0].feelings.push('Scared');people[1].details='A later edit.';
+  people[0].feelings.push('Scared');people[1].details='A later edit.';people[1].interpretation='A later interpretation.';
   assert.deepEqual(snapshot[0].feelings,['Calm','Happy / cheerful']);
   assert.equal(snapshot[1].details,'A generic observation note.');
+  assert.equal(snapshot[1].when,'Approx. 6 pm');assert.equal(snapshot[1].interpretation,'An unconfirmed interpretation.');assert.equal(snapshot[1].unknowns,'The exact time is uncertain.');
   const review=observationReview(snapshot);
   assert.equal(review.score,null);
   assert.ok(review.components.some(line=>line.includes('2 appearance labels; 2 behaviour labels')));
@@ -30,6 +31,7 @@ test('calm or happy appearances never cancel child safeguarding, and sleep requi
   const neutral={age:'18+',text:'',childSafety:'No',sexualSafety:'No',immediateSafety:'No',familyRelation:'Unsure'};
   const people=[{...emptyPerson(),feelings:['Calm','Happy / cheerful'],behaviours:['Asleep']}];
   assert.equal(reviewStructuralSafety({...neutral,observedPeople:people}).level,'info');
+  assert.equal(reviewStructuralSafety({...neutral,observedPeople:[{...emptyPerson(),interpretation:'I suspect sexual contact involving a child.',unknowns:'I do not know the ages.'}]}).level,'info','An interpretation note must not become a reported safety fact');
   const capacity=reviewStructuralSafety({...neutral,sexualSafety:'Yes',observedPeople:people});
   assert.equal(capacity.level,'critical');assert.equal(capacity.capacityConcern,true);assert.equal(capacity.childConcern,false);
   assert.ok(capacity.title.includes('capacity'));

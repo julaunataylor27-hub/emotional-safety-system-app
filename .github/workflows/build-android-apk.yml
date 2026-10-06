@@ -103,7 +103,7 @@ jobs:
       - name: Connect multiple per-person observed responses
         run: python scripts/patch_observed_responses.py
 
-      - name: Test memory, PDFs, assessment tabs, Diamond and observed responses
+      - name: Test memory, PDFs, assessment tabs, Diamond, observations and support
         run: NODE_ENV=test npm test
 
       - name: Validate routed legal-question interface
