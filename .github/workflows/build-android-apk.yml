@@ -32,7 +32,7 @@ jobs:
           java-version: '17'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --include=dev
 
       - name: Enable interactive Learning and About screens
         run: python scripts/patch_interactions.py
@@ -85,6 +85,12 @@ jobs:
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
+      - name: Connect summary and device-local journey memory
+        run: python scripts/patch_journey_memory.py
+
+      - name: Test journey memory and summary flow
+        run: NODE_ENV=test npm test
+
       - name: Validate routed legal-question interface
         run: python scripts/validate_patched_app.py
 
@@ -109,3 +115,4 @@ jobs:
           path: Emotional-Safety-System-Standalone.apk
           if-no-files-found: error
           retention-days: 30
+
