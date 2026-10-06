@@ -1,6 +1,6 @@
 {
   "name": "emotional-safety-system",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "node --test tests/journey-memory.test.cjs tests/journey-pdf.test.cjs tests/journey-progress.test.cjs tests/diamond-effect.test.cjs tests/observed-responses.test.cjs tests/journey-ui.test.cjs"
+    "test": "node --test tests/journey-memory.test.cjs tests/journey-pdf.test.cjs tests/journey-progress.test.cjs tests/diamond-effect.test.cjs tests/observed-responses.test.cjs tests/legal-decision-review.test.cjs tests/journey-ui.test.cjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",

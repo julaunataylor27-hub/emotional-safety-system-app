@@ -59,7 +59,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -552,5 +552,48 @@ test('an adult immediate-danger report gets priority without inventing a child-p
   await press(tree,'EXPLORE MY DIAMOND EFFECT');
   assert.ok(textOf(tree.root).includes('Call emergency 000'));
   assert.ok(!textOf(tree.root).includes('WA Child Protection ·'));
+  await act(async()=>tree.unmount());
+});
+
+test('final rights review keeps sources distinct, opens links on request and exports current guidance with encouragement',async context=>{
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  await describe(tree,'A generic reported concern to clarify with support.');
+  await observationControl(tree,'Is anyone involved under 18? Yes');
+  await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
+  await observationField(tree,'Person 1 observation note','I recorded a generic direct observation.');
+  await observationField(tree,'Person 1 interpretation note','A generic unconfirmed interpretation.');
+  await assessAndExplain(tree,context);await press(tree,'Context');await press(tree,'EXPLORE MY DIAMOND EFFECT');
+  await observationField(tree,'One manageable next step','Ask which facts need clarification.');
+  await observationField(tree,'My protective support step','Ask for safeguarding advice.');
+  await observationField(tree,'My question for a qualified adviser','How can I safely share my record?');
+  await observationField(tree,'Statements I was told · who said what and when','A generic statement, date uncertain.');
+  const linkCount=openedLinks.length,shareCount=shares.length;
+  await press(tree,'Build my next-step plan');
+  assert.ok(textOf(tree.root).includes('Jurisdiction is unconfirmed'));
+  assert.ok(!tree.root.findAllByType('Pressable').some(node=>node.props.accessibilityLabel==='Consent and capacity'));
+  assert.ok(textOf(tree.root).includes('Encouragement'));
+  await observationControl(tree,'Review jurisdiction · Western Australia');
+  assert.ok(!textOf(tree.root).includes('My facts, rights and decision review'),'Changing review input hides the previous plan');
+  await press(tree,'Build my next-step plan');
+  await observationControl(tree,'Direct observations · recorded by me, not independently verified');
+  await observationControl(tree,'Interpretations and possible explanations · unconfirmed');
+  assert.ok(textOf(tree.root).includes('I recorded a generic direct observation.'));
+  await observationControl(tree,'Consent and capacity');
+  assert.ok(textOf(tree.root).includes('Lack of physical resistance'));
+  assert.equal(openedLinks.length,linkCount,'Building and reading do not call or transmit information');
+  await observationControl(tree,'Read source · WA Criminal Code · ss 319–322, 329');
+  assert.ok(openedLinks.at(-1).endsWith('main_mrtitle_218_homepage.html'));
+  failLink=true;await observationControl(tree,'Legal Aid WA · 1300 650 579');
+  assert.ok(textOf(tree.root).includes('Could not open this link'));failLink=false;
+  await observationControl(tree,'Legal Aid WA · 1300 650 579');assert.equal(openedLinks.at(-1),'tel:1300650579');
+  await press(tree,'Save my plan as PDF');
+  const html=pdfPrints.at(-1).html;
+  for(const value of ['KNOW YOUR RIGHTS','ENCOURAGEMENT','How can I safely share my record?','I recorded a generic direct observation.','A generic unconfirmed interpretation.','main_mrtitle_218_homepage.html','SAFEGUARDING STILL APPLIES']) assert.ok(html.includes(value),value);
+  assert.equal(shares.length,shareCount);
+  assert.ok(![...disk.values()].some(value=>value.includes('How can I safely share my record?')));
+  await observationControl(tree,'Review jurisdiction · Elsewhere');await press(tree,'Build my next-step plan');
+  await press(tree,'Save my plan as PDF');assert.ok(!pdfPrints.at(-1).html.includes('Under s 319'));
+  assert.ok(pdfPrints.at(-1).html.includes('WA legal rules are not applied here'));
   await act(async()=>tree.unmount());
 });

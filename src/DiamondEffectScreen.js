@@ -3,6 +3,8 @@ import {View,Text,TextInput,Pressable,PanResponder,StyleSheet,Share,Linking} fro
 import {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,cornerAtPoint,compareChoice,comparisonKey,analyseOptions,needsProtectiveSupport,buildDiamondPlan} from './diamondEffect';
 import journeyPdfService from './journeyPdfService';
 import ReflectionTriangle from './ReflectionTriangle';
+import LegalDecisionReview, {LegalReviewFields} from './LegalDecisionReview';
+import {buildLegalReview} from './legalDecisionReview';
 
 const keys=Object.keys(CORNERS);
 function Button({children,onPress,selected=false,disabled=false}) {
@@ -63,6 +65,7 @@ export default function DiamondEffectScreen({result,draft,onChange,onBack,onRevi
   const checkLabels=explanationMode?EXPLANATION_CHECKS:CHOICE_CHECKS;
   const protective=needsProtectiveSupport(result);
   let plan='',planError='';
+  const finalReview=buildLegalReview(draft,result);
   try {plan=buildDiamondPlan(draft,result);} catch(error) {planError=error.message;}
   const build=()=>{setPlanVisible(true);setNotice(planError||'Your next-step plan is ready. Read it before saving or sharing.');};
   const exportPlan=async action=>{
@@ -160,15 +163,21 @@ export default function DiamondEffectScreen({result,draft,onChange,onBack,onRevi
       <Field label="One manageable next step" value={draft.nextStep} onChangeText={value=>update('nextStep',value)}/>
       <Field label="My protective support step" value={draft.supportStep} onChangeText={value=>update('supportStep',value)}/>
       {protective&&<Text style={styles.body}>Include a protective support step while this assessment has a safeguarding concern. Your reflection cannot remove that concern.</Text>}
+    </View>
+    <LegalReviewFields value={draft.legal} onChange={value=>update('legal',value)}/>
+    <View style={styles.card}>
       <Button onPress={build}>Build my next-step plan</Button>
       <Text accessibilityLiveRegion="polite" style={styles.body}>{busy?'Preparing your plan…':notice}</Text>
     </View>
-    {planVisible&&plan&&<View style={styles.card}>
+    {planVisible&&plan&&<>
+      <LegalDecisionReview report={finalReview}/>
+      <View style={styles.card}>
       <Text style={styles.heading}>My next-step plan</Text>
       <Text selectable style={styles.body}>{plan}</Text>
       <Button disabled={busy} onPress={()=>exportPlan('pdf')}>Save my plan as PDF</Button>
       <Button disabled={busy} onPress={()=>exportPlan('share')}>Share my plan as text</Button>
-    </View>}
+      </View>
+    </>}
     <Text style={styles.body}>These reflections stay in this app session. Save your PDF or copy your plan before closing the app. Your assessment writing is not added to GitHub or shared automatically.</Text>
   </View>;
 }

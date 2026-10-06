@@ -1,4 +1,5 @@
 const {emptyFeelingPair,feelingPairKey,analyseFeelingPair}=require('./feelingPair');
+const {emptyLegalReview,buildLegalReview,legalReviewText}=require('./legalDecisionReview');
 const CORNERS = {
   truth:{title:'Truth', prompt:'What did you observe or experience firsthand? What remains unknown?'},
   values:{title:'Values', prompt:'What matters to you here? Which boundaries and responsibilities do you want to honour?'},
@@ -28,7 +29,7 @@ const TRIANGLE_QUESTIONS = {...TRIANGLE_PROMPTS, repeated:{title:'Pattern over t
 function emptyDiamond() {
   return {truth:'',unknowns:'',values:'',beliefs:'',faith:'',purpose:'',nextStep:'',supportStep:'',
     choices:[{text:'',checks:Array(5).fill('Unsure')},{text:'',checks:Array(5).fill('Unsure')}],chosen:null,
-    comparisonType:'actions',reviewKey:null,
+    comparisonType:'actions',reviewKey:null,legal:emptyLegalReview(),
     triangle:{care:'Unsure',pressure:'Unsure',freedom:'Unsure',repeated:'Unsure',evidence:'',unknowns:'',impact:'',
       feelingPair:emptyFeelingPair(),pairScope:'Unsure',pairReviewKey:null}};
 }
@@ -125,7 +126,8 @@ function buildDiamondPlan(draft,result) {
     'ONE MANAGEABLE NEXT STEP\n'+draft.nextStep.trim(),
     'PROTECTIVE SUPPORT STEP\n'+text(draft.supportStep),
     needsProtectiveSupport(result)?'SAFEGUARDING STILL APPLIES\n'+(result.structuralSafety?.summary||result.level):null,
-    'This reflection is a planning aid. It does not establish another person’s intentions, a diagnosis or a legal finding.'
+    'This reflection is a planning aid. It does not establish another person’s intentions, a diagnosis or a legal finding.',
+    legalReviewText(buildLegalReview(draft,result))
   ].filter(Boolean).join('\n\n');
 }
 module.exports = {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,TRIANGLE_PROMPTS,TRIANGLE_QUESTIONS,emptyDiamond,cornerAtPoint,triangleCornerAtPoint,compareChoice,comparisonKey,analyseOptions,reflectTriangle,needsProtectiveSupport,buildDiamondPlan};
