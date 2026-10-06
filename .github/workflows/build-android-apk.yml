@@ -94,7 +94,10 @@ jobs:
       - name: Connect Journal tabs and journey progress
         run: python scripts/patch_journal_progress.py
 
-      - name: Test journey memory, PDF export, Journal and progress flow
+      - name: Connect explanation Signals, Emotion and Context tabs
+        run: python scripts/patch_explanation_tabs.py
+
+      - name: Test journey memory, PDF export, Journal and assessment tabs
         run: NODE_ENV=test npm test
 
       - name: Validate routed legal-question interface

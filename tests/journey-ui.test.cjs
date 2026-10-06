@@ -37,7 +37,8 @@ const native = {
   SafeAreaView: 'SafeAreaView', ScrollView: 'ScrollView', View: 'View', Text: 'Text', TextInput: 'TextInput',
   Pressable: 'Pressable', Image: 'Image', ImageBackground: 'ImageBackground',
   StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android'}, Linking: {},
-  Animated: {Value: class {interpolate() {return '0deg';} setValue() {}}, View: 'AnimatedView'},
+  Animated: {Value: class {interpolate() {return '0deg';} setValue() {}}, View: 'AnimatedView',
+    timing:()=>({}), loop:()=>({start(){},stop(){}})},
   Share: {share: async content => { if (failShare) throw Error('share failure'); shares.push(content); return {action: 'sharedAction'}; }},
   Alert: {alert: (...args) => alerts.push(args)}
 };
@@ -201,5 +202,99 @@ test('Journal progress offers retry rather than reporting empty progress when me
   failRead = false;
   await press(tree,'TRY AGAIN');
   assert.ok(textOf(tree.root).includes('1 of 7 stages have your input.'));
+  await act(async()=>tree.unmount());
+});
+
+async function describe(tree,value) {
+  const input=tree.root.findAllByType('TextInput').find(node=>node.props.maxLength===2500);
+  assert.ok(input,'Missing assessment description');
+  await act(async()=>input.props.onChangeText(value));
+}
+async function assessAndExplain(tree,context,label='Analyse My Situation') {
+  await press(tree,label);
+  await act(async()=>context.mock.timers.tick(2850));
+  assert.ok(textOf(tree.root).includes('Your Safety Analysis'));
+  await press(tree,'See Explanation');
+}
+function assertSelectedTab(tree,label) {
+  const tabs=tree.root.findAllByType('Pressable').filter(node=>node.props.accessibilityRole==='tab');
+  assert.equal(tabs.length,4);
+  assert.equal(tabs.filter(node=>node.props.accessibilityState.selected).length,1);
+  assert.equal(tabs.find(node=>textOf(node)===label).props.accessibilityState.selected,true);
+}
+
+test('all explanation tabs show their own content, retain Next Steps and reset for a new assessment', async context => {
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();
+  await press(tree,'SAFETY CHECK');
+  const original='I said stop and they kept pressuring me to join the group.';
+  await describe(tree,original); await press(tree,'Worried');
+  await assessAndExplain(tree,context);
+  assertSelectedTab(tree,'Overview');
+  assert.ok(textOf(tree.root).includes('PLAIN LANGUAGE EXPLANATION'));
+  await press(tree,'Signals');
+  assertSelectedTab(tree,'Signals');
+  for(const name of ['Choice','Boundaries','Pressure','Power','Dependency','Secrecy']) assert.ok(textOf(tree.root).includes(name));
+  assert.ok(textOf(tree.root).includes('High Risk'));
+  assert.ok(textOf(tree.root).includes('Unknown'));
+  assert.ok(textOf(tree.root).includes('COERCION / GROOMING INDICATORS'));
+  assert.ok(!textOf(tree.root).includes('PLAIN LANGUAGE EXPLANATION'));
+  await press(tree,'Emotion');
+  assertSelectedTab(tree,'Emotion');
+  assert.ok(textOf(tree.root).includes('Emotion details'));
+  assert.ok(textOf(tree.root).includes('Feeling selected: Worried'));
+  assert.ok(!textOf(tree.root).includes('Six Safety Signals'));
+  await press(tree,'Context');
+  assertSelectedTab(tree,'Context');
+  assert.ok(textOf(tree.root).includes('Assessment context'));
+  assert.ok(textOf(tree.root).includes(original));
+  assert.ok(textOf(tree.root).includes('Relationship setting: Partner / peer'));
+  assert.ok(textOf(tree.root).includes('STRUCTURAL SAFETY'));
+  for(const label of ['Context','Signals','Emotion','Overview']) {
+    await press(tree,label); await press(tree,'Next Steps');
+    assert.ok(textOf(tree.root).includes('Recommended Next Steps'));
+    await press(tree,'‹'); assertSelectedTab(tree,label);
+  }
+  await press(tree,'Context'); await press(tree,'Review My Answers');
+  await describe(tree,'We took a break and respected my boundary.'); await press(tree,'Okay');
+  await assessAndExplain(tree,context);
+  assertSelectedTab(tree,'Overview');
+  await press(tree,'Emotion'); assert.ok(textOf(tree.root).includes('Feeling selected: Okay'));
+  await press(tree,'Context');
+  assert.ok(textOf(tree.root).includes('We took a break and respected my boundary.'));
+  assert.ok(!textOf(tree.root).includes(original));
+  await act(async()=>tree.unmount());
+});
+
+test('explanation tabs preserve Unknown witness emotions and unscored general questions', async context => {
+  context.mock.timers.enable({apis:['setTimeout']});
+  const tree=await mount();
+  await press(tree,'SAFETY CHECK'); await press(tree,'Something I witnessed / was told');
+  await describe(tree,'A young person attended a family meeting.');
+  await press(tree,'10–12'); await press(tree,'Child involved'); await press(tree,'Family');
+  await assessAndExplain(tree,context);
+  await press(tree,'Emotion');
+  assert.ok(textOf(tree.root).includes('Observed response selected: Unknown'));
+  assert.ok(textOf(tree.root).includes('NOT ENOUGH EMOTIONAL INFORMATION TO SCORE'));
+  assert.ok(!textOf(tree.root).includes('Feeling selected: Confused'));
+  assert.ok(!textOf(tree.root).includes('/100'));
+  await press(tree,'Signals');
+  assert.ok(textOf(tree.root).includes('Unknown'));
+  await press(tree,'Context');
+  assert.ok(textOf(tree.root).includes('Age range setting: 10–12'));
+  assert.ok(textOf(tree.root).includes('Whose age setting: Child involved'));
+  await press(tree,'Review My Answers'); await press(tree,'A question / hypothetical');
+  await describe(tree,'What are the six safety signals?');
+  await assessAndExplain(tree,context,'Check My Question');
+  assertSelectedTab(tree,'Overview');
+  await press(tree,'Emotion');
+  assert.ok(textOf(tree.root).includes('No personal feeling is assumed'));
+  assert.ok(textOf(tree.root).includes('NOT SCORED FOR A GENERAL QUESTION'));
+  assert.ok(!textOf(tree.root).includes('/100'));
+  await press(tree,'Context');
+  assert.ok(textOf(tree.root).includes('Input type: Question / hypothetical'));
+  assert.ok(textOf(tree.root).includes('LEGAL & SAFETY CONTEXT'));
+  await press(tree,'Signals');
+  assert.ok(textOf(tree.root).includes('Six Safety Signals — context only'));
   await act(async()=>tree.unmount());
 });
