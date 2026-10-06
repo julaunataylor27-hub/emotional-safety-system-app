@@ -28,3 +28,7 @@ Version 1.0.1 (Android version code 2) requires installing the newly built APK; 
 ## Personal PDF documents
 
 Version 1.0.2 (Android version code 3) adds Open My PDF, Save PDF to My Files and Share PDF above the summary. The build applies `scripts/patch_journey_pdf.py` after the memory patch. Each document is generated locally from the current seven-stage answers, with readable A4 formatting. Opening uses a compatible PDF reader; Android saving uses the system folder picker, and sharing sends a PDF attachment. Cancellation never reports a successful save. Edited answers regenerate the document before export. No personal writing is uploaded by the PDF feature.
+
+## Journal progress
+
+Version 1.0.3 (Android version code 4) connects the Entries and Progress tabs. Progress shows journal activity for the current session and the seven journey stages, with links to edit each stage and view the summary. Switching tabs preserves the current draft and entries. The Technology Lab progress card opens the same view. Prefilled names, motto and default values do not count as personal input; the percentage tracks stages with user answers, not wellbeing or recovery. Journey answers remain device-local. Journal notes are still session-only: copy or screenshot notes before closing or updating the app. The build applies `scripts/patch_journal_progress.py` after the PDF patch.

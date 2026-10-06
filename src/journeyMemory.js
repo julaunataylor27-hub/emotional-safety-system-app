@@ -49,12 +49,18 @@ function createJourneyStore(storage) {
   };
 }
 
+function hasCustomValues(answers) {
+  const values = new Set(answers.philosophyValues.map(value => value.trim()).filter(Boolean));
+  const defaults = defaultAnswers().philosophyValues;
+  return values.size > 0 && (values.size !== defaults.length || defaults.some(value => !values.has(value)));
+}
+
 function hasJourneyContent(answers) {
   const defaults = defaultAnswers();
   return Object.keys(answers).some(key => {
-    if (key === 'philosophyValues') return false;
+    if (key === 'philosophyValues') return hasCustomValues(answers);
     const value = answers[key];
-    return Array.isArray(value) ? value.length > 0 : value.trim() !== '' && value !== defaults[key];
+    return Array.isArray(value) ? value.some(item => item.trim() !== '') : value.trim() !== '' && value.trim() !== defaults[key].trim();
   });
 }
 
@@ -76,4 +82,4 @@ function buildJourneySummary(answers) {
   ].join('\n\n');
 }
 
-module.exports = {MEMORY_KEY, defaultAnswers, decodeMemory, createJourneyStore, hasJourneyContent, buildJourneySummary};
+module.exports = {MEMORY_KEY, defaultAnswers, decodeMemory, createJourneyStore, hasCustomValues, hasJourneyContent, buildJourneySummary};

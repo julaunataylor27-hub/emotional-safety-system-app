@@ -91,7 +91,10 @@ jobs:
       - name: Connect personal PDF documents and save controls
         run: python scripts/patch_journey_pdf.py
 
-      - name: Test journey memory, PDF export and summary flow
+      - name: Connect Journal tabs and journey progress
+        run: python scripts/patch_journal_progress.py
+
+      - name: Test journey memory, PDF export, Journal and progress flow
         run: NODE_ENV=test npm test
 
       - name: Validate routed legal-question interface
@@ -118,4 +121,3 @@ jobs:
           path: Emotional-Safety-System-Standalone.apk
           if-no-files-found: error
           retention-days: 30
-

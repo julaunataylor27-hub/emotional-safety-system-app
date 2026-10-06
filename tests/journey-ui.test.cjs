@@ -148,3 +148,58 @@ test('load and save failures display recovery controls and never replace saved t
   assert.equal(JSON.parse(disk.get(MEMORY_KEY)).answers.foundationMessage, 'My newest answer');
   await act(async () => {tree.unmount();});
 });
+
+test('Journal tabs switch content, preserve drafts and entries, and link to live journey progress', async () => {
+  disk.clear();
+  const tree = await mount();
+  await press(tree,'More'); await press(tree,'My Journal');
+  const tabs = () => tree.root.findAllByType('Pressable').filter(node=>node.props.accessibilityRole==='tab');
+  assert.equal(tabs().find(node=>textOf(node)==='Entries').props.accessibilityState.selected,true);
+  const journalInput = () => tree.root.findAllByType('TextInput').find(node=>node.props.placeholder==='Write a short reflection or next step...');
+  const reflection = 'I paused and wrote down my next step.';
+  await act(async()=>journalInput().props.onChangeText(reflection));
+  await press(tree,'Progress');
+  assert.equal(journalInput(),undefined);
+  assert.ok(textOf(tree.root).includes('Journal activity'));
+  assert.ok(textOf(tree.root).includes('Journal entries this session: 0'));
+  assert.ok(textOf(tree.root).includes('0 of 7 stages have your input.'));
+  assert.equal(tabs().find(node=>textOf(node)==='Progress').props.accessibilityState.selected,true);
+  await press(tree,'Entries');
+  assert.equal(journalInput().props.value,reflection);
+  await press(tree,'New Journal Entry'); await press(tree,'Progress');
+  assert.ok(textOf(tree.root).includes('Journal entries this session: 1'));
+  assert.ok(textOf(tree.root).includes('Latest reflection:'));
+  await press(tree,'Entries');
+  assert.ok(textOf(tree.root).includes(reflection));
+  assert.equal(journalInput().props.value,'');
+  await press(tree,'Progress'); await press(tree,'My Foundation');
+  await write(tree,'I want people to feel welcome.');
+  await press(tree,'More'); await press(tree,'My Journal');
+  assert.ok(textOf(tree.root).includes('1 of 7 stages have your input.'));
+  assert.ok(textOf(tree.root).includes('14%'));
+  const foundation = tree.root.findAllByType('Pressable').find(node=>textOf(node).includes('My Foundation'));
+  assert.ok(textOf(foundation).includes('Has answers'));
+  await press(tree,'VIEW MY SUMMARY');
+  assert.ok(textOf(tree.root).includes('I want people to feel welcome.'));
+  await press(tree,'Home'); await press(tree,'TECH LAB');
+  const progressCard = tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel==='Open journey progress');
+  assert.ok(progressCard);
+  await act(async()=>progressCard.props.onPress());
+  assert.ok(textOf(tree.root).includes('Journal activity'));
+  assert.equal(tabs().find(node=>textOf(node)==='Progress').props.accessibilityState.selected,true);
+  assert.ok(textOf(tree.root).includes('Journal entries this session: 1'));
+  await act(async()=>tree.unmount());
+});
+
+test('Journal progress offers retry rather than reporting empty progress when memory cannot load', async () => {
+  disk.set(MEMORY_KEY,JSON.stringify({version:1,answers:{legacyWorld:'My saved hope'}}));
+  failRead = true;
+  const tree = await mount();
+  await press(tree,'More'); await press(tree,'My Journal'); await press(tree,'Progress');
+  assert.ok(textOf(tree.root).includes('could not be opened'));
+  assert.ok(!textOf(tree.root).includes('0 of 7 stages'));
+  failRead = false;
+  await press(tree,'TRY AGAIN');
+  assert.ok(textOf(tree.root).includes('1 of 7 stages have your input.'));
+  await act(async()=>tree.unmount());
+});
