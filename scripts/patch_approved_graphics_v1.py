@@ -1,70 +1,76 @@
 """Connect the five approved standalone graphics to the real app."""
 from pathlib import Path
+import re
 
 p = Path("App.js")
 s = p.read_text()
 
-replacements = {
-    "import RIDERS_CREST from './assets/riders_crest';":
-        "import RIDERS_CREST from './assets/graphics/riders-crest-v1.webp';",
-    "import AUSTRALIA_CODE_ART from './assets/australia_code_art';":
-        "import AUSTRALIA_CODE_ART from './assets/graphics/australia-code-art-v1.webp';",
-    "import KNOWLEDGE_JUSTICE from './assets/knowledge_justice';":
-        "import KNOWLEDGE_JUSTICE from './assets/graphics/knowledge-justice-v1.webp';",
-    "import humanityHero from './assets/humanity_hero';":
-        "import humanityHero from './assets/graphics/humanity-hero-v1.webp';",
+# Replace old embedded Base64/data-URI asset imports with normal static files.
+imports = {
+    "RIDERS_CREST": "./assets/graphics/riders-crest-v1.webp",
+    "AUSTRALIA_CODE_ART": "./assets/graphics/australia-code-art-v1.webp",
+    "KNOWLEDGE_JUSTICE": "./assets/graphics/knowledge-justice-v1.webp",
+    "humanityHero": "./assets/graphics/humanity-hero-v1.webp",
 }
-for old, new in replacements.items():
-    if old not in s and new not in s:
-        raise SystemExit("Approved graphics: expected import missing: " + old)
-    s = s.replace(old, new)
+old_paths = {
+    "RIDERS_CREST": "./assets/riders_crest",
+    "AUSTRALIA_CODE_ART": "./assets/australia_code_art",
+    "KNOWLEDGE_JUSTICE": "./assets/knowledge_justice",
+    "humanityHero": "./assets/humanity_hero",
+}
 
-if "import PRIMARY_RIDERS from './assets/graphics/primary-riders-v1.webp';" not in s:
+for name, new_path in imports.items():
+    new_import = f"import {name} from '{new_path}';"
+    if new_import in s:
+        continue
+    old_import = f"import {name} from '{old_paths[name]}';"
+    if old_import not in s:
+        raise SystemExit(f"Approved graphics: import for {name} missing")
+    s = s.replace(old_import, new_import, 1)
+
+primary_import = "import PRIMARY_RIDERS from './assets/graphics/primary-riders-v1.webp';"
+if primary_import not in s:
     anchor = "import KNOWLEDGE_JUSTICE from './assets/graphics/knowledge-justice-v1.webp';"
     if anchor not in s:
         raise SystemExit("Approved graphics: knowledge import anchor missing")
-    s = s.replace(
-        anchor,
-        anchor + "\nimport PRIMARY_RIDERS from './assets/graphics/primary-riders-v1.webp';",
-        1,
-    )
+    s = s.replace(anchor, anchor + "\n" + primary_import, 1)
 
-# React Native static assets are imported objects, not data-URI strings.
+# Old generated assets were strings and used source={{uri:...}}.
+# Static Metro assets must use source={ASSET}.
 for name in ["RIDERS_CREST", "AUSTRALIA_CODE_ART", "KNOWLEDGE_JUSTICE", "PRIMARY_RIDERS", "humanityHero"]:
     s = s.replace("source={{uri:" + name + "}}", "source={" + name + "}")
 
-# Graphic 4 gets its own identity placement. Keep Graphic 3 on Learning Centre.
-about_old = '<ImageBackground source={KNOWLEDGE_JUSTICE} style={styles.aboutBrandHero}'
-about_new = '<ImageBackground source={PRIMARY_RIDERS} style={styles.aboutBrandHero}'
-if about_old in s:
-    s = s.replace(about_old, about_new, 1)
-elif about_new not in s:
-    raise SystemExit("Approved graphics: About hero anchor missing")
+# Give Graphic 4 a dedicated identity surface while Graphic 3 remains Learning Centre art.
+about_patterns = [
+    "source={KNOWLEDGE_JUSTICE} style={styles.aboutBrandHero}",
+    "source={{uri:KNOWLEDGE_JUSTICE}} style={styles.aboutBrandHero}",
+]
+if "source={PRIMARY_RIDERS} style={styles.aboutBrandHero}" not in s:
+    changed = False
+    for old in about_patterns:
+        if old in s:
+            s = s.replace(old, "source={PRIMARY_RIDERS} style={styles.aboutBrandHero}", 1)
+            changed = True
+            break
+    if not changed:
+        raise SystemExit("Approved graphics: About identity hero not found")
 
-# Give the major surfaces stable IDs for smoke/UI verification.
-ids = {
-    '<Image source={RIDERS_CREST} style={styles.brandCrestImage}/>':
-        '<Image testID="approved-riders-crest" source={RIDERS_CREST} style={styles.brandCrestImage}/>',
-    '<ImageBackground source={AUSTRALIA_CODE_ART} style={styles.brandHero}':
-        '<ImageBackground testID="approved-australia-code-art" source={AUSTRALIA_CODE_ART} style={styles.brandHero}',
-    '<ImageBackground source={KNOWLEDGE_JUSTICE} style={styles.learningHero}':
-        '<ImageBackground testID="approved-knowledge-justice" source={KNOWLEDGE_JUSTICE} style={styles.learningHero}',
-    '<ImageBackground source={PRIMARY_RIDERS} style={styles.aboutBrandHero}':
-        '<ImageBackground testID="approved-primary-riders" source={PRIMARY_RIDERS} style={styles.aboutBrandHero}',
-}
-for old, new in ids.items():
-    if old in s:
-        s = s.replace(old, new, 1)
-    elif new not in s:
-        raise SystemExit("Approved graphics: visual anchor missing: " + old)
-
-# There are several Humanity Hero surfaces; tag the first Home cinematic one.
-humanity_anchor = '<ImageBackground source={humanityHero} resizeMode="cover" style={StyleSheet.absoluteFillObject}'
-humanity_tagged = '<ImageBackground testID="approved-humanity-hero" source={humanityHero} resizeMode="cover" style={StyleSheet.absoluteFillObject}'
-if humanity_anchor in s:
-    s = s.replace(humanity_anchor, humanity_tagged, 1)
-elif humanity_tagged not in s:
-    raise SystemExit("Approved graphics: Humanity hero anchor missing")
+# Add stable IDs by modifying the first occurrence of each actual source.
+markers = [
+    ("RIDERS_CREST", "approved-riders-crest"),
+    ("AUSTRALIA_CODE_ART", "approved-australia-code-art"),
+    ("KNOWLEDGE_JUSTICE", "approved-knowledge-justice"),
+    ("PRIMARY_RIDERS", "approved-primary-riders"),
+    ("humanityHero", "approved-humanity-hero"),
+]
+for name, test_id in markers:
+    marker = f'testID="{test_id}"'
+    if marker in s:
+        continue
+    source = f"source={{{name}}}"
+    if source not in s:
+        raise SystemExit(f"Approved graphics: no rendered source found for {name}")
+    s = s.replace(source, marker + " " + source, 1)
 
 required = [
     "./assets/graphics/australia-code-art-v1.webp",
