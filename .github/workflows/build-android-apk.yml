@@ -119,11 +119,39 @@ jobs:
           ./gradlew assembleRelease --no-daemon
 
       - name: Verify bundled JavaScript and rename APK
+        id: release
         run: |
           test -f android/app/build/outputs/apk/release/app-release.apk
           cp android/app/build/outputs/apk/release/app-release.apk Emotional-Safety-System-Standalone.apk
 
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Test release startup and reflection graphics on Android 16
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk
+
+      - name: Save installed-app test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-release-smoke-test
+          path: android-smoke
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Upload standalone APK artifact
+        if: ${{ !cancelled() && steps.release.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: Emotional-Safety-System-Standalone-APK

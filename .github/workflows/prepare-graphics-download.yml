@@ -1,0 +1,53 @@
+name: Prepare graphics download
+on:
+  push:
+    branches: [graphics-download-20261007]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  prepare-download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download the verified original archive
+        env:
+          ARTIFACT_DOWNLOAD_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --location --silent --show-error --header "Authorization: Bearer $ARTIFACT_DOWNLOAD_TOKEN" --header "Accept: application/vnd.github+json" "https://api.github.com/repos/julaunataylor27-hub/emotional-safety-system-app/actions/artifacts/11454202302/zip" --output original.zip
+      - name: Verify and split the archive
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          data = Path('original.zip').read_bytes()
+          assert hashlib.sha256(data).hexdigest() == '82209059bb732360c29ff3bf4427a06b6342eabc335c9923244673256b687eda'
+          chunk = 20 * 1024 * 1024
+          Path('parts').mkdir()
+          pieces = [data[start:start + chunk] for start in range(0, len(data), chunk)]
+          assert len(pieces) == 3
+          for index, piece in enumerate(pieces, 1):
+              Path(f'parts/graphics.part{index}').write_bytes(piece)
+          print('Verified original archive and prepared 3 download pieces.')
+          PY
+      - name: Upload download piece 1
+        uses: actions/upload-artifact@v4
+        with:
+          name: Graphics-Download-Part-1
+          path: parts/graphics.part1
+          compression-level: 0
+          retention-days: 7
+      - name: Upload download piece 2
+        uses: actions/upload-artifact@v4
+        with:
+          name: Graphics-Download-Part-2
+          path: parts/graphics.part2
+          compression-level: 0
+          retention-days: 7
+      - name: Upload download piece 3
+        uses: actions/upload-artifact@v4
+        with:
+          name: Graphics-Download-Part-3
+          path: parts/graphics.part3
+          compression-level: 0
+          retention-days: 7
