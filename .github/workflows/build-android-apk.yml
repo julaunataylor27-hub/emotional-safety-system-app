@@ -82,6 +82,12 @@ jobs:
       - name: Apply cinematic image compatibility and polish
         run: python scripts/patch_full_humanity_fix.py
 
+      - name: Verify approved graphics v1
+        run: python scripts/validate_approved_graphics.py
+
+      - name: Connect approved standalone graphics v1
+        run: python scripts/patch_approved_graphics_v1.py
+
       - name: Guard Results screen against missing result fields
         run: python scripts/patch_results_crash_guard.py
 
