@@ -32,6 +32,14 @@ def screen():
                 if len(values) == 4:
                     BODY = values
                     break
+        # The fixed navigation overlays the ScrollView, so its lower bound
+        # alone is not the visible content boundary.
+        for node in root.iter("node"):
+            if node.get("content-desc", "").endswith(", Home"):
+                values = tuple(map(int, re.findall(r"\d+", node.get("bounds", ""))))
+                if len(values) == 4:
+                    BODY = (BODY[0], BODY[1], BODY[2], min(BODY[3], values[1]))
+                    break
         return root
     except ET.ParseError:
         return ET.Element("empty")
