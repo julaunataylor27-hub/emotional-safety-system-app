@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "set": "Emotional Safety System approved graphics v1",
+  "approved": true,
+  "appAssets": [
+    {
+      "file": "australia-code-art-v1.webp",
+      "role": "Home hero / Australia code artwork",
+      "width": 941,
+      "height": 1672,
+      "sha256": "46538d0c75dc4c2ef0dc8eba4654f2bcf11e9897a5f726352b5f8ec34f3f5fc4"
+    },
+    {
+      "file": "humanity-hero-v1.webp",
+      "role": "Humanity Philosophy hero",
+      "width": 941,
+      "height": 1672,
+      "sha256": "9f16600cda26c1dcc440507b03223baabe0f9eb5ea066efc8101984d562136b8"
+    },
+    {
+      "file": "knowledge-justice-v1.webp",
+      "role": "Knowledge + Justice feature artwork",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "d82daab586042ecfd0cecc7879a3451c7c0d0f1f0664126aa9387c804594d471"
+    },
+    {
+      "file": "primary-riders-v1.webp",
+      "role": "Primary Riders identity artwork",
+      "width": 941,
+      "height": 1672,
+      "sha256": "55f799cee944d6123ef8d9f19781547c73a83b5ddf202bca10043a2bde161f9b"
+    },
+    {
+      "file": "riders-crest-v1.webp",
+      "role": "Brand crest / logo artwork",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "3ec6d2f1a4be8798808ffec66da0724ab6c28bc0713f683b80d3cab5ae8bcc8d"
+    }
+  ]
+}
