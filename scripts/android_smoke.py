@@ -9,6 +9,7 @@ from pathlib import Path
 PACKAGE = "au.org.emotionalsafety.prototype"
 OUT = Path("android-smoke")
 OUT.mkdir(exist_ok=True)
+BODY = (0, 0, 1080, 1920)
 
 
 def adb(*args, check=True, timeout=30):
@@ -19,11 +20,27 @@ def adb(*args, check=True, timeout=30):
 
 
 def screen():
+    global BODY
     adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False, timeout=20)
     xml = adb("shell", "cat", "/sdcard/window.xml", check=False)
     (OUT / "latest.xml").write_text(xml)
     try:
-        return ET.fromstring(xml)
+        root = ET.fromstring(xml)
+        for node in root.iter("node"):
+            if node.get("class") == "android.widget.ScrollView":
+                values = tuple(map(int, re.findall(r"\d+", node.get("bounds", ""))))
+                if len(values) == 4:
+                    BODY = values
+                    break
+        # The fixed navigation overlays the ScrollView, so its lower bound
+        # alone is not the visible content boundary.
+        for node in root.iter("node"):
+            if node.get("content-desc", "").endswith(", Home"):
+                values = tuple(map(int, re.findall(r"\d+", node.get("bounds", ""))))
+                if len(values) == 4:
+                    BODY = (BODY[0], BODY[1], BODY[2], min(BODY[3], values[1]))
+                    break
+        return root
     except ET.ParseError:
         return ET.Element("empty")
 
@@ -33,16 +50,17 @@ def bounds(node):
     if len(numbers) != 4:
         return None
     x1, y1, x2, y2 = numbers
+    x1, y1, x2, y2 = max(x1, BODY[0]), max(y1, BODY[1]), min(x2, BODY[2]), min(y2, BODY[3])
     return ((x1 + x2) // 2, (y1 + y2) // 2) if x2 > x1 and y2 > y1 else None
 
 
-def find(label, scroll=False, by_class=False, exact=False):
+def find(label, scroll=False, by_class=False, exact=False, clickable=False):
     for attempt in range(15 if scroll else 10):
         root = screen()
         for node in root.iter("node"):
             values = [node.get("class", "")] if by_class else [node.get("text", ""), node.get("content-desc", "")]
             matches = any(value.strip().casefold() == label.casefold() if exact else label.casefold() in value.casefold() for value in values)
-            if matches and bounds(node):
+            if matches and bounds(node) and (not clickable or node.get("clickable") == "true"):
                 return node
         logs = adb("logcat", "-d", "-v", "brief")
         if "JavascriptException" in logs or "E ReactNativeJS:" in logs:
@@ -60,7 +78,7 @@ def top():
 
 
 def tap(label, scroll=False, navigate=False, exact=False):
-    node = find(label, scroll=scroll, exact=exact)
+    node = find(label, scroll=scroll, exact=exact, clickable=True)
     x, y = bounds(node)
     adb("shell", "input", "tap", str(x), str(y))
     time.sleep(1)
@@ -100,7 +118,7 @@ try:
     print("PASS: native Triangle artwork opens and its focus changes.")
     find("Faith / Hope", scroll=True)
     capture("diamond")
-    tap("Values", exact=True)
+    tap("Values", scroll=True, exact=True)
     find("What matters to you here", scroll=True)
     print("PASS: native Diamond artwork opens and its focus changes.")
 finally:
