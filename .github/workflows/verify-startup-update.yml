@@ -1,0 +1,79 @@
+name: Verify and prepare startup update
+on:
+  push:
+    branches: [verify-startup-update-20261007]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download the original release archive
+        env:
+          ARTIFACT_DOWNLOAD_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --location --silent --show-error --header "Authorization: Bearer $ARTIFACT_DOWNLOAD_TOKEN" --header "Accept: application/vnd.github+json" "https://api.github.com/repos/julaunataylor27-hub/emotional-safety-system-app/actions/artifacts/11455411814/zip" --output original.zip
+      - name: Verify, extract and prepare download pieces
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,zipfile,json
+          data=Path('original.zip').read_bytes()
+          assert hashlib.sha256(data).hexdigest()=='e812fd4a407cf911d349de44935ec62ff7eaa2397d64c8c353d63eb86b3814dc'
+          Path('parts').mkdir()
+          chunk=20*1024*1024
+          pieces=[data[start:start+chunk] for start in range(0,len(data),chunk)]
+          assert len(pieces)==3
+          for index,piece in enumerate(pieces,1):
+              Path(f'parts/startup.part{index}').write_bytes(piece)
+          with zipfile.ZipFile('original.zip') as z:
+              assert z.testzip() is None
+              apks=[name for name in z.namelist() if name.endswith('.apk')]
+              assert len(apks)==1
+              apk=z.read(apks[0]);Path('verified-app.apk').write_bytes(apk)
+              print(json.dumps({'apk_sha256':hashlib.sha256(apk).hexdigest(),'apk_bytes':len(apk)}))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Startup-Download-Part-1
+          path: parts/startup.part1
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Startup-Download-Part-2
+          path: parts/startup.part2
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Startup-Download-Part-3
+          path: parts/startup.part3
+          compression-level: 0
+          retention-days: 7
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify original APK with corrected navigation test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: python3 scripts/android_smoke.py verified-app.apk
+      - name: Save installed-app test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-startup-update-verification
+          path: android-smoke
+          if-no-files-found: warn
+          retention-days: 7
