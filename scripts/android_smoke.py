@@ -118,7 +118,7 @@ try:
     print("PASS: native Triangle artwork opens and its focus changes.")
     find("Faith / Hope", scroll=True)
     capture("diamond")
-    tap("Values", exact=True)
+    tap("Values", scroll=True, exact=True)
     find("What matters to you here", scroll=True)
     print("PASS: native Diamond artwork opens and its focus changes.")
 finally:
