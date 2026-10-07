@@ -686,3 +686,31 @@ test('new graphics resize, preserve writing and safeguarding, and respect both m
   assert.ok(motionStarts.filter(item=>item.duration===280).length>pausedPulses);
   await act(async()=>tree.unmount());assert.equal(motionListeners.size,beforeListeners,'Motion listener must be removed on leaving the screen');
 });
+
+
+test('Support Resources switches between WA and National tabs',async()=>{
+  const tree=await mount();
+  await press(tree,'Support');
+  const tabs=()=>tree.root.findAllByType('Pressable').filter(node=>node.props.accessibilityRole==='tab');
+  const selected=label=>tabs().find(node=>textOf(node)===label).props.accessibilityState.selected;
+  assert.equal(selected('WA Services'),true);
+  assert.equal(selected('National'),false);
+  assert.ok(textOf(tree.root).includes('WA support choices'));
+  assert.ok(!textOf(tree.root).includes('Kids Helpline'));
+  await press(tree,'National');
+  assert.equal(selected('WA Services'),false);
+  assert.equal(selected('National'),true);
+  for(const label of ['Emergency — 000','Kids Helpline','1800RESPECT','Lifeline','13YARN','eSafety Commissioner']) {
+    assert.ok(textOf(tree.root).includes(label),label);
+  }
+  assert.ok(!textOf(tree.root).includes('WA support choices'));
+  const before=openedLinks.length;
+  await press(tree,'Kids Helpline');
+  assert.equal(openedLinks.at(-1),'tel:1800551800');
+  assert.equal(openedLinks.length,before+1);
+  await press(tree,'WA Services');
+  assert.equal(selected('WA Services'),true);
+  assert.ok(textOf(tree.root).includes('WA support choices'));
+  assert.ok(!textOf(tree.root).includes('Kids Helpline'));
+  await act(async()=>tree.unmount());
+});
