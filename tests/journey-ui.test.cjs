@@ -24,6 +24,9 @@ const pdfPrints = [];
 const pdfShares = [];
 const pdfWrites = [];
 const pdfOpens = [];
+let systemReduceMotion=false;
+const motionListeners=new Set();
+const motionStarts=[];
 const pdfFileSystem = {
   cacheDirectory:'file:///cache/', EncodingType:{Base64:'base64'},
   copyAsync:async()=>{}, deleteAsync:async()=>{}, getContentUriAsync:async()=>'content://pdf-reader/document',
@@ -42,14 +45,17 @@ const native = {
   Pressable: 'Pressable', Image: 'Image', ImageBackground: 'ImageBackground',
   StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android'}, Linking: {openURL:async url=>{if(failLink)throw Error('Link unavailable');openedLinks.push(url);}},
   PanResponder:{create:handlers=>({panHandlers:{onResponderGrant:handlers.onPanResponderGrant,onResponderMove:handlers.onPanResponderMove,onResponderRelease:handlers.onPanResponderRelease}})},
-  Animated: {Value: class {interpolate() {return '0deg';} setValue() {}}, View: 'AnimatedView',
-    timing:()=>({}), loop:()=>({start(){},stop(){}})},
+  AccessibilityInfo:{isReduceMotionEnabled:async()=>systemReduceMotion,addEventListener:(_,listener)=>{motionListeners.add(listener);return {remove:()=>motionListeners.delete(listener)};}},
+  Animated: {Value: class {interpolate() {return '0deg';} setValue() {} stopAnimation() {}}, View: 'AnimatedView',
+    timing:(_,options)=>({start(){motionStarts.push(options);},stop(){}}), loop:()=>({start(){},stop(){}})},
   Share: {share: async content => { if (failShare) throw Error('share failure'); shares.push(content); return {action: 'sharedAction'}; }},
   Alert: {alert: (...args) => alerts.push(args)}
 };
 const originalLoad = Module._load;
 Module._load = function(name, parent, main) {
   if (name === 'react-native') return native;
+  if (name === '@shopify/react-native-skia') return {Canvas:'SkiaCanvas',Group:'SkiaGroup',Path:'SkiaPath',Circle:'SkiaCircle',LinearGradient:'SkiaLinearGradient',RadialGradient:'SkiaRadialGradient'};
+  if (name === 'react-native-svg') return {__esModule:true,default:'Svg',Path:'SvgPath',Circle:'SvgCircle'};
   if (name === '@react-native-async-storage/async-storage') return storage;
   if (name === 'expo-status-bar') return {StatusBar: 'ExpoStatusBar'};
   if (name === 'expo-print') return {printToFileAsync:async options=>{if(pdfFailPrint)throw Error('PDF print failure');pdfPrints.push(options);return {uri:'file:///cache/tmp.pdf',numberOfPages:2};}};
@@ -61,7 +67,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -644,4 +650,39 @@ test('PDF controls work before build, preserve unfinished writing and build revi
   assert.ok(pdfPrints.at(-1).html.includes('I AM STILL UNDECIDED'));
   assert.ok(!pdfPrints.at(-1).html.includes('DRAFT — NOT A COMPLETED'));
   await act(async()=>tree.unmount());
+});
+
+test('new graphics resize, preserve writing and safeguarding, and respect both motion controls',async context=>{
+  context.mock.timers.enable({apis:['setTimeout']});
+  systemReduceMotion=true;
+  const beforeListeners=motionListeners.size,beforePulses=motionStarts.filter(item=>item.duration===280).length;
+  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  await describe(tree,'A generic concern for a child requiring clarification.');
+  await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
+  await assessAndExplain(tree,context);await press(tree,'Context');await press(tree,'EXPLORE MY DIAMOND EFFECT');
+  const control=()=>tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel==='Reduce motion');
+  assert.equal(control().props.accessibilityState.checked,true);assert.equal(control().props.disabled,true);
+  const graphic=id=>tree.root.findAllByType('View').find(node=>node.props.testID===id);
+  await observationField(tree,'My observations','This private writing should survive graphics changes.');
+  const prints=pdfPrints.length,shared=pdfShares.length;
+  for(const width of [240,640]) {
+    for(const id of ['diamond-canvas','reflection-triangle']) {
+      await act(async()=>graphic(id).props.onLayout({nativeEvent:{layout:{width}}}));
+      await act(async()=>{graphic(id).props.onResponderGrant();graphic(id).props.onResponderMove({}, {dx:10000,dy:10000});graphic(id).props.onResponderRelease();});
+      assert.equal(graphic(id).props.style.width,'100%');
+    }
+  }
+  await press(tree,'Truth');
+  assert.equal(tree.root.findAllByType('TextInput').find(node=>node.props.accessibilityLabel==='My observations').props.value,'This private writing should survive graphics changes.');
+  assert.ok(textOf(tree.root).includes('Protective support comes first'));
+  assert.equal(motionStarts.filter(item=>item.duration===280).length,beforePulses,'System reduced motion must suppress selection pulses');
+  assert.equal(pdfPrints.length,prints);assert.equal(pdfShares.length,shared,'Graphics must not export or share writing');
+  await act(async()=>{systemReduceMotion=false;for(const listener of motionListeners)listener(false);});
+  assert.equal(control().props.disabled,false);assert.equal(control().props.accessibilityState.checked,false);
+  await observationControl(tree,'Reduce motion');assert.equal(control().props.accessibilityState.checked,true);
+  const pausedPulses=motionStarts.filter(item=>item.duration===280).length;
+  await press(tree,'Values');assert.equal(motionStarts.filter(item=>item.duration===280).length,pausedPulses);
+  await observationControl(tree,'Reduce motion');await press(tree,'Beliefs');
+  assert.ok(motionStarts.filter(item=>item.duration===280).length>pausedPulses);
+  await act(async()=>tree.unmount());assert.equal(motionListeners.size,beforeListeners,'Motion listener must be removed on leaving the screen');
 });
