@@ -95,8 +95,11 @@ def capture(name):
 
 adb("install", "-r", sys.argv[1], timeout=120)
 adb("logcat", "-c")
-print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity"))
 try:
+    try:
+        print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity", timeout=60))
+    except (RuntimeError, subprocess.TimeoutExpired) as error:
+        print("Launch command failed:", error)
     find("START JOURNEY", scroll=True)
     capture("home")
     print("PASS: real release APK renders Home.")
