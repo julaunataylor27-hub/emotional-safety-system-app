@@ -14,10 +14,13 @@ def adb(*args, check=True, timeout=30):
 
 adb("install", "-r", sys.argv[1], timeout=120)
 adb("logcat", "-c")
-print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity"))
 ready = False
 xml = ""
 try:
+    try:
+        print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity", timeout=60))
+    except (RuntimeError, subprocess.TimeoutExpired) as error:
+        print("Launch command failed:", error)
     for attempt in range(18):
         time.sleep(3)
         adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False, timeout=15)
