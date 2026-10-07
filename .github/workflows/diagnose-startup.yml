@@ -14,11 +14,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: Emotional-Safety-System-Standalone-APK
-          run-id: 37553316081
+          run-id: 37555929469
           github-token: ${{ github.token }}
           path: installed-apk
       - name: Verify tested APK
-        run: python3 -c "import hashlib; from pathlib import Path; p=Path('installed-apk/Emotional-Safety-System-Standalone.apk'); assert hashlib.sha256(p.read_bytes()).hexdigest() == 'b3c0f1b3654b3ffdc68092f886e2acda382232dc03b83333061ff1bce39d46f7'"
+        run: python3 -c "import hashlib; from pathlib import Path; p=Path('installed-apk/Emotional-Safety-System-Standalone.apk'); assert hashlib.sha256(p.read_bytes()).hexdigest() == 'dae757ce469524cb0a1b7976636405a2e0e4e99204a6c2635b74e49e69a0b853'"
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
