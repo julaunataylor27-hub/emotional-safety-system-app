@@ -63,7 +63,7 @@ test('positive danger after an unrelated negation still escalates',()=>{
 test('input has a finite, privacy-conscious length and is not verified',()=>{
   const r=assessEvidence({text:'x'.repeat(4000)});
   assert.equal(r.reported.length < 2700,true);
-  assert.match(r.proof,/not independent/i);
+  assert.match(r.proof,/no independent corroboration/i);
 });
 test('the screen is reachable from the app menus without deleting old features',()=>{
   const app = fs.readFileSync(path.join(__dirname,'../App.js'),'utf8');
