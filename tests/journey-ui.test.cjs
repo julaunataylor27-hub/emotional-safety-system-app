@@ -67,7 +67,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
