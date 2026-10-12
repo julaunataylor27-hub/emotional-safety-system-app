@@ -1,0 +1,26 @@
+name: Validate Evidence and Truth Lab
+on:
+  push:
+    branches:
+      - feature/evidence-truth-v1-2-20261012
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test rules, uncertainty, and in-app navigation
+        run: node --test tests/evidence-truth-engine.test.cjs
+      - name: Install React Native tooling
+        run: npm install --include=dev
+      - name: Check JSX syntax of app and new screen
+        run: |
+          node -e "const b=require('@babel/core'); for(const x of ['App.js','src/EvidenceTruthScreen.js']) { b.transformFileSync(x, {configFile:'./babel.config.js'}); console.log('JSX OK:',x) }"
