@@ -50,7 +50,10 @@ function assessEvidence(input) {
   };
 
   const t = text.toLowerCase().replace(/[’‘]/g, "'");
-  const threatened = contains(t, /\b(threaten(?:ed|s)? (?:to )?(?:hurt|kill|hit)|(?:blocked?|blocking) (?:the )?(?:exit|door)|(?:prevented?|preventing) (?:me |them )?from leaving|physically restrain(?:ed|s|ing)?|weapon)\b/);
+  // A simple negation guard prevents 'did not block the exit' from becoming an
+  // affirmative obstruction finding. Complex wording still needs human review.
+  const safetyText = t.replace(/\b(?:did not|didn't|never|was not|wasn't)\s+(?:try to )?(?:block|prevent|threaten|hurt)\b[^.!?]*/g, '');
+  const threatened = contains(safetyText, /\b(threaten(?:ed|s)? (?:to )?(?:hurt|kill|hit)|(?:blocked?|blocking) (?:the )?(?:exit|door)|(?:prevented?|preventing) (?:me |them )?from leaving|physically restrain(?:ed|s|ing)?|weapon)\b/);
   const retaliation = contains(t, /\b(blackmail|threaten(?:ed|s)? to (?:expose|share|spread)|spread lies|ruin your life|turn against you)\b/) ||
       contains(t, /\bif you (?:don't|do not|won't)[^.!?]{0,110}(?:i'll|i will|they'll|they will)[^.!?]{0,110}(?:tell|spread|ruin|punish|expose|share)\b/);
   const boundary = contains(t, /\b(need (?:some )?space|asked for space|said no|asked (?:them|him|her) to stop|asked to stop)\b/);
