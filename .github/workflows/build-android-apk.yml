@@ -112,6 +112,9 @@ jobs:
       - name: Connect interactive WA and National support tabs
         run: python scripts/patch_support_tabs.py
 
+      - name: Reconnect Evidence and Truth Test Lab after redesigned Home
+        run: python scripts/patch_evidence_truth_lab.py
+
       - name: Test memory, PDFs, assessment tabs, Diamond, observations and support
         run: NODE_ENV=test npm test
 
