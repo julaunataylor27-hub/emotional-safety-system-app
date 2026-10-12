@@ -198,6 +198,8 @@ export default function App(){
     <Header/>
     <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
 
+      {screen==='evidence'&&<EvidenceTruthScreen onBack={()=>go('home')} onSupport={()=>go('support')}/>}
+
       {screen==='home'&&<>
         <View style={styles.hero}>
           <View style={styles.sunGlow}><View style={styles.sun}><Text style={styles.sunText}>◉</Text></View></View>
@@ -215,8 +217,6 @@ export default function App(){
         <MenuRow icon="✎" title="My Journal" subtitle="Optional private reflection during this session" onPress={()=>go('journal')} accent={C.blue}/>
         <MenuRow icon="i" title="About the System" subtitle="Purpose, six signals, evidence and connected flow" onPress={()=>go('about')} accent={C.gold}/>
       </>}
-
-      {screen==='evidence'&&<EvidenceTruthScreen onBack={()=>go('home')} onSupport={()=>go('support')}/>}
 
       {screen==='assessment'&&<>
         <BackTitle title="New Assessment" onBack={()=>go('home')} />
