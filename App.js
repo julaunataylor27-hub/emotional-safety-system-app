@@ -4,6 +4,7 @@ import {
   StyleSheet, StatusBar, Platform, Linking, Animated
 } from 'react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import EvidenceTruthScreen from './src/EvidenceTruthScreen';
 
 const C = {
   bg:'#06131B', panel:'#0E2533', panel2:'#143244', line:'#294B5E',
@@ -208,11 +209,14 @@ export default function App(){
         <Ornament/>
         <PrimaryButton onPress={()=>go('assessment')}>＋  New Assessment</PrimaryButton>
         <View style={{height:10}} />
+        <MenuRow icon="✦" title="Evidence & Truth Test Lab" subtitle="Try four cases and explore truth, safety, and choice" onPress={()=>go('evidence')} accent={C.gold}/>
         <MenuRow icon="▤" title="Learning Centre" subtitle="Simple guides, examples and safety knowledge" onPress={()=>go('learn')} />
         <MenuRow icon="♥" title="Support Resources" subtitle="Trusted Australian and WA pathways" onPress={()=>go('support')} accent={C.green}/>
         <MenuRow icon="✎" title="My Journal" subtitle="Optional private reflection during this session" onPress={()=>go('journal')} accent={C.blue}/>
         <MenuRow icon="i" title="About the System" subtitle="Purpose, six signals, evidence and connected flow" onPress={()=>go('about')} accent={C.gold}/>
       </>}
+
+      {screen==='evidence'&&<EvidenceTruthScreen onBack={()=>go('home')} onSupport={()=>go('support')}/>}
 
       {screen==='assessment'&&<>
         <BackTitle title="New Assessment" onBack={()=>go('home')} />
@@ -335,7 +339,7 @@ export default function App(){
             ['◎','Our Purpose','Understand safety without losing the human story.'],
             ['⚙','How It Works','Words → signals → rules → explanation → support.'],
             ['▥','The Six Signals','Choice, Boundaries, Pressure, Power, Dependency, Secrecy.'],
-            ['▤','Evidence & Research','Designed to be transparent and reviewable.']
+            ['▤','Evidence & Research','Open the new Evidence & Truth test lab to explore uncertainty.']
           ].map(([icon,t,s])=><Pressable key={t} onPress={t==='How It Works'?()=>go('flow'):undefined} style={styles.aboutTile}><Text style={styles.aboutIcon}>{icon}</Text><Text style={styles.aboutTitle}>{t}</Text><Text style={styles.aboutText}>{s}</Text></Pressable>)}
         </View>
         <PrimaryButton onPress={()=>go('flow')}>See the Connected Flow  →</PrimaryButton>
@@ -352,6 +356,7 @@ export default function App(){
 
       {screen==='more'&&<>
         <BackTitle title="More" onBack={()=>go('home')} />
+        <MenuRow icon="✦" title="Evidence & Truth Test Lab" subtitle="Explore fictional cases and safe next steps" onPress={()=>go('evidence')} accent={C.gold}/>
         <MenuRow icon="✎" title="My Journal" subtitle="Reflect and track your thoughts" onPress={()=>go('journal')} accent={C.blue}/>
         <MenuRow icon="i" title="About the System" subtitle="Purpose, model and limitations" onPress={()=>go('about')} accent={C.gold}/>
         <MenuRow icon="⚙" title="Connected Flow" subtitle="See how the whole system works together" onPress={()=>go('flow')} accent={C.cyan}/>
