@@ -10,6 +10,7 @@ PACKAGE = "au.org.emotionalsafety.prototype"
 OUT = Path("android-smoke")
 OUT.mkdir(exist_ok=True)
 BODY = (0, 0, 1080, 1920)
+SCROLL_NODES = set()
 
 
 def adb(*args, check=True, timeout=30):
@@ -20,14 +21,16 @@ def adb(*args, check=True, timeout=30):
 
 
 def screen():
-    global BODY
+    global BODY, SCROLL_NODES
     adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False, timeout=20)
     xml = adb("shell", "cat", "/sdcard/window.xml", check=False)
     (OUT / "latest.xml").write_text(xml)
     try:
         root = ET.fromstring(xml)
+        SCROLL_NODES = set()
         for node in root.iter("node"):
             if node.get("class") == "android.widget.ScrollView":
+                SCROLL_NODES = {id(child) for child in node.iter("node")}
                 values = tuple(map(int, re.findall(r"\d+", node.get("bounds", ""))))
                 if len(values) == 4:
                     BODY = values
@@ -35,7 +38,7 @@ def screen():
         # The fixed navigation overlays the ScrollView, so its lower bound
         # alone is not the visible content boundary.
         for node in root.iter("node"):
-            if node.get("content-desc", "").endswith(", Home"):
+            if node.get("content-desc", "").endswith(", Home") or node.get("content-desc", "") == "Home":
                 values = tuple(map(int, re.findall(r"\d+", node.get("bounds", ""))))
                 if len(values) == 4:
                     BODY = (BODY[0], BODY[1], BODY[2], min(BODY[3], values[1]))
@@ -50,7 +53,10 @@ def bounds(node):
     if len(numbers) != 4:
         return None
     x1, y1, x2, y2 = numbers
-    x1, y1, x2, y2 = max(x1, BODY[0]), max(y1, BODY[1]), min(x2, BODY[2]), min(y2, BODY[3])
+    # Only clip scroll content to the visible body. Header and navigation
+    # controls live outside it and must remain tappable.
+    clip = BODY if id(node) in SCROLL_NODES else (0, 0, 1080, 1920)
+    x1, y1, x2, y2 = max(x1, clip[0]), max(y1, clip[1]), min(x2, clip[2]), min(y2, clip[3])
     return ((x1 + x2) // 2, (y1 + y2) // 2) if x2 > x1 and y2 > y1 else None
 
 
@@ -100,10 +106,29 @@ try:
         print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity", timeout=60))
     except (RuntimeError, subprocess.TimeoutExpired) as error:
         print("Launch command failed:", error)
-    find("START JOURNEY", scroll=True)
+    find("Golden tree at sunset")
+    find("Grow yourself.")
     capture("home")
-    print("PASS: real release APK renders Home.")
-    tap("SAFETY CHECK", scroll=True, navigate=True)
+    print("PASS: installed release renders the approved golden-tree Home.")
+    tap("Start my journey", scroll=True, navigate=True)
+    find("My Humanity Journey")
+    tap("Home", navigate=True)
+    tap("Explore Knowledge", scroll=True, navigate=True)
+    find("Stage 2")
+    tap("Home", navigate=True)
+    tap("Learn", navigate=True)
+    find("Learning Centre")
+    tap("Home", navigate=True)
+    tap("Find support", scroll=True, navigate=True)
+    find("Support Resources")
+    tap("Home", navigate=True)
+    tap("Open menu", navigate=True)
+    find("More")
+    tap("Home", navigate=True)
+    print("PASS: Home controls open Journey, Values, Learn, Support and More.")
+    find("Start my journey", scroll=True)
+    capture("home-actions")
+    tap("Explore a situation", scroll=True, navigate=True)
     node = find("android.widget.EditText", scroll=True, by_class=True)
     x, y = bounds(node)
     adb("shell", "input", "tap", str(x), str(y))

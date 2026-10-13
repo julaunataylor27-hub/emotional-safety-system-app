@@ -106,3 +106,12 @@ The release workflow now installs the actual APK on an Android 16 emulator and c
 The exact 1.4.1 APK built from app-source commit `be30628d0ec672dbfbc744baabe52848646df598` passed installed-app verification on Android 16 (API 36, x86_64) in [run 37558322249](https://github.com/julaunataylor27-hub/emotional-safety-system-app/actions/runs/37558322249): Home rendered, the Triangle pressure control changed its prompt, and the Diamond Values control changed its prompt. Its SHA-256 is `dae757ce469524cb0a1b7976636405a2e0e4e99204a6c2635b74e49e69a0b853`. Archive integrity, version code 14, the existing signing certificate, all 43 feature markers and 16 KiB ARM64 load-segment alignment for Skia, Reanimated and Worklets were also checked.
 
 The smoke harness now clips tap targets to the visible ScrollView area above the fixed bottom navigation, targets clickable controls and scrolls the Values button into view. Earlier harness failures tapped the Journey bar behind a partially visible card or tried to tap a corner button still below the viewport. The test-only follow-up commit records the successful run with `[skip ci]`, avoiding a second native compilation of the already tested app source; subsequent app changes still use the full release workflow.
+
+
+## Golden-tree Home (1.5.0)
+
+The Home screen follows the golden tree and sunset concept approved by Julauna Taylor on 13 October 2026. `src/GoldenTreeHome.js` uses bundled landscape and emblem artwork, Marcellus and DM Sans fonts, consistent SVG icons, and native navigation controls. Start my journey opens the existing seven-stage journey. Each of the eight values opens My Values. Explore a situation opens the assessment, and learning, support and menu controls keep their existing routes. The Technology Lab remains available through Journey.
+
+The final `scripts/patch_golden_tree_home.py` build step runs after legacy design patches, so earlier Australia/code artwork cannot replace the approved Home screen. Journey memory and PDF services keep their existing storage and export behaviour. The new Android release uses version 1.5.0 / versionCode 15.
+
+Font licenses are in `assets/fonts/OFL-Marcellus.txt` and `assets/fonts/OFL-DM-Sans.txt`. `assets/graphics/golden-home-manifest.json` records the production artwork hashes. Component tests cover Home navigation, all eight values, larger system text and font fallback. The installed-APK smoke test captures Home and checks Journey, Values, Learn, Support, More, assessment and the existing Triangle/Diamond controls.

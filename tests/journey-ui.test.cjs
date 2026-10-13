@@ -43,7 +43,7 @@ const storage = {
 const native = {
   SafeAreaView: 'SafeAreaView', ScrollView: 'ScrollView', View: 'View', Text: 'Text', TextInput: 'TextInput',
   Pressable: 'Pressable', Image: 'Image', ImageBackground: 'ImageBackground',
-  StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android'}, Linking: {openURL:async url=>{if(failLink)throw Error('Link unavailable');openedLinks.push(url);}},
+  StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android',select:options=>options.android}, useWindowDimensions:()=>({width:390,height:844,scale:3,fontScale:1}), Linking: {openURL:async url=>{if(failLink)throw Error('Link unavailable');openedLinks.push(url);}},
   PanResponder:{create:handlers=>({panHandlers:{onResponderGrant:handlers.onPanResponderGrant,onResponderMove:handlers.onPanResponderMove,onResponderRelease:handlers.onPanResponderRelease}})},
   AccessibilityInfo:{isReduceMotionEnabled:async()=>systemReduceMotion,addEventListener:(_,listener)=>{motionListeners.add(listener);return {remove:()=>motionListeners.delete(listener)};}},
   Animated: {Value: class {interpolate() {return '0deg';} setValue() {} stopAnimation() {}}, View: 'AnimatedView',
@@ -55,8 +55,10 @@ const originalLoad = Module._load;
 Module._load = function(name, parent, main) {
   if (name === 'react-native') return native;
   if (name === '@shopify/react-native-skia') return {Canvas:'SkiaCanvas',Group:'SkiaGroup',Path:'SkiaPath',Circle:'SkiaCircle',LinearGradient:'SkiaLinearGradient',RadialGradient:'SkiaRadialGradient'};
-  if (name === 'react-native-svg') return {__esModule:true,default:'Svg',Path:'SvgPath',Circle:'SvgCircle'};
+  if (name === 'react-native-svg') return {__esModule:true,default:'Svg',Path:'SvgPath',Circle:'SvgCircle',Line:'SvgLine',G:'SvgGroup',Defs:'SvgDefs',LinearGradient:'SvgLinearGradient',Stop:'SvgStop',Rect:'SvgRect'};
   if (name === '@react-native-async-storage/async-storage') return storage;
+  if (name === 'expo-font') return {useFonts:()=>[true,null]};
+  if (name === 'react-native-safe-area-context') return {SafeAreaProvider:'SafeAreaProvider',useSafeAreaInsets:()=>({top:24,bottom:16,left:0,right:0}),initialWindowMetrics:null};
   if (name === 'expo-status-bar') return {StatusBar: 'ExpoStatusBar'};
   if (name === 'expo-print') return {printToFileAsync:async options=>{if(pdfFailPrint)throw Error('PDF print failure');pdfPrints.push(options);return {uri:'file:///cache/tmp.pdf',numberOfPages:2};}};
   if (name === 'expo-file-system/legacy') return pdfFileSystem;
@@ -67,7 +69,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js','../src/GoldenTreeHome.js','../src/GoldenTreeIcons.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -92,7 +94,7 @@ async function write(tree, value) {
 
 test('actual summary button opens a preview, shares it, survives failure and restores after restart', async () => {
   let tree = await mount();
-  await press(tree, 'START JOURNEY');
+  await press(tree, 'Start my journey');
   await press(tree, 'Stage 1');
   await write(tree, 'My family deserve kindness and free choice.');
   assert.equal(JSON.parse(disk.get(MEMORY_KEY)).answers.foundationMessage, 'My family deserve kindness and free choice.');
@@ -126,7 +128,7 @@ test('actual summary button opens a preview, shares it, survives failure and res
   failShare = false;
   await act(async () => {tree.unmount();});
   tree = await mount();
-  await press(tree, 'START JOURNEY'); await press(tree, 'Stage 1');
+  await press(tree, 'Start my journey'); await press(tree, 'Stage 1');
   assert.equal(tree.root.findAllByType('TextInput')[0].props.value, 'My family deserve kindness and free choice.');
   await write(tree, 'My updated reflection belongs in the next PDF.');
   await press(tree, 'Journey'); await press(tree, 'Stage 7'); await press(tree, 'CREATE & SHARE MY SUMMARY');
@@ -144,7 +146,7 @@ test('load and save failures display recovery controls and never replace saved t
   const saved = JSON.stringify({version: 1, answers: {foundationMessage: 'Keep this writing'}});
   disk.set(MEMORY_KEY, saved); failRead = true;
   const tree = await mount();
-  await press(tree, 'START JOURNEY');
+  await press(tree, 'Start my journey');
   assert.ok(textOf(tree.root).includes('could not be opened'));
   assert.equal(tree.root.findAllByType('TextInput').length, 0);
   assert.equal(disk.get(MEMORY_KEY), saved);
@@ -193,7 +195,7 @@ test('Journal tabs switch content, preserve drafts and entries, and link to live
   assert.ok(textOf(foundation).includes('Has answers'));
   await press(tree,'VIEW MY SUMMARY');
   assert.ok(textOf(tree.root).includes('I want people to feel welcome.'));
-  await press(tree,'Home'); await press(tree,'TECH LAB');
+  await press(tree,'Home'); await press(tree,'Start my journey'); await press(tree,'Technology Lab');
   const progressCard = tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel==='Open journey progress');
   assert.ok(progressCard);
   await act(async()=>progressCard.props.onPress());
@@ -237,7 +239,7 @@ function assertSelectedTab(tree,label) {
 test('all explanation tabs show their own content, retain Next Steps and reset for a new assessment', async context => {
   context.mock.timers.enable({apis:['setTimeout']});
   const tree=await mount();
-  await press(tree,'SAFETY CHECK');
+  await press(tree,'Explore a situation');
   const original='I said stop and they kept pressuring me to join the group.';
   await describe(tree,original); await press(tree,'Worried');
   await assessAndExplain(tree,context);
@@ -280,7 +282,7 @@ test('all explanation tabs show their own content, retain Next Steps and reset f
 test('explanation tabs preserve Unknown witness emotions and unscored general questions', async context => {
   context.mock.timers.enable({apis:['setTimeout']});
   const tree=await mount();
-  await press(tree,'SAFETY CHECK'); await press(tree,'Something I witnessed / was told');
+  await press(tree,'Explore a situation'); await press(tree,'Something I witnessed / was told');
   await describe(tree,'A young person attended a family meeting.');
   await press(tree,'10–12'); await press(tree,'Child involved'); await press(tree,'Family');
   await assessAndExplain(tree,context);
@@ -313,7 +315,7 @@ test('explanation tabs preserve Unknown witness emotions and unscored general qu
 test('Diamond flow supports dragging, comparison, safety guards and keeping a personal plan as PDF', async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
   const tree=await mount();
-  await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');
   await describe(tree,'I want advice about a reported sexual concern.');
   async function labelled(label) {
     const button=tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label);
@@ -383,7 +385,7 @@ test('Diamond flow supports dragging, comparison, safety guards and keeping a pe
 });
 test('triangle exploration and explanation comparison preserve uncertainty and active safeguarding',async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');
   await describe(tree,'A generic reported situation needing advice.');
   await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
   await assessAndExplain(tree,context);await press(tree,'Context');await press(tree,'EXPLORE MY DIAMOND EFFECT');
@@ -420,7 +422,7 @@ test('triangle exploration and explanation comparison preserve uncertainty and a
 });
 test('paired feeling UI explains a middle word, exports its sources, and invalidates edited interpretations',async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');
   await describe(tree,'A generic reported concern needing clarification.');
   await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
   await assessAndExplain(tree,context);await press(tree,'Context');await press(tree,'EXPLORE MY DIAMOND EFFECT');
@@ -468,7 +470,7 @@ async function observationField(tree,label,value) {
 }
 test('multiple observations stay separate by person, keep safeguarding active, and snapshot notes without sharing',async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');
   const checked=label=>tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label).props.accessibilityState.checked;
   await observationControl(tree,'Person 1, feelings, Scared');await observationControl(tree,'Person 1, feelings, Confused');
   assert.equal(checked('Person 1, feelings, Scared'),true);assert.equal(checked('Person 1, feelings, Confused'),true);
@@ -514,7 +516,7 @@ test('multiple observations stay separate by person, keep safeguarding active, a
 });
 test('observed sleep with an adult sexual concern gets capacity triage and is ignored when switching to a general question',async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');await press(tree,'18+');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');await press(tree,'18+');
   await describe(tree,'I would like to clarify what I observed.');
   await observationControl(tree,'Person 1, feelings, Calm');await observationControl(tree,'Person 1, behaviours, Unresponsive');
   for(const label of ['Is anyone involved under 18? No','Is there a sexual contact or sexual-boundary concern? Yes','Is anyone in immediate danger now? No']) await observationControl(tree,label);
@@ -549,7 +551,7 @@ test('WA support choices open only the requested dialler or official guidance an
 
 test('an adult immediate-danger report gets priority without inventing a child-parent sexual pattern',async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'18+');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'18+');
   await describe(tree,'This situation needs urgent assistance.');
   for(const label of ['Is anyone involved under 18? No','Is there a sexual contact or sexual-boundary concern? No','Is anyone in immediate danger now? Yes']) {
     const button=tree.root.findAllByType('Pressable').find(node=>node.props.accessibilityLabel===label);
@@ -566,7 +568,7 @@ test('an adult immediate-danger report gets priority without inventing a child-p
 
 test('final rights review keeps sources distinct, opens links on request and exports current guidance with encouragement',async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');
   await describe(tree,'A generic reported concern to clarify with support.');
   await observationControl(tree,'Is anyone involved under 18? Yes');
   await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
@@ -609,7 +611,7 @@ test('final rights review keeps sources distinct, opens links on request and exp
 
 test('PDF controls work before build, preserve unfinished writing and build reviews both options without hiding the document',async context=>{
   context.mock.timers.enable({apis:['setTimeout']});
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');
   await describe(tree,'A generic private report to preserve.');
   await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
   await assessAndExplain(tree,context);await press(tree,'Context');await press(tree,'EXPLORE MY DIAMOND EFFECT');
@@ -656,7 +658,7 @@ test('new graphics resize, preserve writing and safeguarding, and respect both m
   context.mock.timers.enable({apis:['setTimeout']});
   systemReduceMotion=true;
   const beforeListeners=motionListeners.size,beforePulses=motionStarts.filter(item=>item.duration===280).length;
-  const tree=await mount();await press(tree,'SAFETY CHECK');await press(tree,'Something I witnessed / was told');
+  const tree=await mount();await press(tree,'Explore a situation');await press(tree,'Something I witnessed / was told');
   await describe(tree,'A generic concern for a child requiring clarification.');
   await observationControl(tree,'Is anyone involved under 18? Yes');await observationControl(tree,'Is there a sexual contact or sexual-boundary concern? Yes');
   await assessAndExplain(tree,context);await press(tree,'Context');await press(tree,'EXPLORE MY DIAMOND EFFECT');

@@ -2,17 +2,52 @@
   "expo": {
     "name": "Emotional Safety System",
     "slug": "emotional-safety-system",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "newArchEnabled": true,
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "android": {
       "package": "au.org.emotionalsafety.prototype",
-      "versionCode": 14
+      "versionCode": 15
     },
     "ios": {
       "bundleIdentifier": "au.org.emotionalsafety.prototype",
       "supportsTablet": true
-    }
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "ESSHeading",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/Marcellus-Regular.ttf",
+                    "weight": 400
+                  }
+                ]
+              },
+              {
+                "fontFamily": "ESSBody",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/DM-Sans.ttf",
+                    "weight": 400
+                  }
+                ]
+              }
+            ]
+          },
+          "ios": {
+            "fonts": [
+              "./assets/fonts/Marcellus-Regular.ttf",
+              "./assets/fonts/DM-Sans.ttf"
+            ]
+          }
+        }
+      ]
+    ]
   }
 }

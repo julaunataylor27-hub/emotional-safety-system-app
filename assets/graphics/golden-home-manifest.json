@@ -1,0 +1,17 @@
+{
+  "design": "Julauna Taylor approved golden-tree Home, 13 October 2026",
+  "implementation": "Artwork assets plus native editable text, SVG icons and real navigation controls",
+  "assets": [
+    {
+      "file": "golden-tree-home-v1.png",
+      "bytes": 3046286,
+      "sha256": "b1b65473d0a75c93c69d912b3225c304b964b255a44f2a1614fd7046ed139431"
+    },
+    {
+      "file": "golden-tree-emblem-v1.png",
+      "bytes": 2033996,
+      "sha256": "2f4576d2b90270d9956464771e84d3e74f618ec640410bee32b78bc0c821cafc"
+    }
+  ],
+  "fonts": "Marcellus and DM Sans, bundled offline under the included SIL Open Font Licenses"
+}

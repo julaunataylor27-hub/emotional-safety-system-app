@@ -115,6 +115,9 @@ jobs:
       - name: Reconnect Evidence and Truth Test Lab after redesigned Home
         run: python scripts/patch_evidence_truth_lab.py
 
+      - name: Apply approved golden-tree Home after legacy graphics
+        run: python scripts/patch_golden_tree_home.py
+
       - name: Test memory, PDFs, assessment tabs, Diamond, observations and support
         run: NODE_ENV=test npm test
 
