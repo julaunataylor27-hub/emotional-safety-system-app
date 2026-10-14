@@ -89,3 +89,17 @@ test('draft PDFs are named and labelled as drafts and preserve escaped unfinishe
   assert.ok(html.includes('Unfinished &lt;writing&gt; &amp; unknowns.'));
   assert.equal((await service.save(document)).saved,true);
 });
+
+test('Life Journey uses a separately named PDF and the existing Android open/save/share service',async()=>{
+  const {calls,service}=fixture();
+  const document=await service.createLifeJourney({country:{reflection:'My current <question>',additional:'An oral history lead',type:'family'}});
+  assert.ok(document.name.startsWith('Yagan-Life-Journey-'));
+  const html=calls.find(call=>call[0]==='print')[1].html;
+  assert.ok(html.includes('My current &lt;question&gt;'));
+  assert.ok(html.includes('Family oral history - unverified in this tool'));
+  assert.equal((html.match(/<section>/g)||[]).length,7);
+  assert.equal((await service.save(document)).saved,true);
+  await service.open(document);await service.share(document);
+  assert.equal(calls.find(call=>call[0]==='open')[2].type,'application/pdf');
+  assert.equal(calls.find(call=>call[0]==='share')[2].mimeType,'application/pdf');
+});

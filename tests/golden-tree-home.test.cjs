@@ -29,8 +29,8 @@ test('approved artwork and all eight values render as separate native controls',
 });
 test('Journey, assessment, support, menu and navigation controls call their real routes',async()=>{
  const routes=[],values=[];const r=await render({onNavigate:x=>routes.push(x),onValuePress:x=>values.push(x)});
- for(const id of ['home-start-journey','home-explore-situation','home-find-support','home-open-menu','home-nav-home','home-nav-journey','home-nav-learn','home-nav-support','home-nav-more'])await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
- assert.deepEqual(routes,['journey','assessment','support','more','home','journey','learn','support','more']);
+ for(const id of ['home-start-journey','home-explore-situation','home-life-journey','home-find-support','home-open-menu','home-nav-home','home-nav-journey','home-nav-learn','home-nav-support','home-nav-more'])await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
+ assert.deepEqual(routes,['journey','assessment','lifeJourney','support','more','home','journey','learn','support','more']);
  await Renderer.act(async()=>r.root.findByProps({testID:'home-value-knowledge'}).props.onPress());assert.deepEqual(values,['Knowledge']);
  await Renderer.act(async()=>r.unmount());
 });

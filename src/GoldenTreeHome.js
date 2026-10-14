@@ -61,7 +61,7 @@ function HomeContent({ onNavigate, onValuePress }) {
           </Svg>
           <Text style={[styles.primaryLabel,heading]}>Start my journey</Text><GoldenTreeIcon name="Arrow" color="#08261B" size={24}/>
         </Pressable>
-        {[['assessment','Compass','Explore a situation','home-explore-situation'],['support','Lifebuoy','Find support','home-find-support']].map(([route,icon,label,id])=><Pressable key={route} testID={id} accessibilityRole="button" accessibilityLabel={label} onPress={()=>navigate(route)} style={({pressed})=>[styles.link,pressed&&styles.pressed]}>
+        {[['assessment','Compass','Explore a situation','home-explore-situation'],['lifeJourney','Life',"Yagan's Life Journey",'home-life-journey'],['support','Lifebuoy','Find support','home-find-support']].map(([route,icon,label,id])=><Pressable key={route} testID={id} accessibilityRole="button" accessibilityLabel={label} onPress={()=>navigate(route)} style={({pressed})=>[styles.link,pressed&&styles.pressed]}>
           <GoldenTreeIcon name={icon} size={27}/><Text style={[styles.linkLabel,body]}>{label}</Text><GoldenTreeIcon name="Chevron" size={17}/>
         </Pressable>)}
       </View>

@@ -69,7 +69,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js','../src/GoldenTreeHome.js','../src/GoldenTreeIcons.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js','../src/LifeJourneyScreen.js','../src/useLifeJourneyNotes.js','../src/GoldenTreeHome.js','../src/GoldenTreeIcons.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -714,5 +714,94 @@ test('Support Resources switches between WA and National tabs',async()=>{
   assert.equal(selected('WA Services'),true);
   assert.ok(textOf(tree.root).includes('WA support choices'));
   assert.ok(!textOf(tree.root).includes('Kids Helpline'));
+  await act(async()=>tree.unmount());
+});
+
+const {MEMORY_KEY:LIFE_MEMORY_KEY}=require('../src/lifeJourneyMemory.cjs');
+const byId=(tree,id)=>tree.root.findAll(node=>node.props.testID===id&&typeof node.type==='string')[0];
+async function pressId(tree,id){const node=byId(tree,id);assert.ok(node,'Missing '+id);await act(async()=>{await node.props.onPress();});}
+async function writeLife(tree,id,text){await act(async()=>{byId(tree,id).props.onChangeText(text);});}
+
+test('Home and More open Life Journey with distinct evidence tabs and unknown early-life feelings',async()=>{
+  disk.delete(LIFE_MEMORY_KEY);const beforeLinks=openedLinks.length,beforeShares=shares.length;
+  const tree=await mount();await pressId(tree,'home-life-journey');
+  assert.ok(byId(tree,'life-journey-screen'));
+  assert.ok(textOf(tree.root).includes('Country under pressure'));
+  await pressId(tree,'life-tab-meaning');await pressId(tree,'life-feeling-distress');
+  assert.equal(byId(tree,'life-feeling-distress').props.accessibilityState.selected,true);
+  await pressId(tree,'life-previous');
+  assert.ok(textOf(tree.root).includes('No feelings are assigned in this chapter'));
+  assert.equal(tree.root.findAll(node=>typeof node.type==='string'&&String(node.props.testID).startsWith('life-feeling-')).length,0);
+  assert.equal(byId(tree,'life-previous').props.disabled,true);
+  await pressId(tree,'life-next');
+  assert.equal(byId(tree,'life-feeling-distress').props.accessibilityState.selected,true);
+  await pressId(tree,'life-tab-signals');assert.ok(textOf(tree.root).includes('QUESTIONS, NOT SCORES'));
+  await pressId(tree,'life-sources');assert.ok(textOf(tree.root).includes('Original handwritten letters'));
+  assert.equal(openedLinks.length,beforeLinks,'Sources must not open automatically');
+  assert.equal(shares.length,beforeShares,'Writing must not be shared automatically');
+  await pressId(tree,'life-journey-back');await press(tree,'More');await press(tree,'Yagan Life Journey');
+  assert.ok(byId(tree,'life-journey-screen'));
+  await act(async()=>tree.unmount());
+});
+
+test('Life Journey notes restore across restart, update PDFs, and clear only the chosen chapter',async()=>{
+  disk.delete(LIFE_MEMORY_KEY);const existingPersonal=disk.get(MEMORY_KEY),printCount=pdfPrints.length;
+  let tree=await mount();await pressId(tree,'home-life-journey');
+  await writeLife(tree,'life-reflection','My first <question> & Country.');
+  await press(tree,'Cultural guidance');await writeLife(tree,'life-additional-note','Unverified cultural question.');
+  assert.equal(JSON.parse(disk.get(LIFE_MEMORY_KEY)).notes.country.reflection,'My first <question> & Country.');
+  await pressId(tree,'life-pdf-save');
+  assert.ok(textOf(tree.root).includes('saved to the folder you chose'));
+  assert.ok(pdfPrints.at(-1).html.includes('My first &lt;question&gt; &amp; Country.'));
+  assert.ok(pdfPrints.at(-1).html.includes('Cultural guidance - unverified in this tool'));
+  await pressId(tree,'life-pdf-open');await pressId(tree,'life-pdf-share');
+  assert.equal(pdfPrints.length,printCount+1,'Unchanged reflection reuses its PDF');
+  await writeLife(tree,'life-reflection','My updated question.');await pressId(tree,'life-pdf-save');
+  assert.equal(pdfPrints.length,printCount+2);
+  assert.ok(pdfPrints.at(-1).html.includes('My updated question.'));
+  await pressId(tree,'life-text-share');assert.ok(shares.at(-1).message.includes('My updated question.'));
+  await pressId(tree,'life-previous');await writeLife(tree,'life-reflection','An early-life question remains open.');
+  await act(async()=>tree.unmount());
+  tree=await mount();await pressId(tree,'home-life-journey');
+  assert.equal(byId(tree,'life-reflection').props.value,'My updated question.');
+  await pressId(tree,'life-clear-chapter');
+  assert.equal(byId(tree,'life-reflection').props.value,'My updated question.','Confirmation must not clear before choosing');
+  await act(async()=>alerts.at(-1)[2].find(item=>item.text==='Clear notes').onPress());
+  assert.equal(byId(tree,'life-reflection').props.value,'');
+  await pressId(tree,'life-previous');assert.equal(byId(tree,'life-reflection').props.value,'An early-life question remains open.');
+  assert.equal(disk.get(MEMORY_KEY),existingPersonal,'Historical notes cannot overwrite personal journey memory');
+  await act(async()=>tree.unmount());
+});
+
+test('Life Journey load errors prevent replacement and save errors preserve the current draft for retry',async()=>{
+  const original=JSON.stringify({version:1,notes:{country:{reflection:'Preserve my saved history'}}});
+  disk.set(LIFE_MEMORY_KEY,original);failRead=true;
+  const tree=await mount();await pressId(tree,'home-life-journey');
+  assert.equal(byId(tree,'life-reflection').props.editable,false);
+  assert.equal(byId(tree,'life-pdf-save').props.disabled,true);
+  await writeLife(tree,'life-reflection','Must not replace saved text');
+  assert.equal(disk.get(LIFE_MEMORY_KEY),original);
+  failRead=false;await press(tree,'Retry loading Life Journey notes');
+  assert.equal(byId(tree,'life-reflection').props.value,'Preserve my saved history');
+  failWrite=true;await writeLife(tree,'life-reflection','Current draft to retry');
+  assert.ok(textOf(tree.root).includes('Device autosave failed'));
+  assert.equal(disk.get(LIFE_MEMORY_KEY),original);
+  failWrite=false;await press(tree,'Retry saving Life Journey notes');
+  assert.equal(JSON.parse(disk.get(LIFE_MEMORY_KEY)).notes.country.reflection,'Current draft to retry');
+  await act(async()=>tree.unmount());
+});
+
+test('Life Journey accurately reports PDF cancellation, print and reader failure without losing writing',async()=>{
+  disk.delete(LIFE_MEMORY_KEY);const tree=await mount();await pressId(tree,'home-life-journey');
+  await writeLife(tree,'life-reflection','Keep this during export failures');
+  pdfFailPrint=true;await pressId(tree,'life-pdf-save');
+  assert.ok(textOf(tree.root).includes('Could not export the PDF'));
+  pdfFailPrint=false;pdfSaveGranted=false;await pressId(tree,'life-pdf-save');
+  assert.ok(textOf(tree.root).includes('Saving cancelled'));
+  pdfSaveGranted=true;pdfFailOpen=true;await pressId(tree,'life-pdf-open');
+  assert.ok(textOf(tree.root).includes('Could not open a PDF reader'));
+  pdfFailOpen=false;await pressId(tree,'life-pdf-share');
+  assert.ok(textOf(tree.root).includes('PDF sharing menu opened'));
+  assert.equal(byId(tree,'life-reflection').props.value,'Keep this during export failures');
   await act(async()=>tree.unmount());
 });

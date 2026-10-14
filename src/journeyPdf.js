@@ -66,6 +66,11 @@ function createJourneyPdfService({print, fileSystem, sharing, intentLauncher, pl
       const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+title+'</title><style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#173e2a;font-size:12pt;line-height:1.55}h1{font-size:22pt}p{white-space:pre-wrap;overflow-wrap:anywhere;orphans:3;widows:3}</style></head><body><h1>'+title+'</h1><p>'+escapeHtml(text)+'</p></body></html>';
       return createDocument(html,draft?'My-Diamond-Draft-':'My-Diamond-Next-Step-',date);
     },
+    async createLifeJourney(notes) {
+      const date = now();
+      const {buildLifeJourneyPdfHtml} = require('./lifeJourneyPdf.cjs');
+      return createDocument(buildLifeJourneyPdfHtml(notes,date),'Yagan-Life-Journey-',date);
+    },
     share,
     async open(document) {
       if (platform !== 'android') { await share(document); return; }
