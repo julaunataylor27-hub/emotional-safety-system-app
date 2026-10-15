@@ -1,5 +1,7 @@
+import {AppText as Text,AppInput as TextInput} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React,{useState} from 'react';
-import {View,Text,TextInput,Pressable,StyleSheet,Linking} from 'react-native';
+import {View, Pressable, StyleSheet, Linking} from 'react-native';
 import {TRIANGLE_PROMPTS,TRIANGLE_QUESTIONS,reflectTriangle} from './diamondEffect';
 import {PAIR_FEELINGS,PAIR_SOURCES,PAIR_SCOPES,emptyFeelingPair,feelingPairKey,analyseFeelingPair} from './feelingPair';
 import ReflectionArtwork from './ReflectionArtwork';
@@ -86,3 +88,5 @@ const styles=StyleSheet.create({
   shortInput:{borderWidth:1,borderColor:'#5b796a',borderRadius:12,minHeight:48,padding:12,color:'#FFF7E3',fontSize:16,backgroundColor:'#07141c'},feelingCard:{borderWidth:1,borderRadius:15,padding:12,marginTop:12,backgroundColor:'#0a231c'},
   equation:{fontSize:16,lineHeight:24,color:'#FFE29A',fontWeight:'700',marginVertical:8},change:{padding:12,borderRadius:12,borderWidth:1,borderColor:'#597b69',marginVertical:8}
 });
+
+Object.assign(styles,presentationStyles(styles,false));

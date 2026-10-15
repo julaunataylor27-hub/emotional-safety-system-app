@@ -2,6 +2,12 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
+## Presentation edition - version 1.7.0
+
+The 27 October presentation update unifies Home and all inner screens with forest-and-gold styling, three coordinated scenic artworks, native line icons and more readable text. It adds an in-app purpose/vision overview, working topic search and device-local language, country, larger-reading and reduced-motion preferences. English, Spanish, French and Indonesian navigation are included as starter translations; reflections and cultural, legal and support information remain in English. International visitors see the limits of the Australian directory explicitly.
+
+See [the upgrade notes and short demonstration guide](docs/PRESENTATION_UPGRADE_2026-10-15.md). The final build step applies `scripts/patch_presentation_polish.py` after all functional patches. Installing a newly built APK is required to update an existing phone installation.
+
 ## Core safety signals
 
 - Choice
@@ -16,6 +22,12 @@ This prototype uses a transparent local rule engine. It does not diagnose people
 ## Android APK
 
 A GitHub Actions workflow in this repository builds a standalone release APK automatically from the Expo project and uploads it as a workflow artifact.
+
+## Home circle meanings — version 1.6.1
+
+Each of the eight gold Home circles now has an information marker and opens a native, scrollable meaning sheet. It includes a plain definition, a Noongar cultural connection, a reflection question and expandable source links. Close, Android Back and the backdrop return to Home; “Reflect on [value]” opens the existing My Values stage. Definitions remain available offline. Installing the newly built APK is required to see the change on an existing device.
+
+`src/valueMeanings.cjs` holds the app-authored text and public references from the South West Aboriginal Land & Sea Council’s Kaartdijin site and Noongar Boodjar Language Cultural Aboriginal Corporation. These are contemporary app reflections, not a traditional list of eight values, direct quotations, universal accounts of Aboriginal feelings or claims of endorsement. The UI states the Noongar scope and the diversity of Aboriginal cultures. No personal reflections or assessment logic are changed by reading these sheets.
 
 ## Journey memory and sharing
 
