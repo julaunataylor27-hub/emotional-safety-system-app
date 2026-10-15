@@ -72,15 +72,26 @@ def find(label, scroll=False, by_class=False, exact=False, clickable=False):
         if "JavascriptException" in logs or "E ReactNativeJS:" in logs:
             raise AssertionError("JavaScript failed while waiting for " + label)
         if scroll:
-            adb("shell", "input", "swipe", "1050", "1540", "1050", "540", "350")
+            swipe_body(up=True)
         time.sleep(1)
     raise AssertionError("Visible control was not found: " + label)
 
 
+def swipe_body(up):
+    # Stay inside the current ScrollView, including inset modal sheets. Keep
+    # to its right margin so movable artwork does not consume the gesture.
+    left, upper, right, lower = BODY
+    x = max(left + 1, right - 30)
+    high = upper + int((lower - upper) * .25)
+    low = upper + int((lower - upper) * .8)
+    start, end = (low, high) if up else (high, low)
+    adb("shell", "input", "swipe", str(x), str(start), str(x), str(end), "250")
+
+
 def top():
-    # Scroll from the outer margin so the movable artwork does not consume it.
+    screen()
     for _ in range(6):
-        adb("shell", "input", "swipe", "1050", "540", "1050", "1540", "150")
+        swipe_body(up=False)
 
 
 def tap(label, scroll=False, navigate=False, exact=False):
