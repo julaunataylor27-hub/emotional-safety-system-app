@@ -124,6 +124,9 @@ jobs:
       - name: Apply presentation design and language preferences
         run: python scripts/patch_presentation_polish.py
 
+      - name: Connect Living connections educational draft and source links
+        run: python scripts/patch_living_connections.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 
@@ -160,7 +163,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey
+          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections
 
       - name: Save installed-app test evidence
         if: always()

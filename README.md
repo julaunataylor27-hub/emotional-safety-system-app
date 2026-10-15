@@ -8,6 +8,12 @@ The 27 October presentation update unifies Home and all inner screens with fores
 
 See [the upgrade notes and short demonstration guide](docs/PRESENTATION_UPGRADE_2026-10-15.md). The final build step applies `scripts/patch_presentation_polish.py` after all functional patches. Installing a newly built APK is required to update an existing phone installation.
 
+## Living connections — version 1.7.1
+
+Open **Learn → Living connections** or **More → Living connections** for ten cultural connection views, twenty public words/concepts and linked original sources. The native screen uses the app’s forest-and-gold design and larger-reading preference. It keeps documented connections, thematic comparisons and source-only entries distinct, with the educational draft and pending cultural/legal/use reviews clearly visible.
+
+The section reads bundled content offline and opens external sources only when tapped. Link failures leave a selectable URL for retry or copying. Reading does not change personal journey data or the safety assessment. See [the scope, attribution and review notes](docs/LIVING_CONNECTIONS.md). The build applies `scripts/patch_living_connections.py` after presentation polish. Install the newly built version 1.7.1 APK to see this update on a phone.
+
 ## Core safety signals
 
 - Choice

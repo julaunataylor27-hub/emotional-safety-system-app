@@ -13,6 +13,7 @@ const disk = new Map();
 const shares = [];
 const alerts = [];
 const openedLinks = [];
+const backHandlers = new Set();
 let failLink = false;
 let failShare = false;
 let failRead = false;
@@ -46,6 +47,7 @@ const native = {
   StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android',select:options=>options.android}, useWindowDimensions:()=>({width:390,height:844,scale:3,fontScale:1}), Linking: {openURL:async url=>{if(failLink)throw Error('Link unavailable');openedLinks.push(url);}},
   PanResponder:{create:handlers=>({panHandlers:{onResponderGrant:handlers.onPanResponderGrant,onResponderMove:handlers.onPanResponderMove,onResponderRelease:handlers.onPanResponderRelease}})},
   AccessibilityInfo:{isReduceMotionEnabled:async()=>systemReduceMotion,addEventListener:(_,listener)=>{motionListeners.add(listener);return {remove:()=>motionListeners.delete(listener)};}},
+  BackHandler:{addEventListener:(_,handler)=>{backHandlers.add(handler);return {remove:()=>backHandlers.delete(handler)};}},
   Animated: {Value: class {interpolate() {return '0deg';} setValue() {} stopAnimation() {}}, View: 'AnimatedView',
     timing:(_,options)=>({start(){motionStarts.push(options);},stop(){}}), loop:()=>({start(){},stop(){}})},
   Share: {share: async content => { if (failShare) throw Error('share failure'); shares.push(content); return {action: 'sharedAction'}; }},
@@ -853,4 +855,55 @@ test('learning search filters public topics, supports empty results and clears w
  await act(async()=>field().props.onChangeText('zzznomatch'));assert.ok(textOf(tree.root).includes('No matching topics'));
  await act(async()=>field().props.onChangeText(''));assert.ok(textOf(tree.root).includes('Child Development'));
  await act(async()=>tree.unmount());
+});
+
+test('Living connections opens from Learn, preserves draft boundaries, changes selection and handles Android Back',async()=>{
+ const linksBefore=openedLinks.length,personalBefore=disk.get(MEMORY_KEY);
+ const tree=await mount();await press(tree,'Learn');
+ const search=tree.root.findAllByType('TextInput').find(x=>x.props.accessibilityLabel==='Search learning topics');
+ await act(async()=>search.props.onChangeText('kinship'));
+ assert.ok(textOf(tree.root).includes('Living connections'));
+ assert.ok(!textOf(tree.root).includes('No matching topics'));
+ await press(tree,'Living connections');
+ assert.ok(byId(tree,'cultural-connections-screen'));
+ assert.equal(byId(tree,'app-nav-learn').props.accessibilityState.selected,true);
+ assert.match(textOf(byId(tree,'connections-draft-status')),/Cultural review, reuse permissions and legal review pending/);
+ assert.ok(textOf(tree.root).includes('not a genealogy or boundary map'));
+ await pressId(tree,'connections-choose-view');await pressId(tree,'connections-view-family');
+ await pressId(tree,'connections-node-0');
+ assert.ok(textOf(byId(tree,'connections-detail')).includes('Bennelong'));
+ assert.equal(openedLinks.length,linksBefore,'Reading and selecting cannot open a source automatically');
+ await pressId(tree,'connections-detail-source');
+ assert.equal(openedLinks.at(-1),require('../src/culturalConnections.cjs').sources.family[1]);
+ await pressId(tree,'connections-choose-view');await pressId(tree,'connections-view-care');
+ assert.ok(textOf(byId(tree,'connections-detail')).includes('Our thematic comparison'));
+ assert.ok(!textOf(byId(tree,'connections-detail')).includes('Bennelong'));
+ assert.equal(tree.root.findAllByType('Pressable').filter(x=>String(x.props.testID||'').startsWith('connections-node-')).length,6);
+ assert.equal(backHandlers.size,1);
+ await act(async()=>assert.equal([...backHandlers][0](),true));
+ assert.ok(textOf(tree.root).includes('Learning Centre'));assert.equal(backHandlers.size,0);
+ assert.equal(disk.get(MEMORY_KEY),personalBefore,'Cultural browsing cannot change personal journey answers');
+ await act(async()=>tree.unmount());
+});
+
+test('Living connections keeps source-only word entries, supports failed-link retry and lists all research resources',async()=>{
+ const personalBefore=disk.get(MEMORY_KEY),linksBefore=openedLinks.length;
+ const tree=await mount();await press(tree,'More');await press(tree,'Living connections');
+ await pressId(tree,'connections-words-toggle');await pressId(tree,'connections-choose-word');await pressId(tree,'connections-word-10');
+ assert.ok(textOf(byId(tree,'connections-word-detail')).includes('Use guidance is pending'));
+ assert.ok(!textOf(byId(tree,'connections-word-detail')).includes('assessing what is healthy'));
+ failLink=true;await pressId(tree,'connections-word-source');
+ const url=require('../src/culturalConnections.cjs').sources.ngarrindjeri[1];
+ assert.ok(textOf(byId(tree,'connections-word-source-error')).includes(url));
+ assert.equal(openedLinks.length,linksBefore);
+ failLink=false;await pressId(tree,'connections-word-source');assert.equal(openedLinks.at(-1),url);
+ assert.equal(byId(tree,'connections-word-source-error'),undefined);
+ await pressId(tree,'connections-sources-toggle');
+ const links=tree.root.findAllByType('Pressable').filter(x=>String(x.props.testID||'').startsWith('connections-source-'));
+ const resources=tree.root.findAllByType('Pressable').filter(x=>String(x.props.testID||'').startsWith('connections-resource-'));
+ assert.equal(links.length,21);assert.equal(resources.length,7);
+ await pressId(tree,'connections-resource-austlang');assert.equal(openedLinks.at(-1),'https://aiatsis.gov.au/research/languages/austlang');
+ await pressId(tree,'connections-back');assert.ok(textOf(tree.root).includes('Learning Centre'));
+ assert.equal(disk.get(MEMORY_KEY),personalBefore);
+ await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
 });
