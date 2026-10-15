@@ -1,7 +1,9 @@
+import {useAppPreferences} from './AppPreferences';
 import {useEffect,useState} from 'react';
 import {AccessibilityInfo} from 'react-native';
 
 export default function useGraphicsMotion() {
+  const {preferences}=useAppPreferences();
   // Start still while the phone's preference is being read.
   const [systemReduced,setSystemReduced]=useState(true);
   const [manualReduced,setManualReduced]=useState(false);
@@ -15,5 +17,5 @@ export default function useGraphicsMotion() {
     }).catch(()=>{});
     return ()=>{live=false;subscription.remove();};
   },[]);
-  return {reduceMotion:systemReduced||manualReduced,systemReduced,toggle:()=>setManualReduced(value=>!value)};
+  return {reduceMotion:systemReduced||manualReduced||preferences.reduceMotion,systemReduced,toggle:()=>setManualReduced(value=>!value)};
 }

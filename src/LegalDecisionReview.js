@@ -1,5 +1,7 @@
+import {AppText as Text,AppInput as TextInput} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React, {useState} from 'react';
-import {View,Text,Pressable,TextInput,StyleSheet,Linking} from 'react-native';
+import {View, Pressable, StyleSheet, Linking} from 'react-native';
 import {SOURCES,emptyLegalReview} from './legalDecisionReview';
 
 function Button({label,onPress,selected=false,expanded}) {
@@ -79,3 +81,5 @@ const styles=StyleSheet.create({
   priority:{borderLeftWidth:3,borderColor:'#FFBD32',paddingLeft:12,marginVertical:12},topic:{borderBottomWidth:1,borderBottomColor:'#365748',paddingBottom:12,marginTop:7},
   encouragement:{borderWidth:1,borderColor:'#70AC95',backgroundColor:'#123127',borderRadius:14,padding:14,marginTop:18}
 });
+
+Object.assign(styles,presentationStyles(styles,false));

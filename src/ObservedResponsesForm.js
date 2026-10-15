@@ -1,5 +1,7 @@
+import {AppText as Text,AppInput as TextInput} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React from 'react';
-import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
+import {View, Pressable, StyleSheet} from 'react-native';
 import {FEELINGS,BEHAVIOURS,MAX_PEOPLE,emptyPerson,toggleObservation} from './observedResponses';
 import WaSupportCard from './WaSupportCard';
 
@@ -61,3 +63,5 @@ const styles=StyleSheet.create({
   wrap:{flexDirection:'row',flexWrap:'wrap',gap:8},pill:{borderWidth:1,borderColor:'#476271',borderRadius:15,paddingHorizontal:15,paddingVertical:13,minHeight:48,backgroundColor:'#102C3C',marginVertical:3},
   selected:{borderColor:'#E4AD38',backgroundColor:'#1A4056'},pillText:{fontSize:15,fontWeight:'700',color:'#E1EAE8'}
 });
+
+Object.assign(styles,presentationStyles(styles,false));

@@ -2,6 +2,12 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
+## Presentation edition - version 1.7.0
+
+The 27 October presentation update unifies Home and all inner screens with forest-and-gold styling, three coordinated scenic artworks, native line icons and more readable text. It adds an in-app purpose/vision overview, working topic search and device-local language, country, larger-reading and reduced-motion preferences. English, Spanish, French and Indonesian navigation are included as starter translations; reflections and cultural, legal and support information remain in English. International visitors see the limits of the Australian directory explicitly.
+
+See [the upgrade notes and short demonstration guide](docs/PRESENTATION_UPGRADE_2026-10-15.md). The final build step applies `scripts/patch_presentation_polish.py` after all functional patches. Installing a newly built APK is required to update an existing phone installation.
+
 ## Core safety signals
 
 - Choice

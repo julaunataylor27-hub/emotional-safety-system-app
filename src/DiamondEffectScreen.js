@@ -1,5 +1,7 @@
+import {AppText as Text,AppInput as TextInput} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React, {useRef,useState} from 'react';
-import {View,Text,TextInput,Pressable,StyleSheet,Share,Linking} from 'react-native';
+import {View, Pressable, StyleSheet, Share, Linking} from 'react-native';
 import {CORNERS,CHOICE_CHECKS,EXPLANATION_CHECKS,compareChoice,comparisonKey,analyseOptions,needsProtectiveSupport,buildDiamondPlan,buildDiamondDraft} from './diamondEffect';
 import journeyPdfService from './journeyPdfService';
 import ReflectionTriangle from './ReflectionTriangle';
@@ -197,3 +199,5 @@ const styles=StyleSheet.create({
   selected:{backgroundColor:'#FFBD32'},wrap:{flexDirection:'row',flexWrap:'wrap',gap:8},choice:{borderWidth:1,borderColor:'#b28a3d',borderRadius:10,paddingVertical:10,paddingHorizontal:16,minHeight:44},
   review:{borderBottomWidth:1,borderBottomColor:'#597b69',paddingBottom:14,marginBottom:12}
 });
+
+Object.assign(styles,presentationStyles(styles,false));

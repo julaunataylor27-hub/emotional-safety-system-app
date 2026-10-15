@@ -106,7 +106,7 @@ try:
         print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity", timeout=60))
     except (RuntimeError, subprocess.TimeoutExpired) as error:
         print("Launch command failed:", error)
-    find("Golden tree at sunset")
+    find("Eucalyptus tree at dawn; illustrative artwork")
     find("Grow yourself.")
     capture("home")
     print("PASS: installed release renders the approved golden-tree Home.")

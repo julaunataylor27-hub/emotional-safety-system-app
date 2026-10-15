@@ -1,5 +1,7 @@
+import {AppText as Text,AppInput as TextInput} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React, {useMemo, useState} from 'react';
-import {View, Text, TextInput, Pressable, StyleSheet} from 'react-native';
+import {View, Pressable, StyleSheet} from 'react-native';
 import {EXAMPLES, assessEvidence} from './evidenceTruthEngine.cjs';
 
 const C = {
@@ -127,3 +129,5 @@ const s=StyleSheet.create({
   footer:{borderColor:'#6A5636',borderWidth:1,borderRadius:12,padding:12,marginBottom:15},
   footerText:{color:C.muted,fontSize:11,lineHeight:17}
 });
+
+Object.assign(s,presentationStyles(s,false));

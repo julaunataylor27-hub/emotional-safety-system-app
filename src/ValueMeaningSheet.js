@@ -1,5 +1,7 @@
+import {AppText as Text} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, Modal, StyleSheet, Linking, Alert, useWindowDimensions } from 'react-native';
+import {View, ScrollView, Pressable, Modal, StyleSheet, Linking, Alert, useWindowDimensions} from 'react-native';
 import GoldenTreeIcon from './GoldenTreeIcons';
 const { CULTURAL_NOTE, SOURCES } = require('./valueMeanings.cjs');
 

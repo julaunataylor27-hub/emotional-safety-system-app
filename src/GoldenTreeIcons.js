@@ -5,6 +5,15 @@ export default function GoldenTreeIcon({ name, size = 32, color = '#F6D477', fil
   const line = { fill: 'none', stroke: color, strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' };
   let artwork;
   switch (name) {
+    case 'Settings':
+      artwork=<G {...line}><Path d="M4 8h24M4 16h24M4 24h24"/><Circle cx="11" cy="8" r="3" fill="#06241E"/><Circle cx="22" cy="16" r="3" fill="#06241E"/><Circle cx="13" cy="24" r="3" fill="#06241E"/></G>;
+      break;
+    case 'Globe':
+      artwork=<G {...line}><Circle cx="16" cy="16" r="13"/><Path d="M3 16h26M16 3c-9 8-9 18 0 26 9-8 9-18 0-26M6 8h20M6 24h20"/></G>;
+      break;
+    case 'Back':
+      artwork=<Path {...line} d="M20 6L10 16l10 10"/>;
+      break;
     case 'Knowledge': case 'Learn':
       artwork = <G {...line}><Path d="M16 8C12 5 7 5 3 6v19c5-1 9-1 13 2 4-3 8-3 13-2V6c-4-1-9-1-13 2zM16 8v19M6 10c3-.4 5-.2 7 1M6 14c3-.4 5-.2 7 1M6 18c3-.4 5-.2 7 1M26 9v12" /></G>;
       break;

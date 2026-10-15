@@ -121,6 +121,9 @@ jobs:
       - name: Connect native Yagan Life Journey
         run: python scripts/patch_life_journey.py
 
+      - name: Apply presentation design and language preferences
+        run: python scripts/patch_presentation_polish.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 

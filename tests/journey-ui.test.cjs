@@ -69,7 +69,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js','../src/LifeJourneyScreen.js','../src/useLifeJourneyNotes.js','../src/GoldenTreeHome.js','../src/GoldenTreeIcons.js','../src/ValueMeaningSheet.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (filename===path.resolve(__dirname,'../App.js') || filename.startsWith(path.resolve(__dirname,'../src')+'/')) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);
@@ -77,7 +77,7 @@ Module._extensions['.js'] = (module, filename) => {
 const App = require('../App').default;
 const textOf = node => node.findAllByType('Text').map(item => item.children.filter(value => typeof value === 'string').join('')).join(' ');
 async function press(tree, label) {
-  const button = tree.root.findAllByType('Pressable').find(node => textOf(node).includes(label));
+  const button = tree.root.findAllByType('Pressable').find(node => textOf(node).toLowerCase().includes(label.toLowerCase()));
   assert.ok(button, 'Missing button ' + label);
   await act(async () => { await button.props.onPress(); });
 }
@@ -230,7 +230,7 @@ async function assessAndExplain(tree,context,label='Analyse My Situation') {
   await press(tree,'See Explanation');
 }
 function assertSelectedTab(tree,label) {
-  const tabs=tree.root.findAllByType('Pressable').filter(node=>node.props.accessibilityRole==='tab');
+  const tabs=tree.root.findAllByType('Pressable').filter(node=>node.props.accessibilityRole==='tab'&&!String(node.props.testID||'').startsWith('app-nav-'));
   assert.equal(tabs.length,4);
   assert.equal(tabs.filter(node=>node.props.accessibilityState.selected).length,1);
   assert.equal(tabs.find(node=>textOf(node)===label).props.accessibilityState.selected,true);
@@ -804,4 +804,53 @@ test('Life Journey accurately reports PDF cancellation, print and reader failure
   assert.ok(textOf(tree.root).includes('PDF sharing menu opened'));
   assert.equal(byId(tree,'life-reflection').props.value,'Keep this during export failures');
   await act(async()=>tree.unmount());
+});
+
+test('presentation overview explains current capabilities and opens the fictional example',async()=>{
+ const tree=await mount();await press(tree,'Our purpose & vision');
+ assert.ok(textOf(tree.root).includes('Healthy growth.'));
+ assert.ok(textOf(tree.root).includes('does not use a live AI service'));
+ assert.ok(textOf(tree.root).includes('Aspirations are not measured outcomes'));
+ await pressId(tree,'presentation-example');assert.ok(textOf(tree.root).includes('Choose a fictional example'));
+ await act(async()=>tree.unmount());
+});
+test('language and reading preferences save locally, affect Home and restore after restart',async()=>{
+ const {PREFERENCE_KEY}=require('../src/appPreferences.cjs');disk.delete(PREFERENCE_KEY);
+ let tree=await mount();await press(tree,'Language & reading');
+ await pressId(tree,'preference-language-es');await pressId(tree,'preference-size-large');await pressId(tree,'preference-motion-true');
+ const request=tree.root.findAllByType('TextInput').find(x=>x.props.testID==='preference-requested-language');
+ await act(async()=>request.props.onChangeText('Noongar'));
+ await pressId(tree,'preferences-save');
+ const saved=JSON.parse(disk.get(PREFERENCE_KEY)).preferences;
+ assert.equal(saved.language,'es');assert.equal(saved.readingSize,'large');assert.equal(saved.reduceMotion,true);assert.equal(saved.requestedLanguage,'Noongar');
+ await pressId(tree,'app-nav-home');assert.ok(textOf(tree.root).includes('Conocimiento'));
+ assert.equal(tree.root.findByProps({testID:'home-value-understanding'}).props.style({pressed:false})[1].width,'50%');
+ await act(async()=>tree.unmount());tree=await mount();assert.ok(textOf(tree.root).includes('Comenzar mi camino'));
+ await act(async()=>tree.unmount());disk.delete(PREFERENCE_KEY);
+});
+test('international support does not show Australian dialler actions as local services',async()=>{
+ const {PREFERENCE_KEY}=require('../src/appPreferences.cjs');disk.delete(PREFERENCE_KEY);
+ const tree=await mount();await press(tree,'Language & reading');await pressId(tree,'preference-country-NZ');await pressId(tree,'preferences-save');
+ await pressId(tree,'app-nav-support');assert.ok(tree.root.findByProps({testID:'international-support'}));
+ assert.ok(textOf(tree.root).includes('not a local service directory'));
+ assert.ok(!tree.root.findAllByType('Pressable').some(x=>String(x.props.accessibilityLabel||'').includes('1800')));
+ await act(async()=>tree.unmount());disk.delete(PREFERENCE_KEY);
+});
+test('preference save and load failures preserve choices and never overwrite saved preferences',async()=>{
+ const {PREFERENCE_KEY}=require('../src/appPreferences.cjs');disk.delete(PREFERENCE_KEY);
+ let tree=await mount();await press(tree,'Language & reading');await pressId(tree,'preference-country-CA');failWrite=true;
+ await pressId(tree,'preferences-save');assert.ok(textOf(tree.root).includes('Preferences could not be saved'));assert.equal(disk.get(PREFERENCE_KEY),undefined);
+ assert.equal(tree.root.findByProps({testID:'preference-country-CA'}).props.accessibilityState.checked,true);
+ failWrite=false;await pressId(tree,'preferences-save');const old=disk.get(PREFERENCE_KEY);await act(async()=>tree.unmount());
+ failRead=true;tree=await mount();await press(tree,'Language & reading');
+ assert.equal(tree.root.findByProps({testID:'preferences-save'}).props.disabled,true);assert.equal(disk.get(PREFERENCE_KEY),old);
+ failRead=false;await act(async()=>tree.unmount());disk.delete(PREFERENCE_KEY);
+});
+test('learning search filters public topics, supports empty results and clears without changing writing',async()=>{
+ const tree=await mount();await press(tree,'Learn');
+ const field=()=>tree.root.findAllByType('TextInput').find(x=>x.props.accessibilityLabel==='Search learning topics');
+ await act(async()=>field().props.onChangeText('boundaries'));assert.ok(textOf(tree.root).includes('Healthy Boundaries'));assert.ok(!textOf(tree.root).includes('Child Development'));
+ await act(async()=>field().props.onChangeText('zzznomatch'));assert.ok(textOf(tree.root).includes('No matching topics'));
+ await act(async()=>field().props.onChangeText(''));assert.ok(textOf(tree.root).includes('Child Development'));
+ await act(async()=>tree.unmount());
 });

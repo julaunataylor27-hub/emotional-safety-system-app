@@ -1,5 +1,7 @@
+import {AppText as Text} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React, {useState} from 'react';
-import {View,Text,Pressable,Linking,StyleSheet} from 'react-native';
+import {View, Pressable, Linking, StyleSheet} from 'react-native';
 
 const CHILD_GUIDANCE='https://www.wa.gov.au/organisation/department-of-communities/concerns-the-safety-or-wellbeing-of-child-or-young-person';
 const CRISIS_GUIDANCE='https://www.wa.gov.au/service/community-services/community-support/crisis-care';
@@ -36,3 +38,5 @@ const styles=StyleSheet.create({
   body:{fontSize:15,lineHeight:23,color:'#CFDDE2',marginVertical:8},source:{fontSize:12,lineHeight:18,color:'#A9BEC5',marginTop:10},
   button:{borderWidth:1,borderColor:'#E4AD38',borderRadius:13,padding:13,minHeight:48,marginVertical:6,backgroundColor:'#173D4D'},buttonText:{fontSize:16,fontWeight:'700',color:'#FFF5DE',textAlign:'center'}
 });
+
+Object.assign(styles,presentationStyles(styles,false));

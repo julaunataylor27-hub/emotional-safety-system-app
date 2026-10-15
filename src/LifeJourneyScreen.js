@@ -1,5 +1,7 @@
+import {AppText as Text,AppInput as TextInput} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React, {useRef,useState} from 'react';
-import {View,Text,TextInput,Pressable,ScrollView,StyleSheet,Linking,Share,Alert} from 'react-native';
+import {View, Pressable, ScrollView, StyleSheet, Linking, Share, Alert} from 'react-native';
 import M from './lifeJourney.cjs';
 import useLifeJourneyNotes from './useLifeJourneyNotes';
 import journeyPdfService from './journeyPdfService';
@@ -205,3 +207,5 @@ const s=StyleSheet.create({
   status:{color:C.gold,fontSize:13,lineHeight:21,marginTop:13,marginBottom:8},sourceLink:{marginTop:10},url:{color:C.muted,fontSize:11,lineHeight:18,marginTop:6},
   footer:{padding:15,borderTopWidth:1,borderTopColor:C.border,marginTop:22,marginBottom:20}
 });
+
+Object.assign(s,presentationStyles(s,false));

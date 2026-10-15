@@ -17,13 +17,13 @@ function load(name){
  const code=babel.transformSync(fs.readFileSync(file,'utf8'),{filename:file,configFile:false,babelrc:false,presets:['babel-preset-expo'],plugins:['@babel/plugin-transform-modules-commonjs']}).code;
  const mod=new Module(file,module);mod.filename=file;mod.paths=Module._nodeModulePaths(path.dirname(file));
  const normal=mod.require.bind(mod);
- mod.require=name=>name==='react-native'?native:name==='react-native-svg'?svg:name==='expo-font'?{useFonts:()=>[fontsLoaded,null]}:name==='expo-status-bar'?{StatusBar:'StatusBar'}:name==='react-native-safe-area-context'?{SafeAreaProvider:'SafeAreaProvider',useSafeAreaInsets:()=>({top:24,bottom:16,left:0,right:0}),initialWindowMetrics:null}:['./GoldenTreeIcons','./ValueMeaningSheet'].includes(name)?load(name.slice(2)):/\.(png|ttf)$/.test(name)?1:normal(name);
+ mod.require=name=>name==='@react-native-async-storage/async-storage'?{getItem:async()=>null,setItem:async()=>{}}:name==='react-native'?native:name==='react-native-svg'?svg:name==='expo-font'?{useFonts:()=>[fontsLoaded,null]}:name==='expo-status-bar'?{StatusBar:'StatusBar'}:name==='react-native-safe-area-context'?{SafeAreaProvider:'SafeAreaProvider',useSafeAreaInsets:()=>({top:24,bottom:16,left:0,right:0}),initialWindowMetrics:null}:name.startsWith('./')&&!name.endsWith('.cjs')&&!/\.(png|webp|ttf)$/.test(name)?load(name.slice(2)):/\.(png|webp|ttf)$/.test(name)?1:normal(name);
  mod._compile(code,file);return mod.exports;
 }
 const Home=load('GoldenTreeHome').default;
 async function render(props={}){let r;await Renderer.act(async()=>{r=Renderer.create(React.createElement(Home,{onNavigate:()=>{},onValuePress:()=>{},...props}));});return r;}
 test('approved artwork and all eight values render as separate native controls',async()=>{
- const r=await render();assert.equal(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,'Golden tree at sunset');
+ const r=await render();assert.equal(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,'Eucalyptus tree at dawn; illustrative artwork');
  for(const name of ['Knowledge','Understanding','Love','Kindness','Patience','Growth','Humanity','Life'])assert.equal(r.root.findByProps({testID:'home-value-'+name.toLowerCase()}).props.accessibilityLabel,'Explore '+name);
  assert.equal(r.root.findByProps({testID:'home-nav-home'}).props.accessibilityState.selected,true);
  await Renderer.act(async()=>r.unmount());

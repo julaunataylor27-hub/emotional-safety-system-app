@@ -1,5 +1,7 @@
+import {AppText as Text} from './AppPreferences';
+import {presentationStyles} from './PresentationTheme';
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {View,Text,Pressable,PanResponder,Animated,StyleSheet} from 'react-native';
+import {View, Pressable, PanResponder, Animated, StyleSheet} from 'react-native';
 import {Canvas,Group,Path,Circle,LinearGradient,RadialGradient} from '@shopify/react-native-skia';
 import Svg,{Path as SvgPath,Circle as SvgCircle} from 'react-native-svg';
 import {GRAPHIC_COLOURS,reflectionGeometry,confineReflectionPoint,nearestReflectionCorner,linePath} from './reflectionGeometry';
@@ -134,3 +136,5 @@ const styles=StyleSheet.create({
   buttons:{flexDirection:'row',flexWrap:'wrap',gap:8,marginTop:12},cornerButton:{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:7,borderWidth:1,borderRadius:14,padding:12,minHeight:48},buttonText:{fontSize:14,fontWeight:'700',color:'#FFF0CA',flexShrink:1},
   motion:{marginBottom:16},motionButton:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',borderWidth:1,borderColor:'#58735F',backgroundColor:'#102B23',borderRadius:14,padding:14,minHeight:48},motionText:{color:'#E7EFDF',fontSize:14,fontWeight:'700'},motionValue:{color:'#FFE29A',fontSize:14,fontWeight:'800'},motionHint:{color:'#BFCDBE',fontSize:13,lineHeight:20,marginTop:6}
 });
+
+Object.assign(styles,presentationStyles(styles,false));
