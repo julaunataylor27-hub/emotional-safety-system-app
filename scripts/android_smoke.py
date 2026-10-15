@@ -61,26 +61,39 @@ def bounds(node):
 
 
 def find(label, scroll=False, by_class=False, exact=False, clickable=False):
+    normalised_label = label.strip().casefold().replace("’", "'")
     for attempt in range(15 if scroll else 10):
         root = screen()
         for node in root.iter("node"):
             values = [node.get("class", "")] if by_class else [node.get("text", ""), node.get("content-desc", "")]
-            matches = any(value.strip().casefold() == label.casefold() if exact else label.casefold() in value.casefold() for value in values)
+            normalised_values = [value.strip().casefold().replace("’", "'") for value in values]
+            matches = any(value == normalised_label if exact else normalised_label in value for value in normalised_values)
             if matches and bounds(node) and (not clickable or node.get("clickable") == "true"):
                 return node
         logs = adb("logcat", "-d", "-v", "brief")
         if "JavascriptException" in logs or "E ReactNativeJS:" in logs:
             raise AssertionError("JavaScript failed while waiting for " + label)
         if scroll:
-            adb("shell", "input", "swipe", "1050", "1540", "1050", "540", "350")
+            swipe_body(up=True)
         time.sleep(1)
     raise AssertionError("Visible control was not found: " + label)
 
 
+def swipe_body(up):
+    # Stay inside the current ScrollView, including inset modal sheets. Keep
+    # to its right margin so movable artwork does not consume the gesture.
+    left, upper, right, lower = BODY
+    x = max(left + 1, right - 30)
+    high = upper + int((lower - upper) * .25)
+    low = upper + int((lower - upper) * .8)
+    start, end = (low, high) if up else (high, low)
+    adb("shell", "input", "swipe", str(x), str(start), str(x), str(end), "250")
+
+
 def top():
-    # Scroll from the outer margin so the movable artwork does not consume it.
+    screen()
     for _ in range(6):
-        adb("shell", "input", "swipe", "1050", "540", "1050", "1540", "150")
+        swipe_body(up=False)
 
 
 def tap(label, scroll=False, navigate=False, exact=False):
@@ -110,52 +123,54 @@ try:
     find("Grow yourself.")
     capture("home")
     print("PASS: installed release renders the approved golden-tree Home.")
-    tap("Start my journey", scroll=True, navigate=True)
-    find("My Humanity Journey")
-    tap("Home", navigate=True)
-    tap("Explore Knowledge", scroll=True, navigate=True)
-    find("A Noongar connection")
-    find("What we learn through experience")
-    capture("knowledge-meaning")
-    tap("Reflect on Knowledge", scroll=True, exact=True)
-    find("Stage 2")
-    tap("Home", navigate=True)
-    for value in ["Understanding", "Love", "Kindness", "Patience", "Growth", "Humanity", "Life"]:
-        tap("Explore " + value, scroll=True, exact=True)
+    # Diagnose journey/reflection independently after navigation has passed.
+    if "--journey-and-reflection" not in sys.argv[2:]:
+        tap("Start my journey", scroll=True, navigate=True)
+        find("My Humanity Journey")
+        tap("Home", navigate=True)
+        tap("Explore Knowledge", scroll=True, navigate=True)
         find("A Noongar connection")
-        tap("Close " + value + " meaning", exact=True)
-    print("PASS: all eight circles open cultural meanings and return to Home.")
-    tap("Learn", navigate=True)
-    find("Learning Centre")
-    if "--living-connections" in sys.argv[2:]:
-        tap("Living connections", scroll=True, navigate=True)
-        find("Research draft", scroll=True)
-        find("Cultural review, reuse permissions and legal review pending", scroll=True)
-        capture("living-connections-draft")
-        tap("Choose a connection", scroll=True, exact=True)
-        tap("Care, love and responsibility", scroll=True, exact=True)
-        top()
-        find("Comparison of public accounts", scroll=True)
-        tap("Yawuru", scroll=True, exact=True)
-        find("Mabu liyan links wellbeing", scroll=True)
-        find("Read original source", scroll=True)
-        capture("living-connections-yawuru")
-        tap("20 public words and concepts", scroll=True, exact=True)
-        find("Choose a word or concept", scroll=True)
-        find("boodjar", scroll=True)
-        capture("living-connections-word-guide")
-        top()
-        tap("Back to Learn", scroll=True, navigate=True, exact=True)
+        find("What we learn through experience")
+        capture("knowledge-meaning")
+        tap("Reflect on Knowledge", scroll=True, exact=True)
+        find("Stage 2")
+        tap("Home", navigate=True)
+        for value in ["Understanding", "Love", "Kindness", "Patience", "Growth", "Humanity", "Life"]:
+            tap("Explore " + value, scroll=True, exact=True)
+            find("A Noongar connection")
+            tap("Close " + value + " meaning", exact=True)
+        print("PASS: all eight circles open cultural meanings and return to Home.")
+        tap("Learn", navigate=True)
         find("Learning Centre")
-        print("PASS: Living connections preserves draft status, changes topics and opens the word guide.")
-    tap("Home", navigate=True)
-    tap("Find support", scroll=True, navigate=True)
-    find("Support Resources")
-    tap("Home", navigate=True)
-    tap("Open menu", navigate=True)
-    find("More")
-    tap("Home", navigate=True)
-    print("PASS: Home controls open Journey, Values, Learn, Support and More.")
+        if "--living-connections" in sys.argv[2:]:
+            tap("Living connections", scroll=True, navigate=True)
+            find("Research draft", scroll=True)
+            find("Cultural review, reuse permissions and legal review pending", scroll=True)
+            capture("living-connections-draft")
+            tap("Choose a connection", scroll=True, exact=True)
+            tap("Care, love and responsibility", scroll=True, exact=True)
+            top()
+            find("Comparison of public accounts", scroll=True)
+            tap("Yawuru", scroll=True, exact=True)
+            find("Mabu liyan links wellbeing", scroll=True)
+            find("Read original source", scroll=True)
+            capture("living-connections-yawuru")
+            tap("20 public words and concepts", scroll=True, exact=True)
+            find("Choose a word or concept", scroll=True)
+            find("boodjar", scroll=True)
+            capture("living-connections-word-guide")
+            top()
+            tap("Back to Learn", scroll=True, navigate=True, exact=True)
+            find("Learning Centre")
+            print("PASS: Living connections preserves draft status, changes topics and opens the word guide.")
+        tap("Home", navigate=True)
+        tap("Find support", scroll=True, navigate=True)
+        find("Support Resources")
+        tap("Home", navigate=True)
+        tap("Open menu", navigate=True)
+        find("More")
+        tap("Home", navigate=True)
+        print("PASS: Home controls open Journey, Values, Learn, Support and More.")
     if "--life-journey" in sys.argv[2:]:
         tap("Yagan's Life Journey", scroll=True, navigate=True, exact=True)
         find("Country under pressure", scroll=True)
