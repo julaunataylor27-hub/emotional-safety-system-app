@@ -42,7 +42,7 @@ const storage = {
 };
 const native = {
   SafeAreaView: 'SafeAreaView', ScrollView: 'ScrollView', View: 'View', Text: 'Text', TextInput: 'TextInput',
-  Pressable: 'Pressable', Image: 'Image', ImageBackground: 'ImageBackground',
+  Pressable: 'Pressable', Image: 'Image', ImageBackground: 'ImageBackground', Modal: 'Modal',
   StyleSheet: {create: value => value, absoluteFillObject: {}}, StatusBar: {}, Platform: {OS: 'android',select:options=>options.android}, useWindowDimensions:()=>({width:390,height:844,scale:3,fontScale:1}), Linking: {openURL:async url=>{if(failLink)throw Error('Link unavailable');openedLinks.push(url);}},
   PanResponder:{create:handlers=>({panHandlers:{onResponderGrant:handlers.onPanResponderGrant,onResponderMove:handlers.onPanResponderMove,onResponderRelease:handlers.onPanResponderRelease}})},
   AccessibilityInfo:{isReduceMotionEnabled:async()=>systemReduceMotion,addEventListener:(_,listener)=>{motionListeners.add(listener);return {remove:()=>motionListeners.delete(listener)};}},
@@ -69,7 +69,7 @@ Module._load = function(name, parent, main) {
 };
 const originalJs = Module._extensions['.js'];
 Module._extensions['.js'] = (module, filename) => {
-  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js','../src/LifeJourneyScreen.js','../src/useLifeJourneyNotes.js','../src/GoldenTreeHome.js','../src/GoldenTreeIcons.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
+  if (['../App.js','../src/EvidenceTruthScreen.js','../src/useJourneyMemory.js','../src/journeyPdfService.js','../src/DiamondEffectScreen.js','../src/ReflectionTriangle.js','../src/ReflectionArtwork.js','../src/useGraphicsMotion.js','../src/ObservedResponsesForm.js','../src/WaSupportCard.js','../src/LegalDecisionReview.js','../src/LifeJourneyScreen.js','../src/useLifeJourneyNotes.js','../src/GoldenTreeHome.js','../src/GoldenTreeIcons.js','../src/ValueMeaningSheet.js'].some(relative=>filename===path.resolve(__dirname,relative))) {
     const output = babel.transformSync(fs.readFileSync(filename, 'utf8'), {filename, presets: ['babel-preset-expo']});
     module._compile(output.code, filename);
   } else originalJs(module, filename);

@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, Pressable, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import { SafeAreaProvider, useSafeAreaInsets, initialWindowMetrics } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 import GoldenTreeIcon from './GoldenTreeIcons';
+import ValueMeaningSheet from './ValueMeaningSheet';
+const { VALUE_MEANINGS } = require('./valueMeanings.cjs');
 
 const HERO = require('../assets/graphics/golden-tree-home-v1.png');
 const EMBLEM = require('../assets/graphics/golden-tree-emblem-v1.png');
 const COLORS = { background:'#002219', gold:'#F4D17C', ivory:'#FFF6DD', muted:'#DCE6D9', rule:'#294B3C' };
-const VALUES = ['Knowledge','Understanding','Love','Kindness','Patience','Growth','Humanity','Life'];
 const NAV = [['home','Home'],['journey','Journey'],['learn','Learn'],['support','Support'],['more','More']];
 const FONT_ASSETS = { ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'), ESSBody:require('../assets/fonts/DM-Sans.ttf') };
 
 function HomeContent({ onNavigate, onValuePress }) {
+  const [selectedValue, setSelectedValue] = useState(null);
   const insets = useSafeAreaInsets();
   const { width, fontScale } = useWindowDimensions();
   const [fontsLoaded] = useFonts(FONT_ASSETS);
@@ -26,7 +28,7 @@ function HomeContent({ onNavigate, onValuePress }) {
   const body = { fontFamily:bodyFont };
   const navigate = route => onNavigate(route);
 
-  return <View testID="golden-tree-home-screen" style={[styles.screen,{paddingTop:insets.top,paddingLeft:insets.left,paddingRight:insets.right}]}>
+  return <><View testID="golden-tree-home-screen" accessibilityElementsHidden={!!selectedValue} importantForAccessibility={selectedValue?'no-hide-descendants':'auto'} style={[styles.screen,{paddingTop:insets.top,paddingLeft:insets.left,paddingRight:insets.right}]}>
     <StatusBar style="light" />
     <View style={styles.header}>
       <Image source={EMBLEM} style={styles.emblem} resizeMode="contain" accessible={false}/>
@@ -48,9 +50,9 @@ function HomeContent({ onNavigate, onValuePress }) {
         <Text style={[styles.question,body]}>What would you like to understand today?</Text>
       </View>
       <View testID="home-values-grid" style={styles.values}>
-        {VALUES.map(value=><Pressable key={value} testID={'home-value-'+value.toLowerCase()} accessibilityRole="button" accessibilityLabel={'Explore '+value} accessibilityHint="Open My Values in your journey" onPress={()=>onValuePress(value)} style={({pressed})=>[styles.value,{width:(100/columns)+'%'},pressed&&styles.pressed]}>
-          <View style={styles.valueCircle}><GoldenTreeIcon name={value} size={35}/></View>
-          <Text style={[styles.valueLabel,body,largeText&&styles.largeValueLabel]}>{value}</Text>
+        {VALUE_MEANINGS.map(value=><Pressable key={value.name} testID={'home-value-'+value.name.toLowerCase()} accessibilityRole="button" accessibilityLabel={'Explore '+value.name} accessibilityHint="Read the meaning, a Noongar cultural reflection and a question for you" onPress={()=>setSelectedValue(value)} style={({pressed})=>[styles.value,{width:(100/columns)+'%'},pressed&&styles.pressed]}>
+          <View style={styles.valueCircle}><GoldenTreeIcon name={value.name} size={35}/><View testID={'home-value-info-'+value.name.toLowerCase()} pointerEvents="none" accessible={false} style={styles.infoBadge}><Text accessible={false} style={[styles.infoText,body]}>i</Text></View></View>
+          <Text style={[styles.valueLabel,body,largeText&&styles.largeValueLabel]}>{value.name}</Text>
         </Pressable>)}
       </View>
       <View style={styles.actions}>
@@ -73,7 +75,9 @@ function HomeContent({ onNavigate, onValuePress }) {
         {route==='home'&&<View style={styles.activeTab}/>} 
       </Pressable>)}</View>
     </View>
-  </View>;
+  </View>
+    {selectedValue&&<ValueMeaningSheet key={selectedValue.name} value={selectedValue} heading={heading} body={body} bottomInset={insets.bottom} onClose={()=>setSelectedValue(null)} onReflect={value=>{setSelectedValue(null);onValuePress(value);}}/>}
+  </>;
 }
 
 export default function GoldenTreeHome(props) {
@@ -90,6 +94,7 @@ const styles=StyleSheet.create({
   question:{color:COLORS.ivory,fontSize:15,lineHeight:22,textAlign:'center',marginTop:12,marginBottom:14},
   values:{paddingHorizontal:13,flexDirection:'row',flexWrap:'wrap',marginBottom:9},value:{alignItems:'center',paddingHorizontal:2,paddingTop:3,paddingBottom:11,minHeight:84},
   valueCircle:{width:60,height:60,borderRadius:30,borderWidth:1.15,borderColor:COLORS.gold,alignItems:'center',justifyContent:'center'},
+  infoBadge:{position:'absolute',top:-3,right:-4,width:20,height:20,borderRadius:10,backgroundColor:COLORS.gold,borderWidth:2,borderColor:COLORS.background,alignItems:'center',justifyContent:'center'},infoText:{fontSize:12,lineHeight:15,fontWeight:'700',color:COLORS.background},
   valueLabel:{color:COLORS.ivory,fontSize:11.5,lineHeight:16,textAlign:'center',marginTop:6},largeValueLabel:{fontSize:14,lineHeight:20},
   actions:{paddingHorizontal:22},primary:{overflow:'hidden',borderRadius:28,minHeight:52,borderWidth:1.15,borderColor:'#FFEA9F',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:9,paddingHorizontal:14,paddingVertical:8,marginBottom:13},
   primaryLabel:{color:'#09291D',fontSize:23,lineHeight:29},link:{minHeight:48,borderTopWidth:1,borderTopColor:COLORS.rule,flexDirection:'row',alignItems:'center',gap:16,paddingHorizontal:10,paddingVertical:9},linkLabel:{flex:1,color:COLORS.ivory,fontSize:16,lineHeight:23},

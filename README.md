@@ -17,6 +17,12 @@ This prototype uses a transparent local rule engine. It does not diagnose people
 
 A GitHub Actions workflow in this repository builds a standalone release APK automatically from the Expo project and uploads it as a workflow artifact.
 
+## Home circle meanings — version 1.6.1
+
+Each of the eight gold Home circles now has an information marker and opens a native, scrollable meaning sheet. It includes a plain definition, a Noongar cultural connection, a reflection question and expandable source links. Close, Android Back and the backdrop return to Home; “Reflect on [value]” opens the existing My Values stage. Definitions remain available offline. Installing the newly built APK is required to see the change on an existing device.
+
+`src/valueMeanings.cjs` holds the app-authored text and public references from the South West Aboriginal Land & Sea Council’s Kaartdijin site and Noongar Boodjar Language Cultural Aboriginal Corporation. These are contemporary app reflections, not a traditional list of eight values, direct quotations, universal accounts of Aboriginal feelings or claims of endorsement. The UI states the Noongar scope and the diversity of Aboriginal cultures. No personal reflections or assessment logic are changed by reading these sheets.
+
 ## Journey memory and sharing
 
 The build applies `scripts/patch_journey_memory.py` after the existing visual patches. It connects a summary preview, native text sharing and autosave/restore for all seven journey stages. Run the patches in workflow order before `npm test` or running the app locally; `App.js` is the original base source.
