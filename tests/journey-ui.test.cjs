@@ -1063,3 +1063,54 @@ test('Knowledge Trail Android Back walks steps and exits, and the presentation o
   await act(async()=>[...backHandlers][0]());assert.ok(textOf(tree.root).includes('Learning Centre'));assert.equal(backHandlers.size,0);
   await act(async()=>tree.unmount());
 });
+
+test('Learning together is reachable through public search and Knowledge Trail, with optional choices and pause', async () => {
+  const tree=await mount();await press(tree,'Learn');
+  const search=tree.root.findAllByType('TextInput').find(x=>x.props.accessibilityLabel==='Search learning topics');
+  await act(async()=>search.props.onChangeText('encouragement'));
+  assert.ok(!textOf(tree.root).includes('No matching topics'));
+  await press(tree,'Learning together');assert.ok(byId(tree,'together-intro'));
+  assert.equal(byId(tree,'app-nav-learn').props.accessibilityState.selected,true);
+  await pressId(tree,'together-open-trail');await pressId(tree,'trail-learn-together');
+  await pressId(tree,'together-start');await pressId(tree,'together-option-0');
+  assert.equal(byId(tree,'together-option-0').props.accessibilityState.selected,true);
+  await pressId(tree,'together-pause');assert.ok(byId(tree,'together-paused'));
+  await pressId(tree,'app-nav-home');await press(tree,'More');await press(tree,'Learning together');
+  assert.ok(byId(tree,'together-paused'),'Leaving the screen must preserve the paused practice');
+  await pressId(tree,'together-resume');assert.equal(byId(tree,'together-option-0').props.accessibilityState.selected,true);
+  await pressId(tree,'together-leave-open');assert.match(textOf(byId(tree,'together-selected')),/Left open/);
+  await pressId(tree,'together-next');assert.ok(byId(tree,'together-step-pace'));
+  await act(async()=>assert.equal([...backHandlers][0](),true));assert.ok(byId(tree,'together-step-encouragement'));
+  await act(async()=>[...backHandlers][0]());assert.ok(byId(tree,'together-intro'));
+  await act(async()=>[...backHandlers][0]());assert.ok(textOf(tree.root).includes('Learning Centre'));
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
+
+test('Learning together previews current writing, preserves other journeys and recovers from share failure', async () => {
+  const tree=await mount();const before=disk.get(MEMORY_KEY), sharesBefore=shares.length;
+  await press(tree,'More');await press(tree,'Our Purpose & Vision');await pressId(tree,'presentation-learning-together');
+  await act(async()=>byId(tree,'together-input-topic').props.onChangeText('Learning to listen together'));
+  await pressId(tree,'together-start');await pressId(tree,'together-option-0');
+  for(let part=0;part<6;part++) await pressId(tree,'together-next');
+  assert.ok(byId(tree,'together-summary'));assert.match(textOf(tree.root),/Left open/);
+  await act(async()=>byId(tree,'together-input-unknowns').props.onChangeText('We have not tried this with anyone.'));
+  await act(async()=>byId(tree,'together-input-nextStep').props.onChangeText('Ask whether they would like to take part.'));
+  await pressId(tree,'together-preview');
+  const preview=textOf(byId(tree,'together-preview-text'));
+  assert.ok(preview.includes('We have not tried this with anyone.'));assert.ok(preview.includes('not measured outcomes'));
+  assert.equal(shares.length,sharesBefore,'A preview must not open sharing automatically');
+  failShare=true;await pressId(tree,'together-share');assert.match(textOf(byId(tree,'together-status')),/Your plan is still here/);
+  failShare=false;await pressId(tree,'together-share');assert.equal(shares.at(-1).message,preview);
+  await pressId(tree,'together-edit-plan');
+  await act(async()=>byId(tree,'together-input-nextStep').props.onChangeText('Pause and think first.'));
+  await pressId(tree,'together-preview');await pressId(tree,'together-share');assert.ok(shares.at(-1).message.includes('Pause and think first.'));
+  await pressId(tree,'app-nav-home');await press(tree,'Learn');await press(tree,'Learning together');
+  assert.match(textOf(byId(tree,'together-preview-text')),/Pause and think first/);
+  await act(async()=>[...backHandlers][0]());assert.ok(byId(tree,'together-summary'));
+  await pressId(tree,'together-clear');const confirmation=alerts.at(-1);
+  assert.equal(confirmation[0],'Clear this learning practice?');assert.ok(byId(tree,'together-summary'));
+  await act(async()=>confirmation[2].find(item=>item.text==='Clear practice').onPress());
+  assert.ok(byId(tree,'together-intro'));assert.equal(byId(tree,'together-input-topic').props.value,'');
+  assert.equal(disk.get(MEMORY_KEY),before,'Clearing the practice cannot change journey memory');
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
