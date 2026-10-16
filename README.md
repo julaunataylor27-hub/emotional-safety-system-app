@@ -172,3 +172,14 @@ The principles come from Julauna Taylor’s account of personal experience. Thei
 Each part offers two possible approaches and **Leave this open**. People can move on without choosing, revise a choice, pause and resume. An optional topic and the plan’s reflection, unknowns and next step remain in the current app session, including across navigation; app restart clears them. Preview shows the exact current text before the person opens system share options. Share failure preserves the text for copying or retry. Clearing asks for confirmation and affects only this practice. Existing journey memory, PDFs, cultural accounts and Knowledge Trail remain separate.
 
 The build applies `scripts/patch_learning_together.py` after the Knowledge Trail patch. Automated checks exercise navigation, unanswered choices, pause/resume, fresh export text and share failures; the installed Android test includes `--learning-together`. Version 1.7.5 uses Android versionCode 23 and the existing app package.
+
+
+## Explore connections — version 1.7.6
+
+An app-created linked-information exercise connects seven parts of a fictional adult conversation: a question, described events, a reported feeling, general relationship information, its source, unknown circumstances and optional choices. Every relationship has a label and an explanation; browsing works in both directions with reversible history. Learn, its public-topic search, More, the presentation, Knowledge Trail and Learning together open the exercise.
+
+The design is inspired by Tim Berners-Lee’s published linked-information proposal; there is no collaboration or endorsement. Source cards identify author, date information, relevant sections, a check date and limits. The general relationship resource is 1800RESPECT’s Healthy Relationships page. Neither source verifies the scene or personal notes. There are no new cultural claims, diagnoses, truth scores, danger scores or established outcomes.
+
+Optional reflections stay in CoreApp session state across navigation and clear on restart. Preview shows the exact export before the system share sheet opens; cancellation/failure preserves the writing. Clearing requires a confirmation and affects only this exploration. Existing persisted journey notes and PDFs are unchanged. The feature has no network requests beyond external links explicitly opened by the person.
+
+The Android build applies `scripts/patch_explore_connections.py` after Learning together. Model and actual app tests cover graph reachability, link directions, reversible history, unknowns, pause, source retries, private-note isolation, preview, sharing and clear/restart behavior. Installed Android checks use `--explore-connections`. Version 1.7.6 keeps the existing app package and advances Android versionCode to 24.

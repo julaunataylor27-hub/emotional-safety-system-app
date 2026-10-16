@@ -35,7 +35,7 @@ function Source({sourceId}) {
   </View>;
 }
 
-export default function KnowledgeTrailScreen({trail, onChange, onBack, onScrollTop, onLearnTogether}) {
+export default function KnowledgeTrailScreen({trail, onChange, onBack, onScrollTop, onLearnTogether, onExploreConnections}) {
   const [mode, setMode] = useState(null);
   const [index, setIndex] = useState(0);
   const [summary, setSummary] = useState(false);
@@ -95,6 +95,7 @@ export default function KnowledgeTrailScreen({trail, onChange, onBack, onScrollT
       <View style={s.actions}>
         <Button id="trail-start-tim" label="Explore Tim’s story" primary onPress={() => start('tim')}/>
         <Button id="trail-start-own" label="Start my own trail" onPress={() => start('own')}/>
+        {!!onExploreConnections && <Button id="trail-explore-connections" label="Explore connected ideas" onPress={onExploreConnections}/>}
         {!!onLearnTogether && <Button id="trail-learn-together" label="Try learning together" onPress={onLearnTogether}/>}
       </View>
       <View style={s.storyCard}>

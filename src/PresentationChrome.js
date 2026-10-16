@@ -15,7 +15,7 @@ export function AppHeader({onNavigate}){
 }
 export function AppBottomNav({screen,onNavigate}){
  const {t}=useAppPreferences(),insets=useSafeAreaInsets();
- const active=['livingConnections','culturalInquiry','knowledgeTrail','learningTogether'].includes(screen)?'learn':['journey','foundation','values','identity','story','projects','sharing','legacy','tech','summary'].includes(screen)?'journey':screen;
+ const active=['livingConnections','culturalInquiry','knowledgeTrail','learningTogether','exploreConnections'].includes(screen)?'learn':['journey','foundation','values','identity','story','projects','sharing','legacy','tech','summary'].includes(screen)?'journey':screen;
  return <View style={[s.nav,{paddingBottom:Math.max(10,insets.bottom)}]}>{[['home','Home'],['journey','Journey'],['learn','Learn'],['support','Support'],['more','More']].map(([route,icon])=><Pressable key={route} testID={'app-nav-'+route} accessibilityRole="tab" accessibilityLabel={t(route)} accessibilityState={{selected:route===active}} onPress={()=>onNavigate(route)} style={s.navItem}>
    <GoldenTreeIcon name={icon} size={25} color={route===active?P.gold:P.muted} filled={route===active}/><Text style={[s.navLabel,{color:route===active?P.gold:P.muted}]}>{t(route)}</Text>{route===active&&<View style={s.active}/>}</Pressable>)}</View>;
 }
