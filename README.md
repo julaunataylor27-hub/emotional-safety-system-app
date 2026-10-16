@@ -162,3 +162,13 @@ The five steps are Question, Sources, Evidence, Connections and Choice. A public
 The late build patch `scripts/patch_knowledge_trail.py` runs after cultural inquiry. Navigation, source retry, unsafe URL rejection, source/interpretation boundaries, note preservation, clear confirmation and share failures are covered by tests. The Android workflow includes `--knowledge-trail` in the installed-release smoke test. Version 1.7.4 uses Android versionCode 22.
 
 [Knowledge Trail screenshots and validation](docs/prototypes/knowledge-trail/README.md).
+
+# Learning together practice · 1.7.5
+
+Open **Learn → Learning together**, **More → Learning together**, **Knowledge Trail → Try learning together**, or the button in **Our Purpose & Vision**. Public learning search finds the six principles: encouragement, pace, timing, knowledge, conversation and peace.
+
+The principles come from Julauna Taylor’s account of personal experience. Their meanings and the fictional shared-garden exercise were developed for this app. They are not attributed to Yagan, Tim Berners-Lee or a whole cultural community. The aim is to explore shared learning while preserving individual choices and room to disagree; improved outcomes have not been established.
+
+Each part offers two possible approaches and **Leave this open**. People can move on without choosing, revise a choice, pause and resume. An optional topic and the plan’s reflection, unknowns and next step remain in the current app session, including across navigation; app restart clears them. Preview shows the exact current text before the person opens system share options. Share failure preserves the text for copying or retry. Clearing asks for confirmation and affects only this practice. Existing journey memory, PDFs, cultural accounts and Knowledge Trail remain separate.
+
+The build applies `scripts/patch_learning_together.py` after the Knowledge Trail patch. Automated checks exercise navigation, unanswered choices, pause/resume, fresh export text and share failures; the installed Android test includes `--learning-together`. Version 1.7.5 uses Android versionCode 23 and the existing app package.
