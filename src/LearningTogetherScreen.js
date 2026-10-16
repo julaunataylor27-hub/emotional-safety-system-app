@@ -12,7 +12,7 @@ function Button({id, label, onPress, primary, selected}) {
   </Pressable>;
 }
 
-export default function LearningTogetherScreen({practice, onChange, onBack, onOpenTrail, onScrollTop}) {
+export default function LearningTogetherScreen({practice, onChange, onBack, onOpenTrail, onScrollTop, onExploreConnections}) {
   const [about, setAbout] = useState(false);
   const [status, setStatus] = useState('');
   const step = M.STEPS[practice.index];
@@ -75,6 +75,7 @@ export default function LearningTogetherScreen({practice, onChange, onBack, onOp
         <Button id="together-start" label={Object.values(practice.answers).some(Number.isInteger) ? 'Continue my practice' : 'Try the garden example'} primary onPress={() => update({view: 'exercise'}, true)}/>
       </View>
       {field('topic', 'My possible topic (optional)', 'Where might I try learning with someone?')}
+      {!!onExploreConnections && <Button id="together-explore-connections" label="Explore connected ideas" onPress={onExploreConnections}/>}
       <Button id="together-open-trail" label="Explore a question in Knowledge Trail" onPress={onOpenTrail}/>
       <Button id="together-about" label={about ? 'Hide practice details' : 'About this practice'} onPress={() => setAbout(value => !value)}/>
       {about && <View testID="together-about-details" style={s.card}><Text style={s.body}>{M.META.origin}</Text><Text style={s.small}>{M.META.scope}</Text></View>}
