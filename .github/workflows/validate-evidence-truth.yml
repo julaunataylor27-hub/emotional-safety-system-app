@@ -18,9 +18,20 @@ jobs:
         with:
           node-version: '20'
       - name: Test rules, uncertainty, and in-app navigation
-        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs
+        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs tests/knowledge-trail.test.cjs
       - name: Install React Native tooling
         run: npm install --include=dev
+      - name: Prepare the same app source as the Android build
+        run: |
+          python3 - <<'PYBUILD'
+          import re, subprocess, sys
+          from pathlib import Path
+          workflow = Path('.github/workflows/build-android-apk.yml').read_text()
+          for script in re.findall(r'run: python (scripts/[a-z_0-9]+\.py)', workflow):
+              subprocess.run([sys.executable, script], check=True)
+          PYBUILD
+      - name: Test the complete prepared app and navigation
+        run: NODE_ENV=test npm test
       - name: Check JSX syntax of app and learning screens
         run: |
-          node -e "const b=require('@babel/core'); for(const x of ['App.js','src/EvidenceTruthScreen.js','src/CulturalConnectionsScreen.js','src/CulturalInquiryScreen.js']) { b.transformFileSync(x, {configFile:'./babel.config.js'}); console.log('JSX OK:',x) }"
+          node -e "const b=require('@babel/core'); for(const x of ['App.js','src/EvidenceTruthScreen.js','src/CulturalConnectionsScreen.js','src/CulturalInquiryScreen.js','src/KnowledgeTrailScreen.js']) { b.transformFileSync(x, {configFile:'./babel.config.js'}); console.log('JSX OK:',x) }"

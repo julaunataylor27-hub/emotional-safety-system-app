@@ -77,6 +77,7 @@ Module._extensions['.js'] = (module, filename) => {
   } else originalJs(module, filename);
 };
 const App = require('../App').default;
+const Trail = require('../src/knowledgeTrail.cjs');
 const textOf = node => node.findAllByType('Text').map(item => item.children.filter(value => typeof value === 'string').join('')).join(' ');
 async function press(tree, label) {
   const button = tree.root.findAllByType('Pressable').find(node => textOf(node).toLowerCase().includes(label.toLowerCase()));
@@ -998,4 +999,67 @@ test('short cultural summaries expand to every original statement and keep sourc
  assert.equal(byId(tree,'inquiry-expand-whadjuk').props.accessibilityState.expanded,false,'Changing topic starts with the matching short summary');
  assert.match(textOf(byId(tree,'inquiry-preview-whadjuk')),/Manitj and Wardung/);
  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
+
+test('Knowledge Trail walks through sourced history, distinguishes interpretation and handles link retry', async () => {
+  const personalBefore=disk.get(MEMORY_KEY), linksBefore=openedLinks.length;
+  const tree=await mount();await press(tree,'Learn');
+  const search=tree.root.findAllByType('TextInput').find(x=>x.props.accessibilityLabel==='Search learning topics');
+  await act(async()=>search.props.onChangeText('Tim'));
+  assert.ok(textOf(tree.root).includes('Knowledge Trail'));assert.ok(!textOf(tree.root).includes('No matching topics'));
+  await press(tree,'Knowledge Trail');assert.ok(byId(tree,'trail-start'));
+  assert.equal(byId(tree,'app-nav-learn').props.accessibilityState.selected,true);
+  await pressId(tree,'trail-start-tim');assert.ok(byId(tree,'trail-tim-question'));
+  assert.equal(openedLinks.length,linksBefore,'Browsing cannot open external sources automatically');
+  await pressId(tree,'trail-next');assert.ok(byId(tree,'trail-tim-sources'));
+  failLink=true;await pressId(tree,'trail-source-proposal');
+  assert.match(textOf(byId(tree,'trail-source-error-proposal')),/https:\/\/www.w3.org/);
+  failLink=false;await pressId(tree,'trail-source-proposal');
+  assert.equal(openedLinks.at(-1),Trail.SOURCES.proposal.url);assert.equal(byId(tree,'trail-source-error-proposal'),undefined);
+  await pressId(tree,'trail-next');assert.match(textOf(byId(tree,'trail-tim-evidence')),/do not establish a complete algorithm/);
+  await pressId(tree,'trail-next');assert.match(textOf(byId(tree,'trail-tim-connections')),/our reading/);
+  await pressId(tree,'trail-next');assert.ok(byId(tree,'trail-tim-choice'));
+  await pressId(tree,'trail-try-own');assert.ok(byId(tree,'trail-input-question'));
+  assert.equal(disk.get(MEMORY_KEY),personalBefore);
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
+
+test('own Knowledge Trail preserves session writing, previews fresh notes and handles sharing and clear cancellation', async () => {
+  const personalBefore=disk.get(MEMORY_KEY), sharesBefore=shares.length;
+  const tree=await mount();await press(tree,'More');await press(tree,'Knowledge Trail');await pressId(tree,'trail-start-own');
+  const change=async(key,value)=>act(async()=>byId(tree,'trail-input-'+key).props.onChangeText(value));
+  await change('question','Where did this information come from?');
+  await pressId(tree,'trail-next');await change('sources','Original document, author and date.');
+  await change('sourceUrl','javascript:alert(1)');assert.ok(byId(tree,'trail-url-invalid'));assert.equal(byId(tree,'trail-open-own-source'),undefined);
+  await change('sourceUrl',Trail.SOURCES.questions.url);assert.equal(byId(tree,'trail-url-invalid'),undefined);
+  failLink=true;await pressId(tree,'trail-open-own-source');assert.ok(byId(tree,'trail-own-source-error'));
+  failLink=false;await pressId(tree,'trail-open-own-source');assert.equal(openedLinks.at(-1),Trail.SOURCES.questions.url);
+  await pressId(tree,'trail-next');await change('evidence','The document describes a proposal.');await change('unknowns','I have not checked the later outcome.');
+  await pressId(tree,'trail-next');await change('connections','This is my possible connection.');
+  await pressId(tree,'trail-next');await change('choice','Read another source.');await pressId(tree,'trail-preview');
+  assert.match(textOf(byId(tree,'trail-summary')),/I have not checked the later outcome/);assert.equal(shares.length,sharesBefore);
+  failShare=true;await pressId(tree,'trail-share');assert.match(textOf(byId(tree,'trail-status')),/Your writing is still here/);
+  failShare=false;await pressId(tree,'trail-share');assert.match(shares.at(-1).message,/This is my possible connection/);assert.match(shares.at(-1).message,/unverified/);
+  await pressId(tree,'trail-edit');await change('choice','Pause and ask a new question.');await pressId(tree,'trail-preview');await pressId(tree,'trail-share');
+  assert.match(shares.at(-1).message,/Pause and ask a new question/);assert.ok(!shares.at(-1).message.includes('Read another source.'));
+  await pressId(tree,'app-nav-home');await press(tree,'Learn');await press(tree,'Knowledge Trail');await pressId(tree,'trail-start-own');
+  assert.equal(byId(tree,'trail-input-question').props.value,'Where did this information come from?');
+  await pressId(tree,'trail-step-choice');await pressId(tree,'trail-preview');await pressId(tree,'trail-clear');
+  const confirmation=alerts.at(-1);assert.equal(confirmation[0],'Clear my knowledge trail?');
+  assert.ok(textOf(byId(tree,'trail-summary')).includes('Where did this information come from?'),'Opening confirmation cannot clear notes');
+  await act(async()=>confirmation[2].find(item=>item.text==='Clear trail').onPress());
+  assert.equal(byId(tree,'trail-input-question').props.value,'');assert.equal(disk.get(MEMORY_KEY),personalBefore);
+  await act(async()=>tree.unmount());
+  const fresh=await mount();await press(fresh,'Learn');await press(fresh,'Knowledge Trail');await pressId(fresh,'trail-start-own');assert.equal(byId(fresh,'trail-input-question').props.value,'');await act(async()=>fresh.unmount());
+});
+
+test('Knowledge Trail Android Back walks steps and exits, and the presentation opens the prototype', async () => {
+  const tree=await mount();await press(tree,'More');await press(tree,'Our Purpose & Vision');
+  await pressId(tree,'presentation-knowledge-trail');assert.ok(byId(tree,'knowledge-trail-screen'));
+  await pressId(tree,'trail-start-own');await pressId(tree,'trail-step-choice');await pressId(tree,'trail-preview');
+  await act(async()=>assert.equal([...backHandlers][0](),true));assert.equal(byId(tree,'trail-summary'),undefined);assert.ok(byId(tree,'trail-input-choice'));
+  await act(async()=>assert.equal([...backHandlers][0](),true));assert.ok(byId(tree,'trail-input-connections'));
+  await pressId(tree,'trail-step-question');await act(async()=>[...backHandlers][0]());assert.ok(byId(tree,'trail-start'));
+  await act(async()=>[...backHandlers][0]());assert.ok(textOf(tree.root).includes('Learning Centre'));assert.equal(backHandlers.size,0);
+  await act(async()=>tree.unmount());
 });
