@@ -215,7 +215,7 @@ try:
             print("PASS: Knowledge Trail opens sourced history, keeps uncertainty and interpretation visible, and starts a personal question.")
         if "--learning-together" in sys.argv[2:]:
             top()
-            tap("Learning together", scroll=True, navigate=True, exact=True)
+            tap("Learning together", scroll=True, navigate=True)
             find("Make room to learn together.", scroll=True)
             capture("learning-together-start")
             tap("Try the garden example", scroll=True, navigate=True, exact=True)
