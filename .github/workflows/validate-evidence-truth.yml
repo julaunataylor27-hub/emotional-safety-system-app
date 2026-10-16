@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: '20'
       - name: Test rules, uncertainty, and in-app navigation
-        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs
+        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs
       - name: Install React Native tooling
         run: npm install --include=dev
       - name: Check JSX syntax of app and learning screens
         run: |
-          node -e "const b=require('@babel/core'); for(const x of ['App.js','src/EvidenceTruthScreen.js','src/CulturalConnectionsScreen.js']) { b.transformFileSync(x, {configFile:'./babel.config.js'}); console.log('JSX OK:',x) }"
+          node -e "const b=require('@babel/core'); for(const x of ['App.js','src/EvidenceTruthScreen.js','src/CulturalConnectionsScreen.js','src/CulturalInquiryScreen.js']) { b.transformFileSync(x, {configFile:'./babel.config.js'}); console.log('JSX OK:',x) }"

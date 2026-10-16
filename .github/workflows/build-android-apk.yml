@@ -11,7 +11,7 @@ permissions:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     env:
       CI: 1
       NODE_ENV: production
@@ -127,6 +127,9 @@ jobs:
       - name: Connect Living connections educational draft and source links
         run: python scripts/patch_living_connections.py
 
+      - name: Connect cultural comparisons and guided curiosity
+        run: python scripts/patch_cultural_inquiry.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 
@@ -163,7 +166,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections
+          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections --cultural-inquiry
 
       - name: Save installed-app test evidence
         if: always()
