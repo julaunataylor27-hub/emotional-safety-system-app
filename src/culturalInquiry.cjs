@@ -82,6 +82,23 @@ const FACTS = {
   disputes: {source: 'governance', text: 'For corporation-related disputes, it provides for informal good-faith discussion, written notice and possible referral to the Council of Elders. Its definition of consensus considers and reconciles differing views.'},
 };
 
+// Short editorial previews of the attributed statements above. The full wording,
+// the same sources and the account's evidence gap remain available beside them.
+const PREVIEWS = {
+  trilogy: 'In this Noongar-authored framework, Country, family or relations, and knowledge are connected.',
+  access: 'The study describes family and kinship connections to particular Country around the Swan and Canning rivers.',
+  elders: 'Elders have responsibilities for passing knowledge to later generations.',
+  differing: 'The researchers acknowledge different Noongar interpretations and keep their conclusions provisional.',
+  moieties: 'This Whadjuk account describes Manitj and Wardung divisions, inherited through the mother, with marriage across divisions and care for totems.',
+  waterholes: 'The judgment records family care for particular waterholes and recognised family authority over areas of Country.',
+  familyCountry: 'The connection evidence describes family landholding changing through the pastoral era, with continued teaching and care for Country.',
+  barna: 'The Badimia project connects Barna (Country), language, stories, family visits and responsibilities to protect Country.',
+  resources: 'The account describes taking only the food needed to help protect animals and vegetation.',
+  speakers: 'The language project credits women, men and family contributors for recording and teaching language.',
+  council: 'The 2023 corporate rulebook provides for Elders’ guidance on Country, law, custom and language.',
+  disputes: 'The 2023 rulebook describes discussion and possible Elders’ referral for corporation-related disputes.',
+};
+
 const TOPICS = [
   {id: 'country', label: 'Country & responsibilities', question: 'How do people describe their responsibilities to Country?', accounts: {
     whadjuk: {facts: ['trilogy', 'access'], unknown: 'This source does not establish Yagan’s personal wording or a framework he devised.'},
@@ -137,4 +154,4 @@ function matchesSearch(query) {
   return typeof query === 'string' && searchText.includes(query.trim().toLowerCase());
 }
 
-module.exports = {META, SOURCES, GROUPS, FACTS, TOPICS, QUESTIONS, matchesSearch};
+module.exports = {META, SOURCES, GROUPS, FACTS, PREVIEWS, TOPICS, QUESTIONS, matchesSearch};

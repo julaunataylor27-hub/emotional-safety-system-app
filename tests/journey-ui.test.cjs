@@ -918,11 +918,21 @@ test('cultural comparison opens from learning search, swaps distinct accounts an
  await press(tree,'Compare & stay curious');
  assert.ok(byId(tree,'cultural-inquiry-screen'));
  assert.equal(byId(tree,'app-nav-learn').props.accessibilityState.selected,true);
+ assert.ok(byId(tree,'inquiry-question-list'),'The first screen starts with questions');
+ assert.equal(byId(tree,'inquiry-compare'),undefined);
+ await pressId(tree,'inquiry-tab-compare');
  assert.ok(byId(tree,'inquiry-account-whadjuk'));assert.ok(byId(tree,'inquiry-account-badimia'));
+ assert.equal(byId(tree,'inquiry-fact-trilogy'),undefined,'Full accounts begin collapsed');
+ assert.ok(textOf(byId(tree,'inquiry-preview-whadjuk')).includes('Noongar-authored'));
+ assert.match(textOf(byId(tree,'inquiry-account-whadjuk')),/does not establish Yagan/);
+ await pressId(tree,'inquiry-choose-pair-0');
  await pressId(tree,'inquiry-pair-0-badimia');
- assert.equal(byId(tree,'inquiry-pair-0-badimia').props.accessibilityState.selected,true);
- assert.equal(byId(tree,'inquiry-pair-1-whadjuk').props.accessibilityState.selected,true);
- await pressId(tree,'inquiry-pair-1-wajarri');await pressId(tree,'inquiry-topic-disagreement');
+ assert.equal(byId(tree,'inquiry-pair-options-0'),undefined,'Choosing an account closes its options');
+ assert.match(textOf(byId(tree,'inquiry-choose-pair-0')),/Badimia/);
+ assert.match(textOf(byId(tree,'inquiry-choose-pair-1')),/Whadjuk Noongar/);
+ await pressId(tree,'inquiry-choose-pair-1');await pressId(tree,'inquiry-pair-1-wajarri');
+ await pressId(tree,'inquiry-choose-topic');await pressId(tree,'inquiry-topic-disagreement');
+ assert.equal(byId(tree,'inquiry-topic-options'),undefined);
  assert.match(textOf(byId(tree,'inquiry-account-badimia')),/not evidence that no such practices exist/);
  assert.match(textOf(byId(tree,'inquiry-account-wajarri')),/excludes individual disputes outside corporate roles/);
  assert.ok(!byId(tree,'inquiry-fact-moieties'));
@@ -933,15 +943,18 @@ test('cultural comparison opens from learning search, swaps distinct accounts an
 
 test('curiosity paths keep unknowns, link to the relevant comparison and unwind using Android Back',async()=>{
  const tree=await mount();await press(tree,'More');await press(tree,'Compare & stay curious');
- await pressId(tree,'inquiry-tab-questions');await pressId(tree,'inquiry-question-triangle');
+ await pressId(tree,'inquiry-question-triangle');
  assert.match(textOf(byId(tree,'inquiry-question-detail-triangle')),/has not been verified/);
  await pressId(tree,'inquiry-explore-question');
  assert.ok(byId(tree,'inquiry-compare'));assert.ok(byId(tree,'inquiry-account-whadjuk'));assert.ok(byId(tree,'inquiry-account-badimia'));
- await pressId(tree,'inquiry-tab-questions');
+ await pressId(tree,'inquiry-choose-topic');
+ await act(async()=>assert.equal([...backHandlers][0](),true));
+ assert.equal(byId(tree,'inquiry-topic-options'),undefined,'Back closes an open selector first');
+ assert.ok(byId(tree,'inquiry-compare'));
+ await act(async()=>assert.equal([...backHandlers][0](),true));
  assert.ok(byId(tree,'inquiry-question-detail-triangle'),'Switching modes preserves the selected question');
  await act(async()=>assert.equal([...backHandlers][0](),true));
  assert.ok(byId(tree,'inquiry-question-list'));assert.ok(!byId(tree,'inquiry-question-detail-triangle'));
- await act(async()=>assert.equal([...backHandlers][0](),true));assert.ok(byId(tree,'inquiry-compare'));
  await act(async()=>assert.equal([...backHandlers][0](),true));assert.ok(textOf(tree.root).includes('Learning Centre'));
  assert.equal(backHandlers.size,0);await act(async()=>tree.unmount());
 });
@@ -950,6 +963,7 @@ test('comparison source links require a tap, recover after failure and connect t
  const linksBefore=openedLinks.length,personalBefore=disk.get(MEMORY_KEY);
  const tree=await mount();await press(tree,'More');await press(tree,'Living connections');
  await pressId(tree,'connections-explore-inquiry');assert.ok(byId(tree,'cultural-inquiry-screen'));
+ await pressId(tree,'inquiry-tab-compare');
  assert.equal(openedLinks.length,linksBefore);
  const sourceId='inquiry-source-whadjuk-noongar';
  const source=require('../src/culturalInquiry.cjs').SOURCES.noongar.url;
@@ -960,5 +974,28 @@ test('comparison source links require a tap, recover after failure and connect t
  await pressId(tree,'inquiry-connections');assert.ok(byId(tree,'cultural-connections-screen'));
  await pressId(tree,'connections-back');assert.ok(textOf(tree.root).includes('Learning Centre'));
  assert.equal(disk.get(MEMORY_KEY),personalBefore);
+ await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
+
+test('short cultural summaries expand to every original statement and keep source context available',async()=>{
+ const tree=await mount();await press(tree,'More');await press(tree,'Compare & stay curious');
+ await pressId(tree,'inquiry-tab-compare');
+ assert.equal(byId(tree,'inquiry-expand-whadjuk').props.accessibilityState.expanded,false);
+ await pressId(tree,'inquiry-expand-whadjuk');
+ assert.match(textOf(byId(tree,'inquiry-fact-trilogy')),/not a system credited to Yagan personally/);
+ assert.ok(byId(tree,'inquiry-fact-access'),'The full account includes the additional statement');
+ assert.equal(byId(tree,'inquiry-preview-whadjuk'),undefined);
+ const source='inquiry-source-whadjuk-noongar';
+ assert.equal(byId(tree,source+'-details'),undefined);
+ await pressId(tree,source+'-details-toggle');
+ assert.match(textOf(byId(tree,source+'-details')),/Printed pp. 14–15 and 42–43/);
+ assert.match(textOf(byId(tree,source+'-details')),/Whadjuk-focused research/);
+ await pressId(tree,'inquiry-expand-whadjuk');
+ assert.ok(byId(tree,'inquiry-preview-whadjuk'));
+ assert.match(textOf(byId(tree,'inquiry-account-whadjuk')),/does not establish Yagan/);
+ await pressId(tree,'inquiry-expand-whadjuk');
+ await pressId(tree,'inquiry-choose-topic');await pressId(tree,'inquiry-topic-kinship');
+ assert.equal(byId(tree,'inquiry-expand-whadjuk').props.accessibilityState.expanded,false,'Changing topic starts with the matching short summary');
+ assert.match(textOf(byId(tree,'inquiry-preview-whadjuk')),/Manitj and Wardung/);
  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
 });

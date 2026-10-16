@@ -2,11 +2,11 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
-## Compare and stay curious — version 1.7.2
+## Compare and stay curious — version 1.7.3
 
-Open **Learn → Compare & stay curious** or the same entry in **More**. Compare two Whadjuk Noongar, Wajarri Yamatji or Badimia public accounts across four topics, or follow one of six questions into the relevant evidence. Each account keeps its sources, dates, scope and unanswered points visible. A missing detail stays a research gap; corporate governance is not presented as a family-conflict procedure, and the proposed Yamatji triangle remains unverified.
+Open **Learn → Compare & stay curious** or the same entry in **More**. Start with one of six large question cards, follow one question at a time, then explore Whadjuk Noongar, Wajarri Yamatji or Badimia public accounts across four topics. Short summaries expand to the full attributed statements. Larger writing, full-name account selectors and gold source buttons make the phone view easier to read. Each account keeps its source attribution, date, scope and unanswered points available; evidence gaps remain visible even when the full account is closed. A missing detail stays a research gap; corporate governance is not presented as a family-conflict procedure, and the proposed Yamatji triangle remains unverified.
 
-This read-only research draft uses the existing forest-and-gold design and larger-reading preference. It does not infer ancestry or change personal journey answers. Source links open only on a tap and can be copied or retried after failure. Cultural review, reuse permissions and legal review remain pending. See [the source and implementation notes](docs/CULTURAL_INQUIRY.md). The build applies `scripts/patch_cultural_inquiry.py` after Living connections. Install a newly built version 1.7.2 APK to see the addition on a phone.
+This read-only research draft uses the existing forest-and-gold design and larger-reading preference. It does not infer ancestry or change personal journey answers. Source links open only on a tap and can be copied or retried after failure. Cultural review, reuse permissions and legal review remain pending. See [the source and implementation notes](docs/CULTURAL_INQUIRY.md). The build applies `scripts/patch_cultural_inquiry.py` after Living connections. Install a newly built version 1.7.3 APK to see the addition on a phone.
 
 ## Presentation edition - version 1.7.0
 

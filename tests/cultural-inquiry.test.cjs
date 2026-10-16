@@ -5,6 +5,7 @@ const M = require('../src/culturalInquiry.cjs');
 test('every comparison statement has an attributed source with a date, scope and locator', () => {
   for (const [id, fact] of Object.entries(M.FACTS)) {
     assert.ok(fact.text, id);
+    assert.ok(M.PREVIEWS[id], id + ': short summary');
     const source = M.SOURCES[fact.source];
     assert.ok(source, id);
     for (const field of ['label', 'date', 'kind', 'locator', 'scope']) assert.ok(source[field], id + ': ' + field);
