@@ -907,3 +907,58 @@ test('Living connections keeps source-only word entries, supports failed-link re
  assert.equal(disk.get(MEMORY_KEY),personalBefore);
  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
 });
+
+test('cultural comparison opens from learning search, swaps distinct accounts and keeps evidence gaps visible',async()=>{
+ const personalBefore=disk.get(MEMORY_KEY),linksBefore=openedLinks.length;
+ const tree=await mount();await press(tree,'Learn');
+ const field=tree.root.findAllByType('TextInput').find(x=>x.props.accessibilityLabel==='Search learning topics');
+ await act(async()=>field.props.onChangeText('curiosity'));
+ assert.ok(textOf(tree.root).includes('Compare & stay curious'));
+ assert.ok(!textOf(tree.root).includes('No matching topics'));
+ await press(tree,'Compare & stay curious');
+ assert.ok(byId(tree,'cultural-inquiry-screen'));
+ assert.equal(byId(tree,'app-nav-learn').props.accessibilityState.selected,true);
+ assert.ok(byId(tree,'inquiry-account-whadjuk'));assert.ok(byId(tree,'inquiry-account-badimia'));
+ await pressId(tree,'inquiry-pair-0-badimia');
+ assert.equal(byId(tree,'inquiry-pair-0-badimia').props.accessibilityState.selected,true);
+ assert.equal(byId(tree,'inquiry-pair-1-whadjuk').props.accessibilityState.selected,true);
+ await pressId(tree,'inquiry-pair-1-wajarri');await pressId(tree,'inquiry-topic-disagreement');
+ assert.match(textOf(byId(tree,'inquiry-account-badimia')),/not evidence that no such practices exist/);
+ assert.match(textOf(byId(tree,'inquiry-account-wajarri')),/excludes individual disputes outside corporate roles/);
+ assert.ok(!byId(tree,'inquiry-fact-moieties'));
+ assert.equal(openedLinks.length,linksBefore);
+ assert.equal(disk.get(MEMORY_KEY),personalBefore);
+ await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
+
+test('curiosity paths keep unknowns, link to the relevant comparison and unwind using Android Back',async()=>{
+ const tree=await mount();await press(tree,'More');await press(tree,'Compare & stay curious');
+ await pressId(tree,'inquiry-tab-questions');await pressId(tree,'inquiry-question-triangle');
+ assert.match(textOf(byId(tree,'inquiry-question-detail-triangle')),/has not been verified/);
+ await pressId(tree,'inquiry-explore-question');
+ assert.ok(byId(tree,'inquiry-compare'));assert.ok(byId(tree,'inquiry-account-whadjuk'));assert.ok(byId(tree,'inquiry-account-badimia'));
+ await pressId(tree,'inquiry-tab-questions');
+ assert.ok(byId(tree,'inquiry-question-detail-triangle'),'Switching modes preserves the selected question');
+ await act(async()=>assert.equal([...backHandlers][0](),true));
+ assert.ok(byId(tree,'inquiry-question-list'));assert.ok(!byId(tree,'inquiry-question-detail-triangle'));
+ await act(async()=>assert.equal([...backHandlers][0](),true));assert.ok(byId(tree,'inquiry-compare'));
+ await act(async()=>assert.equal([...backHandlers][0](),true));assert.ok(textOf(tree.root).includes('Learning Centre'));
+ assert.equal(backHandlers.size,0);await act(async()=>tree.unmount());
+});
+
+test('comparison source links require a tap, recover after failure and connect to existing learning',async()=>{
+ const linksBefore=openedLinks.length,personalBefore=disk.get(MEMORY_KEY);
+ const tree=await mount();await press(tree,'More');await press(tree,'Living connections');
+ await pressId(tree,'connections-explore-inquiry');assert.ok(byId(tree,'cultural-inquiry-screen'));
+ assert.equal(openedLinks.length,linksBefore);
+ const sourceId='inquiry-source-whadjuk-noongar';
+ const source=require('../src/culturalInquiry.cjs').SOURCES.noongar.url;
+ failLink=true;await pressId(tree,sourceId);
+ assert.ok(textOf(byId(tree,sourceId+'-error')).includes(source));assert.equal(openedLinks.length,linksBefore);
+ failLink=false;await pressId(tree,sourceId);assert.equal(openedLinks.at(-1),source);assert.equal(byId(tree,sourceId+'-error'),undefined);
+ await pressId(tree,'inquiry-about-toggle');assert.ok(textOf(byId(tree,'inquiry-about')).includes('not establish shared ancestry'));
+ await pressId(tree,'inquiry-connections');assert.ok(byId(tree,'cultural-connections-screen'));
+ await pressId(tree,'connections-back');assert.ok(textOf(tree.root).includes('Learning Centre'));
+ assert.equal(disk.get(MEMORY_KEY),personalBefore);
+ await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});

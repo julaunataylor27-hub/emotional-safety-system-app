@@ -2,6 +2,12 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
+## Compare and stay curious — version 1.7.2
+
+Open **Learn → Compare & stay curious** or the same entry in **More**. Compare two Whadjuk Noongar, Wajarri Yamatji or Badimia public accounts across four topics, or follow one of six questions into the relevant evidence. Each account keeps its sources, dates, scope and unanswered points visible. A missing detail stays a research gap; corporate governance is not presented as a family-conflict procedure, and the proposed Yamatji triangle remains unverified.
+
+This read-only research draft uses the existing forest-and-gold design and larger-reading preference. It does not infer ancestry or change personal journey answers. Source links open only on a tap and can be copied or retried after failure. Cultural review, reuse permissions and legal review remain pending. See [the source and implementation notes](docs/CULTURAL_INQUIRY.md). The build applies `scripts/patch_cultural_inquiry.py` after Living connections. Install a newly built version 1.7.2 APK to see the addition on a phone.
+
 ## Presentation edition - version 1.7.0
 
 The 27 October presentation update unifies Home and all inner screens with forest-and-gold styling, three coordinated scenic artworks, native line icons and more readable text. It adds an in-app purpose/vision overview, working topic search and device-local language, country, larger-reading and reduced-motion preferences. English, Spanish, French and Indonesian navigation are included as starter translations; reflections and cultural, legal and support information remain in English. International visitors see the limits of the Australian directory explicitly.

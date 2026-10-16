@@ -46,7 +46,7 @@ function ChoiceSheet({title,onClose,children}){
  </Modal>;
 }
 
-export default function CulturalConnectionsScreen({onBack}){
+export default function CulturalConnectionsScreen({onBack,onExplore}){
  const [viewId,setViewId]=useState('songlines'),[itemIndex,setItemIndex]=useState(null);
  const [choosing,setChoosing]=useState(false),[wordsVisible,setWordsVisible]=useState(false);
  const [wordIndex,setWordIndex]=useState(0),[choosingWord,setChoosingWord]=useState(false),[sourcesVisible,setSourcesVisible]=useState(false);
@@ -68,6 +68,7 @@ export default function CulturalConnectionsScreen({onBack}){
    </View>
    <Text style={s.body}>{M.META.scope}</Text>
    <Text style={s.small}>Some historical sources contain names of deceased people and accounts of colonial harm.</Text>
+   {!!onExplore&&<Button id="connections-explore-inquiry" label="Compare & stay curious" onPress={onExplore}>Compare accounts and follow a question</Button>}
   </View>
 
   <Text accessibilityRole="header" style={s.section}>Explore a connection</Text>
