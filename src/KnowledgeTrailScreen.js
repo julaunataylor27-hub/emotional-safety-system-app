@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Image, Pressable, StyleSheet, Linking, BackHandler, Share, Alert} from 'react-native';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
 import {P} from './PresentationTheme';
+import TimPictureTrail from './TimPictureTrail';
 const M = require('./knowledgeTrail.cjs');
 
 function Button({id, label, onPress, primary, selected, children}) {
@@ -48,6 +49,7 @@ export default function KnowledgeTrailScreen({trail, onChange, onBack, onScrollT
   function start(next) { setMode(next); move(0); }
   function home() { setMode(null); setSummary(false); setStatus(''); onScrollTop?.(); }
   useEffect(() => {
+    if (mode === 'pictures') return;
     const handler = BackHandler.addEventListener('hardwareBackPress', () => {
       if (summary) { setSummary(false); onScrollTop?.(); }
       else if (mode && index > 0) move(index - 1);
@@ -93,8 +95,9 @@ export default function KnowledgeTrailScreen({trail, onChange, onBack, onScrollT
       <Text accessibilityRole="header" style={s.title}>Follow your curiosity.</Text>
       <Text style={s.lead}>From a question to sources, understanding and your own next step.</Text>
       <View style={s.actions}>
-        <Button id="trail-start-tim" label="Explore Tim’s story" primary onPress={() => start('tim')}/>
+        <Button id="trail-start-tim" label="Explore Tim’s story" primary onPress={() => start('pictures')}/>
         <Button id="trail-start-own" label="Start my own trail" onPress={() => start('own')}/>
+        <Button id="trail-start-framework" label="Explore the five-step learning example" onPress={() => start('tim')}/>
         {!!onExploreConnections && <Button id="trail-explore-connections" label="Explore connected ideas" onPress={onExploreConnections}/>}
         {!!onLearnTogether && <Button id="trail-learn-together" label="Try learning together" onPress={onLearnTogether}/>}
       </View>
@@ -103,7 +106,7 @@ export default function KnowledgeTrailScreen({trail, onChange, onBack, onScrollT
           accessibilityLabel="Tim Berners-Lee, photographed by Paul Clarke in 2014"/>
         <Text style={s.small}>Photograph: Paul Clarke, 2014 · CC BY-SA 4.0</Text>
         <Text accessibilityRole="header" style={s.heading}>How did Tim Berners-Lee turn a question into the Web?</Text>
-        <Text style={s.body}>Explore his public accounts through our five-step learning trail.</Text>
+        <Text style={s.body}>Follow 12 milestones with historical pictures, original records and a decision trail. Questions and connections are our learning prompts.</Text>
       </View>
       <Button id="trail-about-toggle" label={about ? 'Hide prototype details' : 'About this prototype'} onPress={() => setAbout(value => !value)}/>
       {about && <View testID="trail-about" style={s.card}>
@@ -111,7 +114,7 @@ export default function KnowledgeTrailScreen({trail, onChange, onBack, onScrollT
         <Text style={s.small}>Sources checked {M.META.checked}. Browsing does not assess your safety or verify your writing.</Text>
         <Source sourceId="photo"/>
       </View>}
-    </View> : <View style={s.section}>
+    </View> : mode === 'pictures' ? <TimPictureTrail onBack={home} onScrollTop={onScrollTop} onStartOwn={() => start('own')}/> : <View style={s.section}>
       <Text style={s.mode}>{own ? 'My own trail' : 'Tim Berners-Lee · public learning example'}</Text>
       <Text accessibilityRole="header" style={s.title}>{summary ? 'My trail so far' : step.label}</Text>
       <View accessibilityLabel="Knowledge trail steps" style={s.steps}>

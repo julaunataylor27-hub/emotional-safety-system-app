@@ -3,7 +3,7 @@
 const META = {
   title: 'Knowledge Trail',
   status: 'Learning prototype',
-  checked: '16 October 2026',
+  checked: '18 October 2026',
   scope: 'These five steps are our learning aid, illustrated with Tim Berners-Lee’s public accounts. This is not his own named method or an endorsement by him.',
   privacy: 'Your writing stays in this app session. Leaving this screen keeps it; closing or restarting the app clears it. Share a copy only when you choose.',
 };
@@ -49,7 +49,7 @@ function trailText(trail) {
     'My next step is optional and can change.'].join('\n\n');
 }
 
-const searchText = 'knowledge trail curiosity curious question sources evidence connections choice tim berners-lee berners lee world wide web internet prototype learning'.toLowerCase();
+const searchText = 'knowledge trail curiosity curious question sources evidence connections choice tim berners-lee berners lee world wide web internet prototype learning picture history photos photographs decision trail enquire browser server'.toLowerCase();
 function matchesSearch(query) {
   return typeof query === 'string' && searchText.includes(query.trim().toLowerCase());
 }

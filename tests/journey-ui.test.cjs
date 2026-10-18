@@ -1013,7 +1013,7 @@ test('Knowledge Trail walks through sourced history, distinguishes interpretatio
   assert.ok(textOf(tree.root).includes('Knowledge Trail'));assert.ok(!textOf(tree.root).includes('No matching topics'));
   await press(tree,'Knowledge Trail');assert.ok(byId(tree,'trail-start'));
   assert.equal(byId(tree,'app-nav-learn').props.accessibilityState.selected,true);
-  await pressId(tree,'trail-start-tim');assert.ok(byId(tree,'trail-tim-question'));
+  await pressId(tree,'trail-start-framework');assert.ok(byId(tree,'trail-tim-question'));
   assert.equal(openedLinks.length,linksBefore,'Browsing cannot open external sources automatically');
   await pressId(tree,'trail-next');assert.ok(byId(tree,'trail-tim-sources'));
   failLink=true;await pressId(tree,'trail-source-proposal');
@@ -1024,6 +1024,44 @@ test('Knowledge Trail walks through sourced history, distinguishes interpretatio
   await pressId(tree,'trail-next');assert.match(textOf(byId(tree,'trail-tim-connections')),/our reading/);
   await pressId(tree,'trail-next');assert.ok(byId(tree,'trail-tim-choice'));
   await pressId(tree,'trail-try-own');assert.ok(byId(tree,'trail-input-question'));
+  assert.equal(disk.get(MEMORY_KEY),personalBefore);
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
+
+test('picture trail keeps all approved milestones, retries media and sources, and preserves personal writing without zoom', async () => {
+  const personalBefore=disk.get(MEMORY_KEY),linksBefore=openedLinks.length;
+  const H=require('../src/timPictureTrail.json');
+  const tree=await mount();await press(tree,'Learn');await press(tree,'Knowledge Trail');
+  await pressId(tree,'trail-start-own');
+  await act(async()=>byId(tree,'trail-input-question').props.onChangeText('My private curiosity question.'));
+  await pressId(tree,'trail-back');await pressId(tree,'trail-start-tim');
+  assert.ok(byId(tree,'tim-picture-trail'));
+  assert.equal(byId(tree,'picture-trail-previous').props.disabled,true);
+  assert.equal(openedLinks.length,linksBefore);
+  for(let index=0;index<H.points.length;index++){
+    const point=H.points[index];
+    assert.ok(textOf(tree.root).includes(point.title));
+    assert.ok(textOf(byId(tree,'picture-trail-decisions')).includes(point.decision.change));
+    assert.ok(!textOf(tree.root).includes('My private curiosity question.'));
+    assert.ok(!textOf(tree.root).includes('Tap image to enlarge'));
+    assert.equal(byId(tree,'tim-picture-trail').findAllByType('Pressable').filter(node=>node.findAllByType('Image').length).length,0);
+    if(index<H.points.length-1)await pressId(tree,'picture-trail-next');
+  }
+  assert.equal(byId(tree,'picture-trail-next'),undefined);
+  await pressId(tree,'picture-trail-choose');assert.ok(byId(tree,'picture-trail-options'));
+  await act(async()=>[...backHandlers][0]());assert.equal(byId(tree,'picture-trail-options'),undefined);
+  await pressId(tree,'picture-trail-choose');await pressId(tree,'picture-trail-option-server');
+  assert.ok(textOf(tree.root).includes('Give the idea a working machine.'));
+  await act(async()=>byId(tree,'picture-trail-image').props.onError());assert.ok(byId(tree,'picture-trail-image-error'));
+  await pressId(tree,'picture-trail-image-retry');assert.ok(byId(tree,'picture-trail-image'));assert.equal(byId(tree,'picture-trail-image-error'),undefined);
+  await pressId(tree,'picture-trail-decisions-toggle');assert.equal(byId(tree,'picture-trail-decisions'),undefined);
+  await pressId(tree,'picture-trail-decisions-toggle');assert.ok(byId(tree,'picture-trail-decisions'));
+  failLink=true;await pressId(tree,'picture-trail-record');assert.ok(byId(tree,'picture-trail-link-error'));
+  failLink=false;await pressId(tree,'picture-trail-link-retry');assert.equal(openedLinks.at(-1),H.points[1].record);
+  assert.equal(byId(tree,'picture-trail-link-error'),undefined);
+  await act(async()=>[...backHandlers][0]());assert.ok(textOf(tree.root).includes('Put the idea on paper.'));
+  await act(async()=>[...backHandlers][0]());assert.ok(byId(tree,'trail-start'));
+  await pressId(tree,'trail-start-own');assert.equal(byId(tree,'trail-input-question').props.value,'My private curiosity question.');
   assert.equal(disk.get(MEMORY_KEY),personalBefore);
   await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
 });
