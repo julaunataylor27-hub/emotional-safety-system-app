@@ -139,6 +139,9 @@ jobs:
       - name: Connect Explore connections learning prototype
         run: python scripts/patch_explore_connections.py
 
+      - name: Connect national and state support directory
+        run: python scripts/patch_support_directory.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 
@@ -175,7 +178,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections --cultural-inquiry --knowledge-trail --learning-together --explore-connections
+          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections --cultural-inquiry --knowledge-trail --learning-together --explore-connections --support-directory
 
       - name: Save installed-app test evidence
         if: always()

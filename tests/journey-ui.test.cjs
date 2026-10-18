@@ -537,19 +537,22 @@ test('observed sleep with an adult sexual concern gets capacity triage and is ig
   await act(async()=>tree.unmount());
 });
 
-test('WA support choices open only the requested dialler or official guidance and recover from link failure',async()=>{
-  const before=openedLinks.length;
+test('support contacts open only on request and retry failures without sending journey writing',async()=>{
+  const before=openedLinks.length, memory=disk.get(MEMORY_KEY);
   const tree=await mount();await press(tree,'Support');
-  assert.ok(textOf(tree.root).includes('WA support choices'));assert.ok(textOf(tree.root).includes('Crisis Care · after hours'));
-  assert.equal(openedLinks.length,before,'Showing support must not call or open anything automatically');
-  await observationControl(tree,'Child Protection · 1800 273 889');assert.equal(openedLinks.at(-1),'tel:1800273889');
-  await observationControl(tree,'Crisis Care · 1800 199 008');assert.equal(openedLinks.at(-1),'tel:1800199008');
-  await observationControl(tree,'Emergency · 000');assert.equal(openedLinks.at(-1),'tel:000');
-  await observationControl(tree,'Read WA Crisis Care guidance');assert.equal(openedLinks.at(-1),'https://www.wa.gov.au/service/community-services/community-support/crisis-care');
-  await observationControl(tree,'Read WA child safety guidance');assert.equal(openedLinks.at(-1),'https://www.wa.gov.au/organisation/department-of-communities/concerns-the-safety-or-wellbeing-of-child-or-young-person');
-  failLink=true;await observationControl(tree,'Crisis Care · 1800 199 008');
-  assert.ok(textOf(tree.root).includes('Could not open this link'));assert.ok(textOf(tree.root).includes('1800 199 008'));failLink=false;
-  await act(async()=>tree.unmount());
+  assert.ok(byId(tree,'support-directory-screen'));
+  assert.ok(byId(tree,'support-wa-child'));
+  assert.equal(openedLinks.length,before,'Showing the directory must not call or open anything');
+  await pressId(tree,'support-wa-child-contact-0');assert.equal(openedLinks.at(-1),'tel:1800273889');
+  await pressId(tree,'support-wa-child-contact-1');assert.equal(openedLinks.at(-1),'tel:1800199008');
+  await pressId(tree,'support-emergency');assert.equal(openedLinks.at(-1),'tel:000');
+  await pressId(tree,'support-wa-child-details-toggle');
+  assert.ok(textOf(byId(tree,'support-wa-child-details')).includes('18 October 2026'));
+  failLink=true;await pressId(tree,'support-wa-child-source');assert.ok(byId(tree,'support-link-error'));
+  failLink=false;await pressId(tree,'support-retry-link');assert.equal(byId(tree,'support-link-error'),undefined);
+  assert.equal(openedLinks.at(-1),require('../src/supportDirectory.cjs').DIRECTORY.services.find(s=>s.id==='wa-child').source_url);
+  assert.equal(disk.get(MEMORY_KEY),memory);
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
 });
 
 test('an adult immediate-danger report gets priority without inventing a child-parent sexual pattern',async context=>{
@@ -693,31 +696,32 @@ test('new graphics resize, preserve writing and safeguarding, and respect both m
 });
 
 
-test('Support Resources switches between WA and National tabs',async()=>{
-  const tree=await mount();
-  await press(tree,'Support');
-  const tabs=()=>tree.root.findAllByType('Pressable').filter(node=>node.props.accessibilityRole==='tab');
-  const selected=label=>tabs().find(node=>textOf(node)===label).props.accessibilityState.selected;
-  assert.equal(selected('WA Services'),true);
-  assert.equal(selected('National'),false);
-  assert.ok(textOf(tree.root).includes('WA support choices'));
-  assert.ok(!textOf(tree.root).includes('Kids Helpline'));
-  await press(tree,'National');
-  assert.equal(selected('WA Services'),false);
-  assert.equal(selected('National'),true);
-  for(const label of ['Emergency — 000','Kids Helpline','1800RESPECT','Lifeline','13YARN','eSafety Commissioner']) {
-    assert.ok(textOf(tree.root).includes(label),label);
+test('Support Resources selects every state and territory, filters needs and preserves the chosen location',async()=>{
+  const tree=await mount();await press(tree,'Support');
+  const chooseRegion=async id=>{await pressId(tree,'support-choose-region');await pressId(tree,'support-region-'+id);};
+  const chooseCategory=async id=>{await pressId(tree,'support-choose-category');await pressId(tree,'support-category-'+id);};
+  for(const [region,entry] of [['WA','wa-house'],['NSW','nsw-house'],['VIC','vic-house'],['QLD','qld-house'],['SA','sa-house'],['TAS','tas-house'],['ACT','act-house'],['NT','nt-house']]){
+    await chooseRegion(region);assert.ok(byId(tree,'support-'+entry),region);
+    assert.ok(byId(tree,'support-emergency'),'Emergency access stays visible for every region');
   }
-  assert.ok(!textOf(tree.root).includes('WA support choices'));
-  const before=openedLinks.length;
-  await press(tree,'Kids Helpline');
-  assert.equal(openedLinks.at(-1),'tel:1800551800');
-  assert.equal(openedLinks.length,before+1);
-  await press(tree,'WA Services');
-  assert.equal(selected('WA Services'),true);
-  assert.ok(textOf(tree.root).includes('WA support choices'));
-  assert.ok(!textOf(tree.root).includes('Kids Helpline'));
-  await act(async()=>tree.unmount());
+  await chooseRegion('National');
+  for(const name of ['Kids Helpline','1800RESPECT','Lifeline','13YARN','eSafety Commissioner'])assert.ok(textOf(tree.root).includes(name),name);
+  assert.equal(byId(tree,'support-wa-child'),undefined);
+  const linksBefore=openedLinks.length;await pressId(tree,'support-kids-contact-0');
+  assert.equal(openedLinks.at(-1),'tel:1800551800');assert.equal(openedLinks.length,linksBefore+1);
+  await chooseRegion('WA');await chooseCategory('housing');assert.ok(byId(tree,'support-wa-house'));
+  assert.equal(byId(tree,'support-wa-child'),undefined);
+  await act(async()=>byId(tree,'support-search').props.onChangeText('private journal phrase never searched'));
+  assert.ok(byId(tree,'support-empty'));assert.ok(byId(tree,'support-emergency'));
+  await pressId(tree,'support-empty-national');assert.ok(byId(tree,'support-kids'));
+  await chooseRegion('ACT');await chooseCategory('housing');
+  await act(async()=>byId(tree,'support-search').props.onChangeText('OneLink'));assert.ok(byId(tree,'support-act-house'));
+  await pressId(tree,'app-nav-home');await press(tree,'Support');
+  assert.equal(byId(tree,'support-search').props.value,'OneLink');assert.ok(byId(tree,'support-act-house'));
+  await pressId(tree,'support-choose-region');await act(async()=>[...backHandlers][0]());
+  assert.equal(byId(tree,'support-region-options'),undefined);assert.ok(byId(tree,'support-directory-screen'));
+  await act(async()=>[...backHandlers][0]());assert.equal(byId(tree,'support-directory-screen'),undefined);
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
 });
 
 const {MEMORY_KEY:LIFE_MEMORY_KEY}=require('../src/lifeJourneyMemory.cjs');
