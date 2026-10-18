@@ -1,0 +1,301 @@
+{
+  "checked": "18 October 2026",
+  "framework": "Our learning framework, based on the linked records. Questions and next connections are our prompts, not a reconstruction of Tim’s private thoughts.",
+  "points": [
+    {
+      "image": "proposal",
+      "label": "March 1989 · The proposal",
+      "date": "March 1989",
+      "title": "Put the idea on paper.",
+      "caption": "Archive reproduction of the proposal’s first page.",
+      "credit": "Image: CERN · Educational and informational use. Displayed from CERN’s archive; copyright retained.",
+      "record": "https://www.w3.org/History/1989/proposal.html",
+      "imageSource": "https://info.cern.ch/www20/photos/",
+      "terms": "https://copyright.web.cern.ch/",
+      "fact": "He proposed connecting information through distributed hypertext to address the loss of knowledge at CERN.",
+      "question": "What problem did those circles and links describe?",
+      "id": "proposal",
+      "decision": {
+        "question": "How could people find knowledge as a project changed?",
+        "change": "The document explains his intended approach. Working software is the next milestone to investigate.",
+        "next": "What would a working demonstration need?"
+      },
+      "media": {
+        "kind": "archive",
+        "url": "https://info.cern.ch/www20/img/www20_07.jpg",
+        "width": 540,
+        "height": 405
+      }
+    },
+    {
+      "image": "server",
+      "label": "1990 · First Web server",
+      "date": "By the end of 1990",
+      "title": "Give the idea a working machine.",
+      "caption": "The original NeXT workstation, photographed on display in 2005. The photograph is later than the invention.",
+      "credit": "Photo: Coolcaesar · CC BY-SA 3.0. Original 2008 upload; resized and compressed.",
+      "record": "https://home.cern/science/computing/the-birth-of-the-web/short-history-web/",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:First_Web_Server.jpg",
+      "terms": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "fact": "His first Web server and browser ran on a NeXT computer at CERN.",
+      "question": "What did one computer need to send a page to another?",
+      "id": "server",
+      "decision": {
+        "question": "Could linked documents work through running software?",
+        "change": "A server and browser were working by the end of 1990.",
+        "next": "How could somebody on another kind of computer participate?"
+      },
+      "media": {
+        "kind": "bundled",
+        "width": 1000,
+        "height": 750
+      }
+    },
+    {
+      "image": "browser",
+      "label": "1990 · Browser and editor",
+      "date": "First developed in 1990",
+      "title": "Let people follow links and edit.",
+      "caption": "An archived screenshot of a later WorldWideWeb version. It does not show the first run in 1990.",
+      "credit": "Screenshot: Ck_mpk; PNG adaptation: FedericoMP, 2008 · CC BY-SA 3.0. Image unchanged.",
+      "record": "https://www.w3.org/People/Berners-Lee/WorldWideWeb.html",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:WorldWideWeb.png",
+      "terms": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "fact": "WorldWideWeb combined reading linked documents with editing them.",
+      "question": "How is a place for making knowledge different from a place for only reading?",
+      "id": "browser",
+      "decision": {
+        "question": "Could somebody both read and create linked documents?",
+        "change": "The original browser supported editing, but required a NeXT computer.",
+        "next": "What simpler browser could reach more people?"
+      },
+      "media": {
+        "kind": "bundled",
+        "width": 830,
+        "height": 651
+      }
+    },
+    {
+      "image": "firstwebsite",
+      "label": "1990–1991 · The first website",
+      "date": "1990–1991 · the early Web project",
+      "title": "Explain how others could take part.",
+      "caption": "A 2021 screenshot of an early Web page in CERN’s browser emulator. This is a later reconstruction, not a 1991 screenshot.",
+      "credit": "CERN / Tim Berners-Lee; uploaded by Erick Soares3, 2021 · Public-domain record. Image unchanged.",
+      "record": "https://home.cern/science/computing/the-birth-of-the-web/short-history-web/",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:W3_First_Website.png",
+      "terms": "https://commons.wikimedia.org/wiki/File:W3_First_Website.png#Licensing",
+      "fact": "The first website explained the Web project, hypertext and ways to use the system.",
+      "question": "What would a newcomer need to know before trying it?",
+      "id": "firstwebsite",
+      "decision": {
+        "question": "How could a newcomer learn what the project offered?",
+        "change": "The website explained the project and linked to further information.",
+        "next": "How could others try it and contribute?"
+      },
+      "media": {
+        "kind": "bundled",
+        "width": 1366,
+        "height": 655
+      }
+    },
+    {
+      "image": "demonstration",
+      "label": "1991 · Show people the Web",
+      "date": "1991",
+      "title": "Let other people try the idea.",
+      "caption": "Berners-Lee demonstrating the Web at Hypertext 1991, San Antonio.",
+      "credit": "Image: CERN · Educational and informational use. Displayed from CERN’s archive; copyright retained.",
+      "record": "https://info.cern.ch/www20/photos/",
+      "imageSource": "https://info.cern.ch/www20/photos/",
+      "terms": "https://copyright.web.cern.ch/",
+      "fact": "A working demonstration gave people a chance to see and question the system.",
+      "question": "What might another person notice that its creator had missed?",
+      "id": "demonstration",
+      "decision": {
+        "question": "What could people discover by trying the working software?",
+        "change": "The photograph shows the demonstration. The archive caption gives no detailed account of the audience’s feedback.",
+        "next": "What feedback would be useful to investigate?"
+      },
+      "media": {
+        "kind": "archive",
+        "url": "https://info.cern.ch/www20/img/www20_06.jpg",
+        "width": 540,
+        "height": 405
+      }
+    },
+    {
+      "image": "release",
+      "label": "30 April 1993 · Open the software",
+      "date": "30 April 1993",
+      "title": "Allow others to build on it.",
+      "caption": "CERN’s document releasing key Web software into the public domain.",
+      "credit": "Image: CERN · Educational and informational use. Displayed from CERN’s archive; copyright retained.",
+      "record": "https://home.cern/science/computing/the-birth-of-the-web/licensing-web/",
+      "imageSource": "https://info.cern.ch/www20/photos/",
+      "terms": "https://copyright.web.cern.ch/",
+      "fact": "The release covered the basic line-mode client, server and common-code library. Web software had circulated earlier.",
+      "question": "What becomes possible when others can use and change the software?",
+      "id": "release",
+      "decision": {
+        "question": "What permission did other developers need?",
+        "change": "CERN permitted use, copying, modification and distribution of the released components.",
+        "next": "How could different implementations remain compatible?"
+      },
+      "media": {
+        "kind": "archive",
+        "url": "https://info.cern.ch/www20/img/www20_05.jpg",
+        "width": 540,
+        "height": 405
+      }
+    },
+    {
+      "image": "tim1994",
+      "label": "October 1994 · W3C",
+      "date": "October 1994",
+      "title": "Help different systems work together.",
+      "caption": "A CERN portrait dated 1994. It is not a photograph of W3C’s founding meeting.",
+      "credit": "Image: CERN · Educational and informational use. Displayed from CERN’s archive; copyright retained.",
+      "record": "https://www.w3.org/about/history/",
+      "imageSource": "https://info.cern.ch/www20/photos/",
+      "terms": "https://copyright.web.cern.ch/",
+      "fact": "He founded W3C at MIT in cooperation with CERN to coordinate Web standards.",
+      "question": "Which rules must people share so their different tools can connect?",
+      "id": "tim1994",
+      "decision": {
+        "question": "How could independently developed tools share a common Web?",
+        "change": "W3C provided a community for coordinating Web standards.",
+        "next": "Which decisions would need continuing public discussion?"
+      },
+      "media": {
+        "kind": "archive",
+        "url": "https://info.cern.ch/www20/img/www20_02.jpg",
+        "width": 540,
+        "height": 405
+      }
+    },
+    {
+      "image": "conference1998",
+      "label": "26 June 1998 · The next questions",
+      "date": "26 June 1998",
+      "title": "Keep questioning what comes next.",
+      "caption": "Speaking at CERN’s “Internet, Web, What’s next?” conference.",
+      "credit": "Image: CERN · Educational and informational use. Displayed from CERN’s archive; copyright retained.",
+      "record": "https://info.cern.ch/www20/photos/",
+      "imageSource": "https://info.cern.ch/www20/photos/",
+      "terms": "https://copyright.web.cern.ch/",
+      "fact": "The invention was already established, while discussion about its future continued.",
+      "question": "What new problems can appear after an invention succeeds?",
+      "id": "conference1998",
+      "decision": {
+        "question": "What questions remain after a technology becomes established?",
+        "change": "The photograph preserves his appearance at a conference about what would come next.",
+        "next": "What new evidence would change a prediction about the Web?"
+      },
+      "media": {
+        "kind": "archive",
+        "url": "https://info.cern.ch/www20/img/www20_12.jpg",
+        "width": 540,
+        "height": 405
+      }
+    },
+    {
+      "image": "summit2003",
+      "label": "2003 · A wider conversation",
+      "date": "2003",
+      "title": "Take the conversation beyond software.",
+      "caption": "Berners-Lee with Kofi Annan during the World Summit on the Information Society.",
+      "credit": "Image: CERN · Educational and informational use. Displayed from CERN’s archive; copyright retained.",
+      "record": "https://info.cern.ch/www20/photos/",
+      "imageSource": "https://info.cern.ch/www20/photos/",
+      "terms": "https://copyright.web.cern.ch/",
+      "fact": "The historical record includes international discussion as well as code and computers.",
+      "question": "Who should have a voice in a technology used across countries?",
+      "id": "summit2003",
+      "decision": {
+        "question": "Who should participate in discussions about information technology?",
+        "change": "The photograph places him in an international conversation about the information society.",
+        "next": "Whose perspectives should a future discussion include?"
+      },
+      "media": {
+        "kind": "archive",
+        "url": "https://info.cern.ch/www20/img/www20_11.jpg",
+        "width": 540,
+        "height": 405
+      }
+    },
+    {
+      "image": "reunion2009",
+      "label": "13 March 2009 · Remember the collaborators",
+      "date": "13 March 2009",
+      "title": "Look back with other contributors.",
+      "caption": "Ben Segal, Tim Berners-Lee and Robert Cailliau beside the NeXT at the proposal’s twentieth anniversary.",
+      "credit": "Photo: Maximilien Brice, CERN · CC BY 4.0. Resized and compressed.",
+      "record": "https://commons.wikimedia.org/wiki/File:Trio_around_Next_machine_at_the_20th_anniversary_of_the_World_Wide_Web%27s_first_proposal.jpg",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:Trio_around_Next_machine_at_the_20th_anniversary_of_the_World_Wide_Web%27s_first_proposal.jpg",
+      "terms": "https://creativecommons.org/licenses/by/4.0/",
+      "fact": "This reunion is a later reflection on the early work, not a photograph from 1989.",
+      "question": "Whose contributions can disappear when a story focuses on only one inventor?",
+      "id": "reunion2009",
+      "decision": {
+        "question": "How can a history acknowledge several contributors?",
+        "change": "The 2009 reunion brings three contributors together beside the original machine.",
+        "next": "Which other people and earlier inventions should we follow?"
+      },
+      "media": {
+        "kind": "bundled",
+        "width": 900,
+        "height": 600
+      }
+    },
+    {
+      "image": "portrait",
+      "label": "24 September 2014 · Public recognition",
+      "date": "24 September 2014",
+      "title": "Recognise the person in the photograph.",
+      "caption": "Berners-Lee arriving at the Guildhall to receive the Honorary Freedom of the City of London.",
+      "credit": "Photo: Paul Clarke · CC BY-SA 4.0. Resized and compressed.",
+      "record": "https://commons.wikimedia.org/wiki/File:Sir_Tim_Berners-Lee.jpg",
+      "imageSource": "https://commons.wikimedia.org/wiki/File:Sir_Tim_Berners-Lee.jpg",
+      "terms": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "fact": "This is the photograph from your app. Paul Clarke is its photographer.",
+      "question": "What do a photograph’s date and credit tell us—and what do they leave unknown?",
+      "id": "portrait",
+      "decision": {
+        "question": "What can a photograph tell us about a person’s work?",
+        "change": "Its date, occasion and photographer establish the photograph’s context.",
+        "next": "Which account or document would answer the next question?"
+      },
+      "media": {
+        "kind": "bundled",
+        "width": 1600,
+        "height": 1066
+      }
+    },
+    {
+      "image": "book",
+      "label": "2025–2026 · Tell his own story",
+      "date": "Memoir: September 2025 · paperback: September 2026",
+      "title": "Return to his own account.",
+      "caption": "The UK paperback cover of This Is for Everyone, shown on his official book website. The memoir first appeared in 2025.",
+      "credit": "Cover: official book website / publisher; copyright retained. Reduced for this educational discussion.",
+      "record": "https://thisisforeveryone.timbl.com/",
+      "imageSource": "https://thisisforeveryone.timbl.com/",
+      "terms": "",
+      "fact": "His own memoir offers a further route into the experiences and decisions behind the Web.",
+      "question": "Which recollection could you compare with a document written at the time?",
+      "id": "book",
+      "decision": {
+        "question": "How can a later recollection add to an earlier record?",
+        "change": "The memoir is a later personal account, distinct from documents written during the invention.",
+        "next": "Where do recollections and contemporary records agree or differ?"
+      },
+      "media": {
+        "kind": "archive",
+        "url": "https://thisisforeveryone.timbl.com/dist/images/paperback-cover.webp",
+        "width": 600,
+        "height": 882
+      }
+    }
+  ]
+}

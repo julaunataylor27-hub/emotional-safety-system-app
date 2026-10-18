@@ -30,6 +30,26 @@ test('export preserves the person’s words and missing evidence without inventi
 });
 
 test('public search includes the example without searching private writing', () => {
-  for (const query of ['', 'knowledge trail', 'Berners', 'Lee', 'Tim', 'curiosity', 'internet']) assert.equal(M.matchesSearch(query), true);
+  for (const query of ['', 'knowledge trail', 'Berners', 'Lee', 'Tim', 'curiosity', 'internet', 'picture history', 'decision trail', 'enquire']) assert.equal(M.matchesSearch(query), true);
   for (const query of [null, {}, 1, 'my private question']) assert.equal(M.matchesSearch(query), false);
+});
+
+test('picture milestones preserve chronology, image provenance and the distinction between records and prompts', () => {
+  const H = require('../src/timPictureTrail.json');
+  assert.equal(H.points.length, 12);
+  assert.equal(new Set(H.points.map(point => point.id)).size, 12);
+  assert.equal(H.points[0].id, 'proposal');
+  assert.equal(H.points.at(-1).id, 'book');
+  assert.match(H.framework, /our prompts/);
+  assert.match(H.points.find(point => point.id === 'server').caption, /2005/);
+  assert.match(H.points.find(point => point.id === 'firstwebsite').caption, /2021.*later reconstruction/);
+  assert.match(H.points.find(point => point.id === 'portrait').credit, /Paul Clarke/);
+  for (const point of H.points) {
+    assert.ok(point.caption && point.credit && point.fact && point.date, point.id);
+    for (const url of [point.record, point.imageSource, ...(point.terms ? [point.terms] : [])]) assert.ok(M.externalUrl(url), point.id);
+    assert.ok(point.decision.question && point.decision.change && point.decision.next, point.id);
+    assert.ok(point.media.width > 0 && point.media.height > 0);
+    if (point.media.kind === 'archive') assert.ok(M.externalUrl(point.media.url));
+    else assert.equal(point.media.kind, 'bundled');
+  }
 });

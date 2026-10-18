@@ -2,6 +2,16 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
+## Tim's picture and decision trail · version 1.7.8
+
+Open **Learn → Knowledge Trail → Explore Tim’s story** for twelve historical
+picture milestones, dated captions, source and reuse links, and an app-created
+decision trail. Questions and interpretations stay separate from recorded
+actions. Images display at their normal size, without image zoom. The existing
+five-step example and personal trail remain available. Some archive images
+require an internet connection; captions and historical reading remain offline.
+See [scope, provenance and verification](docs/TIM_PICTURE_TRAIL.md).
+
 ## Australia-wide support directory - version 1.7.7
 
 Open **Support** and choose National or any of the eight states and territories.
