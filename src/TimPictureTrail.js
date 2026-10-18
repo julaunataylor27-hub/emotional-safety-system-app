@@ -25,9 +25,9 @@ function Picture({point}) {
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   return <View style={s.section}>
-    {!failed ? <Image key={attempt} testID="picture-trail-image" source={BUNDLED[point.id] || {uri: point.media.url}}
+    {!failed ? <View style={[s.imageFrame, {aspectRatio: point.media.width / point.media.height}, point.id === 'book' && s.book]}><Image key={attempt} testID="picture-trail-image" source={BUNDLED[point.id] || {uri: point.media.url}}
       accessibilityLabel={point.caption} resizeMode="contain"
-      onError={() => setFailed(true)} style={[s.image, {aspectRatio: point.media.width / point.media.height}, point.id === 'book' && s.book]}/>
+      onError={() => setFailed(true)} style={s.image}/></View>
       : <View testID="picture-trail-image-error" style={s.note} accessibilityLiveRegion="polite">
         <Text style={s.body}>This archive image could not load. You can retry or use its image source below. The caption and decision trail are still available.</Text>
         <Button id="picture-trail-image-retry" label="Retry image" onPress={() => {setFailed(false); setAttempt(value => value + 1);}}/>
@@ -120,7 +120,7 @@ const s = StyleSheet.create({
   heading: {fontSize: 23, lineHeight: 32, fontWeight: '600', color: P.text},
   body: {fontSize: 17, lineHeight: 28, color: P.text}, small: {fontSize: 14, lineHeight: 23, color: P.muted},
   credit: {fontSize: 13, lineHeight: 21, color: P.muted}, label: {fontSize: 14, lineHeight: 23, fontWeight: '600', color: P.gold},
-  image: {width: '100%', borderRadius: 12}, book: {maxWidth: 290, alignSelf: 'center'},
+  imageFrame: {width: '100%', borderRadius: 12, overflow: 'hidden'}, image: {width: '100%', height: '100%'}, book: {maxWidth: 290, alignSelf: 'center'},
   button: {minHeight: 50, borderRadius: 14, borderWidth: 1, borderColor: P.line, paddingHorizontal: 14, paddingVertical: 12, justifyContent: 'center'},
   buttonText: {fontSize: 16, lineHeight: 25, color: P.text, textAlign: 'center', fontWeight: '600'},
   primary: {backgroundColor: P.gold, borderColor: P.gold}, dark: {color: P.bg}, disabled: {opacity: .45}, pressed: {opacity: .78},

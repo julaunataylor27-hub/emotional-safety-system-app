@@ -112,6 +112,28 @@ def capture(name):
     (OUT / (name + ".xml")).write_text(adb("shell", "cat", "/sdcard/window.xml", check=False))
 
 
+def support_directory_checks():
+    find("Find support across Australia.", scroll=True)
+    capture("support-directory-wa")
+    tap("Choose state or territory. Current: Western Australia", scroll=True, exact=True)
+    find("Northern Territory", scroll=True)
+    capture("support-directory-regions")
+    tap("Australian Capital Territory", scroll=True, navigate=True, exact=True)
+    tap("Choose type of help. Current: All support", scroll=True, exact=True)
+    tap("Housing, food and money", scroll=True, navigate=True, exact=True)
+    find("FIRST Canberra (formerly OneLink)", scroll=True)
+    find("1800 176 468", scroll=True)
+    capture("support-directory-act-housing")
+    top()
+    tap("Choose state or territory. Current: Australian Capital Territory", scroll=True, exact=True)
+    tap("National services", scroll=True, navigate=True, exact=True)
+    tap("Choose type of help. Current: Housing, food and money", scroll=True, exact=True)
+    tap("Aboriginal and Torres Strait Islander support", scroll=True, navigate=True, exact=True)
+    find("community-controlled health", scroll=True)
+    capture("support-directory-national-first-nations")
+    print("PASS: support directory switches jurisdiction and help type, including ACT housing and national First Nations resources.")
+
+
 adb("install", "-r", sys.argv[1], timeout=120)
 adb("logcat", "-c")
 try:
@@ -123,6 +145,42 @@ try:
     find("Grow yourself.")
     capture("home")
     print("PASS: installed release renders the approved golden-tree Home.")
+    if "--picture-release-check" in sys.argv[2:]:
+        tap("Learn", navigate=True)
+        tap("Knowledge Trail", scroll=True, navigate=True)
+        tap("Explore Tim’s story", scroll=True, navigate=True, exact=True)
+        tap("Choose a milestone. Current: March 1989 · The proposal", scroll=True, exact=True)
+        tap("1990 · First Web server", scroll=True, navigate=True, exact=True)
+        # Position the complete bundled photograph inside the viewport. Its
+        # intrinsic width/height previously overrode the responsive layout.
+        image = None
+        for _ in range(15):
+            root = screen()
+            for node in root.iter("node"):
+                if node.get("resource-id", "").endswith("picture-trail-image"):
+                    coords = tuple(map(int, re.findall(r"\d+", node.get("bounds", ""))))
+                    if len(coords) == 4:
+                        left, upper, right, lower = coords
+                        if upper >= BODY[1] + 30 and lower <= BODY[3] - 30 and lower - upper > 500:
+                            image = node
+                            break
+            if image is not None:
+                break
+            left, upper, right, lower = BODY
+            adb("shell", "input", "swipe", str(right - 30), str(lower - 100), str(right - 30), str(lower - 350), "250")
+        assert image is not None, "The complete server photograph must fit on screen"
+        assert left >= 40 and right <= 1040, "Photograph exceeds content margins"
+        assert abs((right-left)/(lower-upper) - 4/3) < .04, "Server photograph lost its aspect ratio"
+        assert image.get("clickable") == "false", "Pictures should not open zoom controls"
+        capture("picture-server-responsive")
+        find("Question · our prompt", scroll=True)
+        find("What the evidence establishes", scroll=True)
+        capture("picture-decisions")
+        print("PASS: complete bundled photograph fits content width and ratio, with no image zoom, and decision trail opens.")
+        tap("Home", navigate=True)
+        tap("Find support", scroll=True, navigate=True)
+        support_directory_checks()
+        tap("Home", navigate=True)
     # Diagnose journey/reflection independently after navigation has passed.
     if "--journey-and-reflection" not in sys.argv[2:]:
         tap("Start my journey", scroll=True, navigate=True)
@@ -287,25 +345,7 @@ try:
         tap("Find support", scroll=True, navigate=True)
         find("Support Resources")
         if "--support-directory" in sys.argv[2:]:
-            find("Find support across Australia.", scroll=True)
-            capture("support-directory-wa")
-            tap("Choose state or territory. Current: Western Australia", scroll=True, exact=True)
-            find("Northern Territory", scroll=True)
-            capture("support-directory-regions")
-            tap("Australian Capital Territory", scroll=True, exact=True)
-            tap("Choose type of help. Current: All support", scroll=True, exact=True)
-            tap("Housing, food and money", scroll=True, exact=True)
-            find("FIRST Canberra (formerly OneLink)", scroll=True)
-            find("1800 176 468", scroll=True)
-            capture("support-directory-act-housing")
-            top()
-            tap("Choose state or territory. Current: Australian Capital Territory", scroll=True, exact=True)
-            tap("National services", scroll=True, exact=True)
-            tap("Choose type of help. Current: Housing, food and money", scroll=True, exact=True)
-            tap("Aboriginal and Torres Strait Islander support", scroll=True, exact=True)
-            find("community-controlled health", scroll=True)
-            capture("support-directory-national-first-nations")
-            print("PASS: support directory switches jurisdiction and help type, including ACT housing and national First Nations resources.")
+            support_directory_checks()
         tap("Home", navigate=True)
         tap("Open menu", navigate=True)
         find("More")
