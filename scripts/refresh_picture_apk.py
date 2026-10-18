@@ -1,4 +1,5 @@
 """Refresh only Hermes JS in a known prototype APK; keep native bytes unchanged."""
+import copy
 import hashlib
 import json
 import re
@@ -22,7 +23,7 @@ with zipfile.ZipFile(base) as old:
             if re.match(r'META-INF/(MANIFEST.MF|.*\.(SF|RSA|DSA|EC))$', item.filename, re.I):
                 continue
             data = new_bundle if item.filename == 'assets/index.android.bundle' else old.read(item.filename)
-            updated.writestr(item, data)
+            updated.writestr(copy.copy(item), data)
     with zipfile.ZipFile(output) as updated:
         for name in updated.namelist():
             if name != 'assets/index.android.bundle':
