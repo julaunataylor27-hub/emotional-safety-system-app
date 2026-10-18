@@ -2,13 +2,13 @@
   "expo": {
     "name": "Emotional Safety System",
     "slug": "emotional-safety-system",
-    "version": "1.7.6",
+    "version": "1.7.7",
     "newArchEnabled": true,
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "android": {
       "package": "au.org.emotionalsafety.prototype",
-      "versionCode": 24
+      "versionCode": 25
     },
     "ios": {
       "bundleIdentifier": "au.org.emotionalsafety.prototype",

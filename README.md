@@ -2,6 +2,20 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
+## Australia-wide support directory - version 1.7.7
+
+Open **Support** and choose National or any of the eight states and territories.
+Filter by type of help or search public service information. The directory adds
+housing, food, financial counselling, legal, First Nations, disability, carer,
+elder abuse and online-safety pathways alongside counselling, violence and
+child-safety support. Cards show audiences, opening hours and source links.
+Emergency access stays visible and external contacts open only after a tap.
+
+The 73 researched service/directory entries were web checked on 18 October 2026;
+existing national First Nations crisis support is also retained. Regional limits
+and after-hours contacts are labelled. See [scope and verification notes](docs/SUPPORT_DIRECTORY.md).
+Install the new 1.7.7 Android APK to see this update on a phone.
+
 ## Compare and stay curious — version 1.7.3
 
 Open **Learn → Compare & stay curious** or the same entry in **More**. Start with one of six large question cards, follow one question at a time, then explore Whadjuk Noongar, Wajarri Yamatji or Badimia public accounts across four topics. Short summaries expand to the full attributed statements. Larger writing, full-name account selectors and gold source buttons make the phone view easier to read. Each account keeps its source attribution, date, scope and unanswered points available; evidence gaps remain visible even when the full account is closed. A missing detail stays a research gap; corporate governance is not presented as a family-conflict procedure, and the proposed Yamatji triangle remains unverified.

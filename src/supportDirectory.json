@@ -1,0 +1,1666 @@
+{
+  "checked": "18 October 2026",
+  "services": [
+    {
+      "id": "emergency",
+      "name": "Emergency: police, fire or ambulance",
+      "regions": [
+        "National"
+      ],
+      "category": "Emergency",
+      "audience": "Anyone in Australia",
+      "help": "Immediate danger or a life-threatening emergency.",
+      "contacts": [
+        {
+          "label": "Emergency",
+          "number": "000",
+          "url": "tel:000"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.triplezero.gov.au/",
+      "source_url": "https://www.wa.gov.au/organisation/department-of-communities/family-and-domestic-violence-helplines-and-support-services",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "lifeline",
+      "name": "Lifeline",
+      "regions": [
+        "National"
+      ],
+      "category": "Crisis support",
+      "audience": "Anyone in Australia",
+      "help": "Support when overwhelmed, in crisis or needing to be heard.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "13 11 14",
+          "url": "tel:+61131114?oai_link_source=model_response_hotline"
+        },
+        {
+          "label": "Text",
+          "number": "0477 13 11 14",
+          "url": "sms:+61477131114?oai_link_source=model_response_hotline"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.lifeline.org.au?oai_link_source=model_response_hotline",
+      "source_url": "https://www.lifeline.org.au?oai_link_source=model_response_hotline",
+      "checked": "18 October 2026",
+      "notes": "Phone, text and online chat.",
+      "extra_links": [
+        {
+          "label": "Online chat",
+          "url": "https://www.lifeline.org.au/crisis-chat/?oai_link_source=model_response_hotline"
+        }
+      ]
+    },
+    {
+      "id": "respect",
+      "name": "1800RESPECT",
+      "regions": [
+        "National"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People affected by domestic, family or sexual violence",
+      "help": "Counselling, information and referral.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 737 732",
+          "url": "tel:1800737732"
+        },
+        {
+          "label": "Text",
+          "number": "0458 737 732",
+          "url": "sms:0458737732"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://1800respect.org.au/",
+      "source_url": "https://1800respect.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Online chat and video options on the website.",
+      "extra_links": []
+    },
+    {
+      "id": "kids",
+      "name": "Kids Helpline",
+      "regions": [
+        "National"
+      ],
+      "category": "Children and young people",
+      "audience": "Ages 5 to 25",
+      "help": "Phone and online counselling about any concern.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 55 1800",
+          "url": "tel:1800551800"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.kidshelpline.com.au/about/faqs",
+      "source_url": "https://www.kidshelpline.com.au/about/faqs",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "medicare",
+      "name": "Medicare Mental Health",
+      "regions": [
+        "National"
+      ],
+      "category": "Mental health navigation",
+      "audience": "People seeking suitable mental health support",
+      "help": "Help finding mental health services and next steps.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 595 212",
+          "url": "tel:1800595212"
+        }
+      ],
+      "hours": "Mon-Fri 8:30am-5pm; excluding public holidays",
+      "website": "https://www.medicarementalhealth.gov.au/finding-help/medicare-mental-health-services",
+      "source_url": "https://www.medicarementalhealth.gov.au/finding-help/medicare-mental-health-services",
+      "checked": "18 October 2026",
+      "notes": "Service navigation; not an emergency response.",
+      "extra_links": []
+    },
+    {
+      "id": "qlife",
+      "name": "QLife",
+      "regions": [
+        "National"
+      ],
+      "category": "LGBTIQA+ support",
+      "audience": "LGBTIQA+ people and those supporting them",
+      "help": "Peer support and referrals.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 184 527",
+          "url": "tel:1800184527"
+        }
+      ],
+      "hours": "3pm-9pm every day, in each state or territory's local time",
+      "website": "https://www.qlife.org.au/get-help",
+      "source_url": "https://www.qlife.org.au/resources/chat",
+      "checked": "18 October 2026",
+      "notes": "Phone and webchat. Hours changed from December 2025.",
+      "extra_links": []
+    },
+    {
+      "id": "blueknot",
+      "name": "Blue Knot Helpline",
+      "regions": [
+        "National"
+      ],
+      "category": "Trauma support",
+      "audience": "Adults affected by childhood trauma and people supporting them",
+      "help": "Brief trauma-specialist counselling, information and referrals.",
+      "contacts": [
+        {
+          "label": "Phone; press 1",
+          "number": "1300 657 380",
+          "url": "tel:1300657380"
+        }
+      ],
+      "hours": "9am-5pm AEST/AEDT, 7 days including public holidays",
+      "website": "https://blueknot.org.au/survivors/blue-knot-helpline/",
+      "source_url": "https://blueknot.org.au/survivors/blue-knot-helpline/",
+      "checked": "18 October 2026",
+      "notes": "Not a crisis service. Webchat provides information/referrals rather than counselling.",
+      "extra_links": []
+    },
+    {
+      "id": "bravehearts",
+      "name": "Bravehearts Information and Support Line",
+      "regions": [
+        "National"
+      ],
+      "category": "Child sexual abuse support",
+      "audience": "People seeking support or information about child sexual abuse",
+      "help": "Information, advice and referral.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 272 831",
+          "url": "tel:1800272831"
+        }
+      ],
+      "hours": "Weekdays 8:30am-4:30pm AEST; public holidays may vary",
+      "website": "https://bravehearts.org.au/",
+      "source_url": "https://www.health.gov.au/contacts/bravehearts?language=en",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "mrs",
+      "name": "Men's Referral Service",
+      "regions": [
+        "National"
+      ],
+      "category": "Behaviour change",
+      "audience": "Men using violence; family, friends and professionals",
+      "help": "Counselling and referral to help stop abusive behaviour.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1300 766 491",
+          "url": "tel:1300766491"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://mrs.org.au/",
+      "source_url": "https://mrs.org.au/",
+      "checked": "18 October 2026",
+      "notes": "A behaviour-change service; distinguish it from support for victim-survivors.",
+      "extra_links": []
+    },
+    {
+      "id": "debt",
+      "name": "National Debt Helpline",
+      "regions": [
+        "National"
+      ],
+      "category": "Money and financial hardship",
+      "audience": "People with debt or money problems",
+      "help": "Financial counselling and options for dealing with debt.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 007 007",
+          "url": "tel:1800007007"
+        }
+      ],
+      "hours": "Weekdays 9:30am-4:30pm; check provider for local arrangements",
+      "website": "https://ndh.org.au/about-national-debt-helpline/contact-us/",
+      "source_url": "https://ndh.org.au/about-national-debt-helpline/contact-us/",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "disability",
+      "name": "Disability Gateway",
+      "regions": [
+        "National"
+      ],
+      "category": "Disability",
+      "audience": "People with disability, their families and carers",
+      "help": "Information and help connecting with support and advocacy.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 643 787",
+          "url": "tel:1800643787"
+        }
+      ],
+      "hours": "Mon-Fri 8am-8pm AEST/AEDT",
+      "website": "https://www.disabilitygateway.gov.au/contact-us-form",
+      "source_url": "https://www.disabilitygateway.gov.au/contact-us-form",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "carers",
+      "name": "Carer Gateway",
+      "regions": [
+        "National"
+      ],
+      "category": "Carers",
+      "audience": "People providing unpaid care",
+      "help": "Connect with carer support and local services.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 422 737",
+          "url": "tel:1800422737"
+        }
+      ],
+      "hours": "General support: Mon-Fri 8am-5pm",
+      "website": "https://www.carergateway.gov.au/about-us/contact-us",
+      "source_url": "https://www.carergateway.gov.au/about-us/contact-us",
+      "checked": "18 October 2026",
+      "notes": "Ask about eligibility and emergency respite options; the general-contact hours above are not a crisis-service promise.",
+      "extra_links": []
+    },
+    {
+      "id": "elder",
+      "name": "1800 ELDERHelp",
+      "regions": [
+        "National"
+      ],
+      "category": "Older people and elder abuse",
+      "audience": "Older people and anyone concerned about elder abuse",
+      "help": "Connects callers with their state or territory elder-abuse service.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 353 374",
+          "url": "tel:1800353374"
+        }
+      ],
+      "hours": "Hours depend on the receiving state/territory service",
+      "website": "https://www.health.gov.au/contacts/elder-abuse-phone-line",
+      "source_url": "https://www.health.gov.au/contacts/elder-abuse-phone-line",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "tis",
+      "name": "TIS National",
+      "regions": [
+        "National"
+      ],
+      "category": "Language access",
+      "audience": "People needing a spoken-language interpreter",
+      "help": "Ask an interpreter to connect you with the service you need.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "131 450",
+          "url": "tel:131450"
+        }
+      ],
+      "hours": "Immediate phone interpreting: 24 hours, every day",
+      "website": "https://www.tisnational.gov.au/Contact-us",
+      "source_url": "https://www.tisnational.gov.au/Contact-us",
+      "checked": "18 October 2026",
+      "notes": "Ask the receiving service about interpreting eligibility and charges.",
+      "extra_links": []
+    },
+    {
+      "id": "relay",
+      "name": "National Relay Service / Access Hub",
+      "regions": [
+        "National"
+      ],
+      "category": "Accessible communication",
+      "audience": "People who are deaf, hard of hearing or have speech communication difficulty",
+      "help": "Find the relay call type and access point that suits you.",
+      "contacts": [],
+      "hours": "Depends on the relay option; check the website",
+      "website": "https://www.accesshub.gov.au/about-the-nrs",
+      "source_url": "https://www.accesshub.gov.au/about-the-nrs",
+      "checked": "18 October 2026",
+      "notes": "Access numbers and registration vary by call type; use the official instructions.",
+      "extra_links": []
+    },
+    {
+      "id": "esafety",
+      "name": "eSafety Commissioner",
+      "regions": [
+        "National"
+      ],
+      "category": "Online safety and reporting",
+      "audience": "Australians affected by serious online harm",
+      "help": "Reporting pathways for cyberbullying, adult cyber abuse, image-based abuse and illegal content.",
+      "contacts": [],
+      "hours": "Online information and reporting; response times vary",
+      "website": "https://www.esafety.gov.au/report",
+      "source_url": "https://www.esafety.gov.au/report",
+      "checked": "18 October 2026",
+      "notes": "Read the criteria and reporting steps for the relevant scheme.",
+      "extra_links": []
+    },
+    {
+      "id": "izzy",
+      "name": "Ask Izzy",
+      "regions": [
+        "National"
+      ],
+      "category": "Food, housing and local help",
+      "audience": "People seeking nearby practical support",
+      "help": "Search for food, housing, everyday essentials and other local services.",
+      "contacts": [],
+      "hours": "Online directory; individual providers have their own hours",
+      "website": "https://askizzy.org.au/",
+      "source_url": "https://askizzy.org.au/",
+      "checked": "18 October 2026",
+      "notes": "A directory, not a guarantee of a bed, payment or same-day assistance.",
+      "extra_links": []
+    },
+    {
+      "id": "naccho",
+      "name": "NACCHO: find an Aboriginal community-controlled health service",
+      "regions": [
+        "National"
+      ],
+      "category": "First Nations health",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Find community-controlled health organisations by location.",
+      "contacts": [],
+      "hours": "Directory; check the chosen health service",
+      "website": "https://www.naccho.org.au/locations/",
+      "source_url": "https://www.naccho.org.au/locations/",
+      "checked": "18 October 2026",
+      "notes": "Check local services, coverage and appointment arrangements.",
+      "extra_links": []
+    },
+    {
+      "id": "wellmob",
+      "name": "WellMob",
+      "regions": [
+        "National"
+      ],
+      "category": "First Nations wellbeing",
+      "audience": "Aboriginal and Torres Strait Islander people and supporters",
+      "help": "Social, emotional and cultural wellbeing resources, including audio and video.",
+      "contacts": [],
+      "hours": "Online resources",
+      "website": "https://wellmob.org.au/",
+      "source_url": "https://wellmob.org.au/",
+      "checked": "18 October 2026",
+      "notes": "An educational resource collection, not an emergency response.",
+      "extra_links": []
+    },
+    {
+      "id": "fvpls",
+      "name": "Find a Family Violence Prevention Legal Service",
+      "regions": [
+        "National"
+      ],
+      "category": "First Nations legal and family violence",
+      "audience": "Aboriginal and Torres Strait Islander victim-survivors",
+      "help": "Find community-controlled legal and support services by region.",
+      "contacts": [],
+      "hours": "Directory; each local service sets its hours and eligibility",
+      "website": "https://fnaafv.org.au/fvpls/how-to-find-them",
+      "source_url": "https://fnaafv.org.au/fvpls/how-to-find-them",
+      "checked": "18 October 2026",
+      "notes": "FNAAFV is a peak body; contact a listed local service for help.",
+      "extra_links": []
+    },
+    {
+      "id": "wa-women",
+      "name": "Women's Domestic Violence Helpline",
+      "regions": [
+        "WA"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Western Australians affected by family and domestic violence",
+      "help": "Support and referrals, including women's refuges.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 007 339",
+          "url": "tel:1800007339"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.wa.gov.au/organisation/department-of-communities/family-and-domestic-violence-helplines-and-support-services",
+      "source_url": "https://www.wa.gov.au/organisation/department-of-communities/family-and-domestic-violence-helplines-and-support-services",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "wa-men",
+      "name": "Men's Domestic Violence Helpline",
+      "regions": [
+        "WA"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Male victim-survivors and men concerned about their behaviour",
+      "help": "Information and referrals.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 000 599",
+          "url": "tel:1800000599"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.wa.gov.au/organisation/department-of-communities/family-and-domestic-violence-helplines-and-support-services",
+      "source_url": "https://www.wa.gov.au/organisation/department-of-communities/family-and-domestic-violence-helplines-and-support-services",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "wa-child",
+      "name": "Child Protection Central Intake / Crisis Care",
+      "regions": [
+        "WA"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "Anyone concerned about a child's wellbeing",
+      "help": "Child-protection intake; after-hours concerns and crisis referrals.",
+      "contacts": [
+        {
+          "label": "Central Intake: business hours",
+          "number": "1800 273 889",
+          "url": "tel:1800273889"
+        },
+        {
+          "label": "Crisis Care: after hours",
+          "number": "1800 199 008",
+          "url": "tel:1800199008"
+        }
+      ],
+      "hours": "Central Intake: business hours. Crisis Care: after hours",
+      "website": "https://www.wa.gov.au/organisation/department-of-communities/concerns-the-safety-or-wellbeing-of-child-or-young-person",
+      "source_url": "https://www.wa.gov.au/organisation/department-of-communities/family-and-domestic-violence-helplines-and-support-services",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "wa-sarc",
+      "name": "Sexual Assault Resource Centre (SARC)",
+      "regions": [
+        "WA"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "All genders, age 13+; crisis medical services for Perth and Peel",
+      "help": "Sexual-assault medical, forensic and counselling support.",
+      "contacts": [
+        {
+          "label": "Crisis line",
+          "number": "1800 199 888",
+          "url": "tel:1800199888"
+        },
+        {
+          "label": "Alternative number",
+          "number": "08 6458 1828",
+          "url": "tel:0864581828"
+        }
+      ],
+      "hours": "Crisis medical line: 24 hours. Telephone counselling: 8:30am-11pm daily",
+      "website": "https://www.kemh.health.wa.gov.au/Other-Services/SARC/Crisis-services",
+      "source_url": "https://www.kemh.health.wa.gov.au/Other-Services/SARC/Crisis-services",
+      "checked": "18 October 2026",
+      "notes": "Under 13s and regional medical needs have different pathways; read the source.",
+      "extra_links": []
+    },
+    {
+      "id": "wa-house",
+      "name": "Entrypoint Perth",
+      "regions": [
+        "WA"
+      ],
+      "category": "Housing",
+      "audience": "People homeless or at risk; regional information also available",
+      "help": "Assessment and referral for accommodation and support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 124 684",
+          "url": "tel:1800124684"
+        }
+      ],
+      "hours": "Mon-Fri 9am-7pm; Sat-Sun 9am-5pm; closed public holidays",
+      "website": "https://www.entrypointperth.com.au/contact-us/",
+      "source_url": "https://www.entrypointperth.com.au/contact-us/",
+      "checked": "18 October 2026",
+      "notes": "Provider contact page includes Sunday hours; accommodation availability varies.",
+      "extra_links": []
+    },
+    {
+      "id": "wa-legal",
+      "name": "Legal Aid WA",
+      "regions": [
+        "WA"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1300 650 579",
+          "url": "tel:1300650579"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.legalaid.wa.gov.au/",
+      "source_url": "https://www.fcfcoa.gov.au/gfl/lhelp-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "nsw-legal",
+      "name": "Legal Aid NSW / LawAccess NSW",
+      "regions": [
+        "NSW"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1300 888 529",
+          "url": "tel:1300888529"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.legalaid.nsw.gov.au/",
+      "source_url": "https://www.fcfcoa.gov.au/gfl/lhelp-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "vic-legal",
+      "name": "Victoria Legal Aid",
+      "regions": [
+        "VIC"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1300 792 387",
+          "url": "tel:1300792387"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.legalaid.vic.gov.au/",
+      "source_url": "https://www.fcfcoa.gov.au/gfl/lhelp-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "qld-legal",
+      "name": "Legal Aid Queensland",
+      "regions": [
+        "QLD"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1300 651 188",
+          "url": "tel:1300651188"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.legalaid.qld.gov.au/",
+      "source_url": "https://www.fcfcoa.gov.au/gfl/lhelp-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "sa-legal",
+      "name": "Legal Services Commission SA",
+      "regions": [
+        "SA"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1300 366 424",
+          "url": "tel:1300366424"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.lsc.sa.gov.au/",
+      "source_url": "https://www.fcfcoa.gov.au/gfl/lhelp-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "tas-legal",
+      "name": "Tasmania Legal Aid",
+      "regions": [
+        "TAS"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1300 366 611",
+          "url": "tel:1300366611"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.legalaid.tas.gov.au/",
+      "source_url": "https://www.fcfcoa.gov.au/gfl/lhelp-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "act-legal",
+      "name": "Legal Aid ACT",
+      "regions": [
+        "ACT"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1300 654 314",
+          "url": "tel:1300654314"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.legalaidact.org.au/contact-legal-aid",
+      "source_url": "https://www.legalaidact.org.au/contact-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "nt-legal",
+      "name": "Legal Aid NT",
+      "regions": [
+        "NT"
+      ],
+      "category": "Legal",
+      "audience": "People seeking legal information or assistance",
+      "help": "Legal information and referral; advice or representation subject to eligibility.",
+      "contacts": [
+        {
+          "label": "Legal help",
+          "number": "1800 019 343",
+          "url": "tel:1800019343"
+        }
+      ],
+      "hours": "Check provider hours and eligibility",
+      "website": "https://www.legalaid.nt.gov.au/",
+      "source_url": "https://www.fcfcoa.gov.au/gfl/lhelp-legal-aid",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "wa-afls",
+      "name": "Aboriginal Family Legal Services WA",
+      "regions": [
+        "WA"
+      ],
+      "category": "First Nations legal and family violence",
+      "audience": "Aboriginal and Torres Strait Islander people affected by violence",
+      "help": "Family violence and sexual-assault legal support.",
+      "contacts": [
+        {
+          "label": "Freecall",
+          "number": "1800 469 246",
+          "url": "tel:1800469246"
+        }
+      ],
+      "hours": "Check provider hours, region and eligibility",
+      "website": "https://www.afls.org.au/",
+      "source_url": "https://www.wa.gov.au/organisation/department-of-communities/family-and-domestic-violence-helplines-and-support-services",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "nsw-dv",
+      "name": "NSW Domestic Violence Line",
+      "regions": [
+        "NSW"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People seeking domestic-violence support",
+      "help": "Counselling, information and referral.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 656 463",
+          "url": "tel:1800656463"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "source_url": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "nsw-sex",
+      "name": "NSW Sexual Violence Helpline",
+      "regions": [
+        "NSW"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People of all genders affected by sexual violence",
+      "help": "Specialist counselling and support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 424 017",
+          "url": "tel:1800424017"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "source_url": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "nsw-child",
+      "name": "NSW Child Protection Helpline",
+      "regions": [
+        "NSW"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "Anyone concerned about a child at risk",
+      "help": "Report child-protection concerns.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "13 21 11",
+          "url": "tel:132111"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "source_url": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "nsw-house",
+      "name": "Link2home",
+      "regions": [
+        "NSW"
+      ],
+      "category": "Housing",
+      "audience": "People homeless or at risk of homelessness",
+      "help": "Housing information, assessment and referral.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 152 152",
+          "url": "tel:1800152152"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "source_url": "https://dcj.nsw.gov.au/contact-us/helplines.html",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "vic-dv",
+      "name": "Safe Steps",
+      "regions": [
+        "VIC"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People affected by family violence in Victoria",
+      "help": "Crisis support, safety planning and accommodation pathways.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 015 188",
+          "url": "tel:1800015188"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://safesteps.org.au/",
+      "source_url": "https://safesteps.org.au/",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "vic-sex",
+      "name": "Sexual Assault Crisis Line (SACL)",
+      "regions": [
+        "VIC"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People impacted by sexual violence; supporters and professionals",
+      "help": "Counselling and recent-assault response.",
+      "contacts": [
+        {
+          "label": "Counselling",
+          "number": "1800 806 292",
+          "url": "tel:1800806292"
+        },
+        {
+          "label": "Recent-assault after-hours response",
+          "number": "1800 577 011",
+          "url": "tel:1800577011"
+        }
+      ],
+      "hours": "Counselling: 24/7. Response line: 5pm-9am weekdays; all weekend/public holiday",
+      "website": "https://www.sacl.com.au/support",
+      "source_url": "https://www.sacl.com.au/support",
+      "checked": "18 October 2026",
+      "notes": "The two lines have different purposes and hours.",
+      "extra_links": []
+    },
+    {
+      "id": "vic-child",
+      "name": "Victoria Child Protection",
+      "regions": [
+        "VIC"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "Anyone concerned about a child at significant risk",
+      "help": "Choose the division for the child's local government area.",
+      "contacts": [
+        {
+          "label": "North",
+          "number": "1300 598 521",
+          "url": "tel:1300598521"
+        },
+        {
+          "label": "South",
+          "number": "1300 555 526",
+          "url": "tel:1300555526"
+        },
+        {
+          "label": "East",
+          "number": "1300 360 452",
+          "url": "tel:1300360452"
+        },
+        {
+          "label": "West",
+          "number": "1300 360 462",
+          "url": "tel:1300360462"
+        },
+        {
+          "label": "After-hours emergency",
+          "number": "13 12 78",
+          "url": "tel:131278"
+        }
+      ],
+      "hours": "Divisions: Mon-Fri 8:45am-5pm. After hours: 5pm-9am weekdays, all weekends/public holidays",
+      "website": "https://services.dffh.vic.gov.au/child-protection-contacts",
+      "source_url": "https://services.dffh.vic.gov.au/child-protection-contacts",
+      "checked": "18 October 2026",
+      "notes": "Use the provider page to match the child's area. Updated division numbers apply.",
+      "extra_links": []
+    },
+    {
+      "id": "vic-house",
+      "name": "Victoria homelessness assistance",
+      "regions": [
+        "VIC"
+      ],
+      "category": "Housing",
+      "audience": "People homeless or at risk",
+      "help": "Connect with housing and support services.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 825 955",
+          "url": "tel:1800825955"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.housing.vic.gov.au/crisis-emergency-accommodation",
+      "source_url": "https://www.housing.vic.gov.au/crisis-emergency-accommodation",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "vic-orange",
+      "name": "The Orange Door",
+      "regions": [
+        "VIC"
+      ],
+      "category": "Family support",
+      "audience": "Adults, children and families affected by violence or needing family support",
+      "help": "Find a local entry point for family violence and family services.",
+      "contacts": [],
+      "hours": "Check the local service",
+      "website": "https://services.dffh.vic.gov.au/orange-door-and-family-services",
+      "source_url": "https://services.dffh.vic.gov.au/orange-door-and-family-services",
+      "checked": "18 October 2026",
+      "notes": "Use the website to find the correct local contact.",
+      "extra_links": []
+    },
+    {
+      "id": "qld-dv",
+      "name": "DVConnect Womensline",
+      "regions": [
+        "QLD"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Queenslanders experiencing domestic and family violence",
+      "help": "Crisis support and access to safety.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 811 811",
+          "url": "tel:1800811811"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.dvconnect.org/about-us/contact/",
+      "source_url": "https://www.dvconnect.org/about-us/contact/",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "qld-men",
+      "name": "DVConnect Mensline",
+      "regions": [
+        "QLD"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Men experiencing or using domestic and family violence",
+      "help": "Counselling, information and referral.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 600 636",
+          "url": "tel:1800600636"
+        }
+      ],
+      "hours": "9am-midnight, every day",
+      "website": "https://www.dvconnect.org/about-us/contact/",
+      "source_url": "https://www.dvconnect.org/about-us/contact/",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "qld-sex",
+      "name": "DVConnect Sexual Assault Helpline",
+      "regions": [
+        "QLD"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Anyone in Queensland affected by sexual assault or abuse",
+      "help": "Sexual-assault counselling and support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 010 120",
+          "url": "tel:1800010120"
+        }
+      ],
+      "hours": "7:30am-11:30pm, every day",
+      "website": "https://www.dvconnect.org/about-us/contact/",
+      "source_url": "https://www.dvconnect.org/about-us/contact/",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "qld-child",
+      "name": "Queensland Child Safety",
+      "regions": [
+        "QLD"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "Anyone concerned about a child's safety",
+      "help": "Regional intake in business hours; after-hours response.",
+      "contacts": [
+        {
+          "label": "After hours",
+          "number": "1800 177 135",
+          "url": "tel:1800177135"
+        }
+      ],
+      "hours": "Regional intake: Mon-Fri 9am-5pm. Use after-hours line outside these hours",
+      "website": "https://www.qld.gov.au/community/getting-support-health-social-issue/support-victims-abuse/child-abuse/reporting-child-abuse",
+      "source_url": "https://www.qld.gov.au/community/getting-support-health-social-issue/support-victims-abuse/child-abuse/reporting-child-abuse",
+      "checked": "18 October 2026",
+      "notes": "Business-hours numbers differ by region: follow Regional Intake Service on the source page.",
+      "extra_links": []
+    },
+    {
+      "id": "qld-house",
+      "name": "Queensland Homeless Hotline",
+      "regions": [
+        "QLD"
+      ],
+      "category": "Housing",
+      "audience": "People homeless or at risk",
+      "help": "Information and referral for accommodation and practical support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 474 753",
+          "url": "tel:1800474753"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.qld.gov.au/housing/emergency-temporary-housing/housing-options-in-a-crisis",
+      "source_url": "https://www.qld.gov.au/housing/emergency-temporary-housing/housing-options-in-a-crisis",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "sa-dv",
+      "name": "Domestic Violence Crisis Line SA",
+      "regions": [
+        "SA"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Women and children affected by domestic/family violence",
+      "help": "Crisis counselling, information and safe accommodation options.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 800 098",
+          "url": "tel:1800800098"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://womenssafetyservices.com.au/how-to-get-help/",
+      "source_url": "https://womenssafetyservices.com.au/how-to-get-help/",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "sa-sex",
+      "name": "Yarrow Place Rape and Sexual Assault Service",
+      "regions": [
+        "SA"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People aged 16+ at the time of sexual assault",
+      "help": "Specialist sexual-assault support and crisis response.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 817 421",
+          "url": "tel:1800817421"
+        }
+      ],
+      "hours": "24-hour crisis response",
+      "website": "https://www.wchn.sa.gov.au/our-network/yarrow-place",
+      "source_url": "https://www.sa.gov.au/topics/emergencies-and-safety/crisis-helplines-and-support",
+      "checked": "18 October 2026",
+      "notes": "Contact the service about age-specific and regional pathways.",
+      "extra_links": []
+    },
+    {
+      "id": "sa-child",
+      "name": "SA Child Abuse Report Line (CARL)",
+      "regions": [
+        "SA"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "Anyone concerned about abuse or neglect of a child",
+      "help": "Report child-protection concerns.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "13 14 78",
+          "url": "tel:131478"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://aifs.gov.au/resources/resource-sheets/reporting-child-abuse-and-neglect",
+      "source_url": "https://aifs.gov.au/resources/resource-sheets/reporting-child-abuse-and-neglect",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "sa-house",
+      "name": "Homeless Connect SA",
+      "regions": [
+        "SA"
+      ],
+      "category": "Housing",
+      "audience": "People experiencing homelessness",
+      "help": "Access information and referrals to homelessness support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 003 308",
+          "url": "tel:1800003308"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.sa.gov.au/topics/emergencies-and-safety/homelessness",
+      "source_url": "https://www.sa.gov.au/topics/emergencies-and-safety/homelessness",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "tas-dv",
+      "name": "Family Violence Response and Referral Line",
+      "regions": [
+        "TAS"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People affected by family violence",
+      "help": "Connect with a family-violence response or service.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 633 937",
+          "url": "tel:1800633937"
+        }
+      ],
+      "hours": "24 hours; after-hours calls are directed to Tasmania Police",
+      "website": "https://www.safefromviolence.tas.gov.au/services-directory",
+      "source_url": "https://www.safefromviolence.tas.gov.au/services-directory",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "tas-counselling",
+      "name": "Family Violence Counselling and Support Service",
+      "regions": [
+        "TAS"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Children, young people and adults affected by family violence",
+      "help": "Specialist family-violence counselling and support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 608 122",
+          "url": "tel:1800608122"
+        }
+      ],
+      "hours": "Mon-Fri 9am-midnight; weekends/public holidays 4pm-midnight",
+      "website": "https://www.safeathome.tas.gov.au/services/victim-survivor-services",
+      "source_url": "https://www.safeathome.tas.gov.au/services/victim-survivor-services",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "tas-sex",
+      "name": "1800MYSUPPORT",
+      "regions": [
+        "TAS"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People affected by sexual assault or harm across Tasmania",
+      "help": "Statewide sexual-assault crisis response and support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 697 877",
+          "url": "tel:1800697877"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.1800mysupport.org.au/",
+      "source_url": "https://www.1800mysupport.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Delivered by SASS and Laurel House; after-hours contact may involve a callback.",
+      "extra_links": []
+    },
+    {
+      "id": "tas-child",
+      "name": "Strong Families, Safe Kids Advice and Referral Line",
+      "regions": [
+        "TAS"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "People with concerns about a child's safety or wellbeing",
+      "help": "Advice, referral and child-safety concerns.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 000 123",
+          "url": "tel:1800000123"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.service.tas.gov.au/services/justice-crime-and-the-law/family-violence/report-a-child-safety-or-wellbeing-concern/",
+      "source_url": "https://aifs.gov.au/resources/resource-sheets/reporting-child-abuse-and-neglect",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "tas-house",
+      "name": "Housing Connect",
+      "regions": [
+        "TAS"
+      ],
+      "category": "Housing",
+      "audience": "People needing housing assistance",
+      "help": "Access housing and homelessness assistance.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 800 588",
+          "url": "tel:1800800588"
+        }
+      ],
+      "hours": "Crisis housing access: 24 hours; routine enquiries Mon-Fri 9am-5pm",
+      "website": "https://www.homestasmania.com.au/housing-and-homelessness/housing-connect",
+      "source_url": "https://www.homestasmania.com.au/housing-and-homelessness/housing-connect",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "act-dv",
+      "name": "Domestic Violence Crisis Service (DVCS)",
+      "regions": [
+        "ACT"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Anyone affected by domestic/family violence",
+      "help": "Crisis intervention, safety planning and referrals.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "02 6280 0900",
+          "url": "tel:0262800900"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://www.dvcs.org.au/",
+      "source_url": "https://www.act.gov.au/community/domestic-family-and-sexual-violence/get-help-now",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "act-sex",
+      "name": "Canberra Rape Crisis Centre",
+      "regions": [
+        "ACT"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People impacted by sexual violence",
+      "help": "Specialist crisis support and advocacy.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "02 6247 2525",
+          "url": "tel:0262472525"
+        }
+      ],
+      "hours": "7am-11pm, every day",
+      "website": "https://crcc.org.au/our-services/crisis-support/",
+      "source_url": "https://crcc.org.au/our-services/crisis-support/",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "act-child",
+      "name": "Child and Youth Protection Services (CYPS)",
+      "regions": [
+        "ACT"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "Concerns about abuse or neglect by a family member or guardian",
+      "help": "Child-protection reporting.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1300 556 729",
+          "url": "tel:1300556729"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://aifs.gov.au/resources/resource-sheets/reporting-child-abuse-and-neglect",
+      "source_url": "https://aifs.gov.au/resources/resource-sheets/reporting-child-abuse-and-neglect",
+      "checked": "18 October 2026",
+      "notes": "For abuse outside a family context, AIFS directs people to ACT Policing.",
+      "extra_links": []
+    },
+    {
+      "id": "act-house",
+      "name": "FIRST Canberra (formerly OneLink)",
+      "regions": [
+        "ACT"
+      ],
+      "category": "Housing",
+      "audience": "People with housing, homelessness and related support needs",
+      "help": "Central intake, assessment and referral.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 176 468",
+          "url": "tel:1800176468"
+        }
+      ],
+      "hours": "Mon-Fri 8am-6pm; Sat-Sun 12:30pm-5pm; closed public holidays",
+      "website": "https://www.salvationarmy.org.au/services-and-support/homelessness-support-services/specialist-services/first-canberra",
+      "source_url": "https://www.salvationarmy.org.au/services-and-support/homelessness-support-services/specialist-services/first-canberra",
+      "checked": "18 October 2026",
+      "notes": "Use the current provider name and contact details.",
+      "extra_links": []
+    },
+    {
+      "id": "nt-darwin-dv",
+      "name": "Dawn House",
+      "regions": [
+        "NT"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Women and children in Darwin experiencing domestic/family violence",
+      "help": "Shelter, counselling and outreach.",
+      "contacts": [
+        {
+          "label": "Emergency line",
+          "number": "08 8945 1388",
+          "url": "tel:0889451388"
+        }
+      ],
+      "hours": "All-hours emergency line; ask about other service hours",
+      "website": "https://www.dawnhouse.org.au/",
+      "source_url": "https://www.dawnhouse.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Regional service: Darwin. National support is also available through 1800RESPECT.",
+      "extra_links": []
+    },
+    {
+      "id": "nt-alice-dv",
+      "name": "Women's Safety Services of Central Australia (WoSSCA)",
+      "regions": [
+        "NT"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "Women and children in Alice Springs and Central Australia",
+      "help": "Shelter and domestic/family-violence support.",
+      "contacts": [
+        {
+          "label": "Shelter",
+          "number": "08 8952 6075",
+          "url": "tel:0889526075"
+        }
+      ],
+      "hours": "Check provider hours and service area",
+      "website": "https://www.wossca.org.au/",
+      "source_url": "https://nt.gov.au/law/crime/domestic-family-and-sexual-violence",
+      "checked": "18 October 2026",
+      "notes": "Regional service: Alice Springs/Central Australia.",
+      "extra_links": []
+    },
+    {
+      "id": "nt-sex",
+      "name": "NT Sexual Assault Referral Centres",
+      "regions": [
+        "NT"
+      ],
+      "category": "Violence and sexual assault",
+      "audience": "People needing sexual-assault support in the relevant NT region",
+      "help": "Medical, counselling and referral pathways.",
+      "contacts": [
+        {
+          "label": "Darwin",
+          "number": "08 8922 6472",
+          "url": "tel:0889226472"
+        },
+        {
+          "label": "Katherine",
+          "number": "08 8973 8524",
+          "url": "tel:0889738524"
+        },
+        {
+          "label": "Tennant Creek",
+          "number": "08 8962 4361",
+          "url": "tel:0889624361"
+        },
+        {
+          "label": "Alice Springs",
+          "number": "08 8955 4500",
+          "url": "tel:0889554500"
+        }
+      ],
+      "hours": "Darwin and Alice Springs: 24-hour recent-assault help. Other centres: check hours",
+      "website": "https://nt.gov.au/wellbeing/hospitals-health-services/sexual-assault-referral-centres",
+      "source_url": "https://nt.gov.au/wellbeing/hospitals-health-services/sexual-assault-referral-centres",
+      "checked": "18 October 2026",
+      "notes": "Choose the regional centre; 1800RESPECT is also available NT-wide.",
+      "extra_links": []
+    },
+    {
+      "id": "nt-child",
+      "name": "NT Child Protection Reporting Line",
+      "regions": [
+        "NT"
+      ],
+      "category": "Child safety and reporting",
+      "audience": "Anyone concerned about suspected child abuse or neglect",
+      "help": "Report or discuss child-protection concerns.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 700 250",
+          "url": "tel:1800700250"
+        }
+      ],
+      "hours": "24 hours, every day",
+      "website": "https://nt.gov.au/law/crime/report-child-abuse",
+      "source_url": "https://nt.gov.au/law/crime/report-child-abuse",
+      "checked": "18 October 2026",
+      "notes": "",
+      "extra_links": []
+    },
+    {
+      "id": "nt-house",
+      "name": "NT homelessness central intake",
+      "regions": [
+        "NT"
+      ],
+      "category": "Housing",
+      "audience": "People anywhere in the NT homeless or at risk",
+      "help": "Telephone/online screening and referral for housing support.",
+      "contacts": [
+        {
+          "label": "Phone",
+          "number": "1800 920 333",
+          "url": "tel:1800920333"
+        }
+      ],
+      "hours": "24-hour initial screening and triage",
+      "website": "https://families.nt.gov.au/homelessness/darwin-homelessness-services",
+      "source_url": "https://families.nt.gov.au/homelessness/darwin-homelessness-services",
+      "checked": "18 October 2026",
+      "notes": "Despite the source page title, the service accepts calls from anywhere in the NT.",
+      "extra_links": []
+    },
+    {
+      "id": "wa-als",
+      "name": "Aboriginal Legal Service of WA",
+      "regions": [
+        "WA"
+      ],
+      "category": "First Nations legal",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Community-controlled legal assistance.",
+      "contacts": [],
+      "hours": "Check the provider for contacts, hours and eligibility",
+      "website": "https://www.als.org.au/",
+      "source_url": "https://www.natsils.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Use the local office and practice area that fits the matter.",
+      "extra_links": []
+    },
+    {
+      "id": "nsw-act-als",
+      "name": "Aboriginal Legal Service (NSW/ACT)",
+      "regions": [
+        "NSW",
+        "ACT"
+      ],
+      "category": "First Nations legal",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Community-controlled legal assistance.",
+      "contacts": [],
+      "hours": "Check the provider for contacts, hours and eligibility",
+      "website": "https://www.alsnswact.org.au/",
+      "source_url": "https://www.natsils.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Use the local office and practice area that fits the matter.",
+      "extra_links": []
+    },
+    {
+      "id": "vic-vals",
+      "name": "Victorian Aboriginal Legal Service",
+      "regions": [
+        "VIC"
+      ],
+      "category": "First Nations legal",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Community-controlled legal assistance.",
+      "contacts": [],
+      "hours": "Check the provider for contacts, hours and eligibility",
+      "website": "https://www.vals.org.au/",
+      "source_url": "https://www.natsils.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Use the local office and practice area that fits the matter.",
+      "extra_links": []
+    },
+    {
+      "id": "qld-atsils",
+      "name": "Aboriginal and Torres Strait Islander Legal Service Queensland",
+      "regions": [
+        "QLD"
+      ],
+      "category": "First Nations legal",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Community-controlled legal assistance.",
+      "contacts": [],
+      "hours": "Check the provider for contacts, hours and eligibility",
+      "website": "https://www.atsils.org.au/",
+      "source_url": "https://www.natsils.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Use the local office and practice area that fits the matter.",
+      "extra_links": []
+    },
+    {
+      "id": "sa-alrm",
+      "name": "Aboriginal Legal Rights Movement",
+      "regions": [
+        "SA"
+      ],
+      "category": "First Nations legal",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Community-controlled legal assistance.",
+      "contacts": [],
+      "hours": "Check the provider for contacts, hours and eligibility",
+      "website": "https://www.alrm.org.au/",
+      "source_url": "https://www.natsils.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Use the local office and practice area that fits the matter.",
+      "extra_links": []
+    },
+    {
+      "id": "tas-tals",
+      "name": "Tasmanian Aboriginal Legal Service",
+      "regions": [
+        "TAS"
+      ],
+      "category": "First Nations legal",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Community-controlled legal assistance.",
+      "contacts": [],
+      "hours": "Check the provider for contacts, hours and eligibility",
+      "website": "https://tals.net.au/",
+      "source_url": "https://www.natsils.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Use the local office and practice area that fits the matter.",
+      "extra_links": []
+    },
+    {
+      "id": "nt-naaja",
+      "name": "North Australian Aboriginal Justice Agency",
+      "regions": [
+        "NT"
+      ],
+      "category": "First Nations legal",
+      "audience": "Aboriginal and Torres Strait Islander people",
+      "help": "Community-controlled legal assistance.",
+      "contacts": [],
+      "hours": "Check the provider for contacts, hours and eligibility",
+      "website": "https://www.naaja.org.au/",
+      "source_url": "https://www.natsils.org.au/",
+      "checked": "18 October 2026",
+      "notes": "Use the local office and practice area that fits the matter.",
+      "extra_links": []
+    }
+  ]
+}
