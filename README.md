@@ -1,5 +1,13 @@
 # Emotional Safety System — Mobile App Prototype
 
+## Knowledge Trails in Safe Curiosity · version 1.9.1
+
+The Safe Curiosity Lab now includes curated **Knowledge Trails**: four expandable explanations per topic (meaning, causes or mechanisms, consequences, and choices), two follow-up questions, a small optional learning check, and verified original-source links for five fictional topics. Children are directed toward age-appropriate education rather than only a warning. Younger age ranges are shown less explicit privacy content and are linked to eSafety's parent guidance. Urgent examples prioritise help rather than a quiz. Unrecognised topics teach how to check evidence without making up answers.
+
+Open **Learn → Safe Curiosity Lab**, select an example and tap **Explore safely**, then scroll to **Explore the knowledge**. The questions and assessment results are not recorded to device storage or sent to a server. Original sources open only after tapping. The prototype does not scan websites, analyse photos, browse the internet or provide complete child protection. Child-development, privacy, accessibility and cultural review are pending. See [knowledge trail details](docs/SAFE_CURIOSITY_LAB.md).
+
+Android version **1.9.1 / versionCode 30** needs a newly built APK; an existing phone installation will not change automatically.
+
 ## Safe Curiosity Lab · version 1.9.0 (offline demonstration)
 
 Open **Learn → Safe Curiosity Lab**, also available in **More**. Explore five fictional examples covering online privacy, pressure, puberty, feelings and recommendation algorithms. Choose a broad age band or enter a non-identifying question. Tap **Explore safely** to see a simple keyword-rule match, transparent explanation, educational wording and possible support. Unknown questions remain **unknown** rather than being declared safe. Possible danger gets support information.
