@@ -21,7 +21,7 @@ const BRANCHES=[],LEAVES=[];
 branch(113,219,40,-Math.PI/2,5,3,BRANCHES,LEAVES);
 const PINES=Array.from({length:19},(_,i)=>({x:i*24-10,scale:.45+(i%5)*.12}));
 export default function NightForestScene({height=260,style,testID,accessibilityLabel,fade=true}){
- return <View testID={testID} accessibilityLabel={accessibilityLabel||'Illustrated golden tree and moonlit water'} style={[styles.wrap,{height},style]}>
+ return <View accessible testID={testID} accessibilityLabel={accessibilityLabel||'Illustrated golden tree and moonlit water'} style={[styles.wrap,{height},style]}>
   <Svg viewBox="0 0 400 270" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" accessible={false}>
     <Defs>
       <LinearGradient id="skyNight" x1="0" x2="0.1" y1="0" y2="1"><Stop offset="0" stopColor="#051321"/><Stop offset=".65" stopColor="#0B2631"/><Stop offset="1" stopColor="#17413D"/></LinearGradient>
