@@ -144,7 +144,7 @@ def law_rights_kinship_checks():
 
 def independence_commitment_checks():
     top()
-    tap("Independence & commitment", scroll=True, navigate=True, exact=True)
+    tap("Independence & commitment", scroll=True, navigate=True)
     find("Room to be yourself. Care you freely choose.", scroll=True)
     capture("independence-commitment-intro")
     tap("Start or continue my reflection", scroll=True, navigate=True, exact=True)
@@ -241,6 +241,11 @@ try:
         tap("Home", navigate=True)
         tap("Find support", scroll=True, navigate=True)
         support_directory_checks()
+        tap("Home", navigate=True)
+    if "--balance-release-check" in sys.argv[2:]:
+        tap("Learn", navigate=True)
+        find("Learning Centre")
+        independence_commitment_checks()
         tap("Home", navigate=True)
     if "--law-release-check" in sys.argv[2:]:
         tap("Learn", navigate=True)
