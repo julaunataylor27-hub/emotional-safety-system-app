@@ -131,7 +131,9 @@ function getKnowledge(result, ageGroup) {
     sections[0].body = 'A private picture may show something a person wants to keep to themselves. Always ask before sharing pictures of someone else. It is not okay for someone to pressure a child to send private body pictures.';
     sections[2].body = 'A picture sent to one person might be copied or shown to other people. If someone asks you for a private picture, speak with a trusted grown-up who helps keep you safe.';
   }
-  const sourceIds = lesson.sources.filter(key => !((key === 'privacyTeen' || key === 'privacyConsent') && isYoung) && !(key === 'privacyParent' && isTeen));
+  const sourceIds = id === 'privacy'
+    ? (isTeen ? ['privacyTeen','privacyConsent'] : ['privacyParent'])
+    : lesson.sources;
   return {
     title:id === 'urgent' ? 'Getting help' : id === 'general' ? 'How to research a new question' : 'Knowledge Trail',
     intro:lesson.intro,
