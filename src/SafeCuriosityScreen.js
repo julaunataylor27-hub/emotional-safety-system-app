@@ -19,6 +19,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
   const [ageGroup, setAgeGroup] = useState('10-12');
   const [question, setQuestion] = useState('');
   const [result, setResult] = useState(null);
+  const [knowledgeView, setKnowledgeView] = useState(false);
   const [openSections, setOpenSections] = useState({0: true});
   const [followup, setFollowup] = useState(-1);
   const [quizChoice, setQuizChoice] = useState(null);
@@ -26,6 +27,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
   const trail = result ? Knowledge.getKnowledge(result, ageGroup) : null;
 
   function resetTrail() {
+    setKnowledgeView(false);
     setResult(null);
     setOpenSections({0: true});
     setFollowup(-1);
@@ -40,9 +42,9 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
   }
 
   useEffect(() => {
-    const handler = BackHandler.addEventListener('hardwareBackPress', () => {onBack(); return true;});
+    const handler = BackHandler.addEventListener('hardwareBackPress', () => {if (knowledgeView) {setKnowledgeView(false); onScrollTop?.();} else onBack(); return true;});
     return () => handler.remove();
-  }, [onBack]);
+  }, [onBack, onScrollTop, knowledgeView]);
 
   function review() {
     resetTrail();
@@ -58,16 +60,17 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
   }
 
   return <View testID="safe-curiosity-screen" style={s.root}>
-    <Button id="safe-curiosity-back" label="Back to Learn" onPress={onBack}/>
+    <Button id="safe-curiosity-back" label={knowledgeView ? "Back to Safe Curiosity" : "Back to Learn"} onPress={()=>{if(knowledgeView){setKnowledgeView(false);onScrollTop?.();}else onBack();}}/>
     <View style={s.scenicHero} testID="safe-curiosity-night-banner">
       <NightForestScene height={205}/>
       <View style={s.heroOverlay}>
        <Text style={s.heroEmblem}>✦</Text>
-       <Text accessibilityRole="header" style={s.heroHeading}>Safe Curiosity Lab</Text>
+       <Text accessibilityRole="header" style={s.heroHeading}>{knowledgeView ? "Explore the knowledge" : "Safe Curiosity Lab"}</Text>
        <Text style={s.heroPill}>Proof of Concept</Text>
-       <Text style={s.heroDescription}>A safe space to explore questions with age-appropriate knowledge and supportive answers.</Text>
+       <Text style={s.heroDescription}>{knowledgeView ? "Step-by-step learning to understand and stay safe online." : "A safe space to explore questions with age-appropriate knowledge and supportive answers."}</Text>
       </View>
     </View>
+    {!knowledgeView && <>
     <View style={s.notice} testID="safe-curiosity-scope">
       <Text style={s.heading}>This is a demonstration, not an internet filter.</Text>
       <Text style={s.body}>It checks only a question you choose to enter, using a few transparent rules stored inside the app. It does not scan your phone, look at videos, connect to websites, or claim to read anyone's emotions.</Text>
@@ -92,8 +95,10 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
     <Text style={s.small}>Your question stays in this screen's temporary memory. The lab does not upload it or save it to device storage. Navigating away from this lab or clearing the field removes this lab's copy.</Text>
     <Button id="safe-curiosity-review" label="⌕  Explore safely" primary disabled={!question.trim()} onPress={review}/>
     <Button id="safe-curiosity-clear" label="Clear question and result" onPress={clear}/>
+    </>}
 
     {result && <View testID="safe-curiosity-result" accessibilityLiveRegion="polite" style={s.result}>
+      {!knowledgeView && <>
       <Text style={s.eyebrow}>{result.status.toUpperCase()} · DEMONSTRATION</Text>
       <Text accessibilityRole="header" style={s.resultHeading}>{result.title}</Text>
       <Text style={s.fieldLabel}>Why this example was selected</Text>
@@ -103,6 +108,8 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
       <Text style={s.fieldLabel}>One possible next step</Text>
       <Text style={s.body}>{result.next}</Text>
       <Text style={s.small}>{result.limitation}</Text>
+      <Button id="safe-curiosity-open-knowledge" label="Explore the knowledge →" primary onPress={()=>{setKnowledgeView(true);onScrollTop?.();}}/>
+      </>}
       {trail && <View testID="safe-curiosity-knowledge-trail" style={s.knowledge}>
         <View style={s.knowledgeTitle}><GoldenTreeIcon name="Knowledge" color={P.gold} size={30}/><Text accessibilityRole="header" style={s.title}>Explore the knowledge</Text></View>
         <Text style={s.body}>{trail.intro}</Text>
@@ -150,7 +157,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
       </View>}
     </View>}
 
-    <View style={s.notice}>
+    {!knowledgeView && <View style={s.notice}>
       <Text style={s.heading}>How this could grow into your chip idea</Text>
       <Text style={s.body}>1. Test these learning and safeguarding examples with adults and child-safety experts.</Text>
       <Text style={s.body}>2. Build an opt-in, privacy-preserving browser prototype that checks permitted website content.</Text>
