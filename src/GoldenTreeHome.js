@@ -14,11 +14,11 @@ const COLORS={background:P.bg,gold:P.gold,ivory:P.text,muted:P.muted,rule:P.line
 const NAV=[['home','Home'],['journey','Journey'],['learn','Learn'],['support','Support'],['more','More']];
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
 const FEATURES=[
- {route:'assessment',icon:'Compass',name:'Start Assessment',description:'Understand needs. Find the right path.',id:'home-explore-situation'},
+ {route:'assessment',icon:'Compass',name:'Start Assessment',description:'Explore a situation · Understand needs. Find the right path.',id:'home-explore-situation'},
  {route:'safeCuriosity',icon:'Understanding',name:'Safe Curiosity Lab',description:'Explore questions safely.',id:'home-safe-curiosity'},
  {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Separate information, feelings and uncertainty.',id:'home-evidence-truth'},
  {route:'support',icon:'Humanity',name:'Support Resources',description:'Find help and guidance.',id:'home-find-support'},
- {route:'more',icon:'More',name:'More',description:'Settings, learning and more.',id:'home-more'},
+ {route:'more',icon:'More',name:'More',description:'Settings, guides and more.',id:'home-more'},
 ];
 function HomeContent({onNavigate,onValuePress}){
  const [selectedValue,setSelectedValue]=useState(null);
@@ -66,7 +66,7 @@ function HomeContent({onNavigate,onValuePress}){
     <View style={s.extras}>
       <Pressable testID="home-start-journey" accessibilityRole="button" accessibilityLabel="Start my journey"
         onPress={()=>navigate('journey')} style={({pressed})=>[s.primary,pressed&&s.pressed]}>
-        <GoldenTreeIcon name="Journey" size={23} color={P.bg}/><Text style={[s.primaryLabel,body]}>Start my journey</Text><GoldenTreeIcon name="Arrow" color={P.bg} size={23}/>
+        <GoldenTreeIcon name="Journey" size={23} color={P.bg}/><Text style={[s.primaryLabel,body]}>{t('start')}</Text><GoldenTreeIcon name="Arrow" color={P.bg} size={23}/>
       </Pressable>
       <Text style={[s.sectionHeading,heading]}>Your knowledge grows here</Text>
       <Text style={[s.sectionSub,body]}>Explore the eight values. Each opens an explanation, a question and its public sources.</Text>
