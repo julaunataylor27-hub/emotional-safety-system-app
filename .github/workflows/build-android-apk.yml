@@ -187,7 +187,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections --cultural-inquiry --knowledge-trail --learning-together --explore-connections --support-directory --law-rights-kinship --independence-commitment
+          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections --cultural-inquiry --knowledge-trail --learning-together --explore-connections --support-directory --law-rights-kinship --independence-commitment --night-forest
 
       - name: Save installed-app test evidence
         if: always()
