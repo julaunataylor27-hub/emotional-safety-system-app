@@ -124,7 +124,7 @@ def night_forest_design_checks():
     find("Understanding the internet", scroll=True)
     tap("Explore the knowledge", scroll=True, navigate=True)
     find("What is an algorithm?", scroll=True)
-    tap("Why am I seeing similar videos?", scroll=True)
+    tap("Why do I see similar videos?", scroll=True)
     find("A platform may predict", scroll=True)
     capture("night-forest-knowledge")
     tap("Back to Safe Curiosity", scroll=True, navigate=True)
