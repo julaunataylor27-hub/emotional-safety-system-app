@@ -1,14 +1,12 @@
 import {AppText as Text,AppInput as TextInput} from './AppPreferences';
-import {presentationStyles} from './PresentationTheme';
+import {presentationStyles,P} from './PresentationTheme';
+import NightForestScene from './NightForestScene';
+import GoldenTreeIcon from './GoldenTreeIcons';
 import React, {useMemo, useState} from 'react';
 import {View, Pressable, StyleSheet} from 'react-native';
 import {EXAMPLES, assessEvidence} from './evidenceTruthEngine.cjs';
 
-const C = {
-  bg:'#071815', panel:'#102923', border:'#8A6A36', gold:'#EABE71',
-  light:'#FFF3DC', muted:'#C9C5B8', green:'#77C5A4',
-  amber:'#E6C083', red:'#F1AB9F'
-};
+const C = {bg:P.bg,panel:P.panel,border:P.line,gold:P.gold,light:P.text,muted:P.muted,green:P.green,amber:P.amber,red:P.red};
 const FIRST_EXAMPLE = EXAMPLES[1];
 function Choice({label,onPress,active}) {
   return <Pressable accessibilityRole="button" accessibilityState={{selected:!!active}}
@@ -34,12 +32,14 @@ export default function EvidenceTruthScreen({onBack,onSupport}) {
   return <View>
     <Pressable accessibilityRole="button" accessibilityLabel="Back to home"
       onPress={onBack} style={s.back}><Text style={s.backText}>‹  Back</Text></Pressable>
-    <View style={s.hero}>
-      <Text style={s.eyebrow}>EMOTIONAL SAFETY SYSTEM  ·  TEST LAB</Text>
-      <Text style={s.symbol}>✦  ◉  ✦</Text>
-      <Text style={s.heroTitle}>Evidence &amp; Truth{'\n'}Engine</Text>
-      <Text style={s.heroSub}>Version 1.2  |  Protection × Emotional Safety × Truth × Choice</Text>
-      <Text style={s.heroNote}>A guided reflection, not a verdict. Your decisions remain yours.</Text>
+    <View style={s.hero} testID="evidence-night-forest-banner">
+      <NightForestScene height={218}/>
+      <View style={s.heroOverlay}>
+       <GoldenTreeIcon name="Knowledge" size={39} color={P.gold}/>
+       <Text style={s.heroTitle}>Evidence &amp; Truth</Text>
+       <Text style={s.heroSub}>Separate facts, feelings, interpretations and uncertainty.</Text>
+       <Text style={s.heroNote}>A guided reflection, not a verdict. Your decisions remain yours.</Text>
+      </View>
     </View>
     <Panel title="1 · Choose a fictional example">
       <Text style={s.body}>Explore how different descriptions change the system’s response.</Text>
@@ -101,14 +101,15 @@ export default function EvidenceTruthScreen({onBack,onSupport}) {
 const s=StyleSheet.create({
   back:{alignSelf:'flex-start',paddingHorizontal:12,paddingVertical:9,borderColor:C.border,borderWidth:1,borderRadius:12,marginBottom:10},
   backText:{color:C.light,fontSize:15,fontWeight:'800'},
-  hero:{backgroundColor:'#19241C',borderColor:C.gold,borderWidth:1,borderRadius:19,padding:19,marginBottom:14,alignItems:'center'},
+  hero:{backgroundColor:'#0B2427',borderColor:C.gold,borderWidth:1,borderRadius:21,marginBottom:15,overflow:'hidden'},
+  heroOverlay:{position:'absolute',top:0,left:0,right:0,bottom:0,padding:17,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(2,20,21,.21)'},
   eyebrow:{color:C.gold,fontSize:10,fontWeight:'900',letterSpacing:1.2,textAlign:'center'},
   symbol:{color:C.gold,fontSize:23,marginTop:8},
-  heroTitle:{color:C.light,fontSize:26,fontWeight:'900',textAlign:'center',lineHeight:32,marginTop:6},
-  heroSub:{color:C.gold,fontSize:12,lineHeight:18,textAlign:'center',marginTop:7},
+  heroTitle:{color:C.light,fontSize:31,fontFamily:'ESSHeading',textAlign:'center',lineHeight:42,marginTop:6,textShadowColor:'#03151D',textShadowRadius:6},
+  heroSub:{color:C.text||C.light,fontSize:15,lineHeight:22,textAlign:'center',marginTop:7,textShadowColor:'#03151D',textShadowRadius:6},
   heroNote:{color:C.muted,fontSize:12,textAlign:'center',marginTop:9,lineHeight:18},
-  panel:{backgroundColor:C.panel,borderColor:C.border,borderWidth:1,borderRadius:17,padding:15,marginBottom:13},
-  heading:{color:C.gold,fontSize:18,fontWeight:'900',marginBottom:9},
+  panel:{backgroundColor:C.panel,borderColor:C.border,borderWidth:1,borderRadius:19,padding:17,marginBottom:14},
+  heading:{color:C.gold,fontSize:20,fontFamily:'ESSHeading',marginBottom:11},
   label:{color:C.light,fontWeight:'800',fontSize:13,marginTop:12,marginBottom:6},
   line:{borderTopWidth:1,borderTopColor:'#4E4935',paddingTop:6,marginTop:9},
   body:{color:C.light,fontSize:13,lineHeight:20},
@@ -117,7 +118,7 @@ const s=StyleSheet.create({
   choice:{borderColor:'#84683D',borderWidth:1,backgroundColor:'#1C3029',borderRadius:12,paddingVertical:10,paddingHorizontal:11,minHeight:41,justifyContent:'center'},
   active:{backgroundColor:C.gold,borderColor:C.gold},
   choiceText:{color:C.light,fontSize:12,fontWeight:'800'},
-  input:{backgroundColor:C.bg,borderColor:'#7A6A4F',borderWidth:1,borderRadius:12,padding:12,color:C.light,fontSize:14,minHeight:125,lineHeight:20},
+  input:{backgroundColor:C.bg,borderColor:C.border,borderWidth:1,borderRadius:15,padding:14,color:C.light,fontSize:16,minHeight:125,lineHeight:25},
   levelRow:{flexDirection:'row',alignItems:'center',gap:9,marginTop:4},
   dot:{width:12,height:12,borderRadius:6},
   finding:{fontSize:17,fontWeight:'900',flex:1},
