@@ -1,0 +1,57 @@
+name: Verify Independence and Commitment APK
+on:
+  push:
+    branches: [codex/verify-independence-release]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-built-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve compiled version 1.8.1
+        uses: actions/download-artifact@v4
+        with:
+          name: Emotional-Safety-System-Standalone-APK
+          run-id: 39207326450
+          github-token: ${{ github.token }}
+          path: installed-apk
+      - name: Check exact installer and test syntax
+        run: |
+          python3 -m py_compile scripts/android_smoke.py
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          assert hashlib.sha256(Path('installed-apk/Emotional-Safety-System-Standalone.apk').read_bytes()).hexdigest() == '83a51130e25b57d565c3e6b5171488fe1caf69ca8bc651eb232013a15856e2b0'
+          PY
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify new reflection and core navigation on Android 16
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: python3 scripts/android_smoke.py installed-apk/Emotional-Safety-System-Standalone.apk --balance-release-check --journey-and-reflection
+      - name: Save installed-app evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Independence-Commitment-Android-evidence
+          path: android-smoke
+          retention-days: 7
+      - name: Save verified version 1.8.1
+        uses: actions/upload-artifact@v4
+        with:
+          name: Emotional-Safety-System-v1.8.1-Verified-APK
+          path: installed-apk/Emotional-Safety-System-Standalone.apk
+          retention-days: 30
