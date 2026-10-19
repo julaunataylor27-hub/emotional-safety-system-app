@@ -2,6 +2,21 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
+## Independence & commitment · version 1.8.1
+
+Open **Learn → Independence & commitment**, **More → Independence & commitment**,
+or the matching **Our Purpose & Vision** button. Four optional parts explore your
+own space, a freely chosen commitment, room to say no or revise a plan, and a
+check-in that can adapt. A fictional adult conversation offers a starting point.
+This is an app-created reflection for anyone, with no birth-date interpretation
+or relationship score. Public WA and 1800RESPECT sources support its themes.
+
+Writing remains in the current app session across navigation and pauses; restart
+clears it. Preview and manual text sharing allow a copy. Unsure/no choices stay
+visible, and clearing requires confirmation. Existing journey memory and safety
+rules are unchanged. See [scope, sources and verification](docs/INDEPENDENCE_COMMITMENT.md).
+Install the new **1.8.1 / Android versionCode 28 APK** to see it on a phone.
+
 
 ## Law, Rights & Kinship · version 1.8.0
 
