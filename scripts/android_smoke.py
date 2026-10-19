@@ -481,7 +481,9 @@ try:
         tap("Home", navigate=True)
     find("Start my journey", scroll=True)
     capture("home-actions")
-    tap("Explore a situation", scroll=True, navigate=True)
+    # The redesigned first card is called Start Assessment and is above the journey link.
+    top()
+    tap("Start Assessment", scroll=True, navigate=True, exact=True)
     node = find("android.widget.EditText", scroll=True, by_class=True)
     x, y = bounds(node)
     adb("shell", "input", "tap", str(x), str(y))
