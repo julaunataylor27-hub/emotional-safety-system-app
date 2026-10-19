@@ -1,0 +1,53 @@
+name: Verify Law Rights Kinship APK
+on:
+  push:
+    branches: [codex/verify-law-release]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-built-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve the compiled 1.8.0 package
+        uses: actions/download-artifact@v4
+        with:
+          name: Emotional-Safety-System-Standalone-APK
+          run-id: 39192424835
+          github-token: ${{ github.token }}
+          path: installed-apk
+      - name: Check the package and test script
+        run: |
+          python3 -m py_compile scripts/android_smoke.py
+          sha256sum installed-apk/Emotional-Safety-System-Standalone.apk
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify law reading, local support, saved notes and reflection on Android 16
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: python3 scripts/android_smoke.py installed-apk/Emotional-Safety-System-Standalone.apk --law-release-check --journey-and-reflection --life-journey
+      - name: Save installed-app evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Law-Rights-Kinship-Android-evidence
+          path: android-smoke
+          retention-days: 7
+      - name: Save verified 1.8.0 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Emotional-Safety-System-v1.8.0-Verified-APK
+          path: installed-apk/Emotional-Safety-System-Standalone.apk
+          retention-days: 30

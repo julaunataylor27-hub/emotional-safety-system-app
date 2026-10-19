@@ -113,7 +113,7 @@ def capture(name):
 
 
 def law_rights_kinship_checks():
-    tap("Law, Rights & Kinship", scroll=True, navigate=True, exact=True)
+    tap("Law, Rights & Kinship", scroll=True, navigate=True)
     find("Understand rights. Respect kinship.", scroll=True)
     find("many Aboriginal Nations", scroll=True)
     capture("law-rights-kinship-intro")
@@ -207,6 +207,14 @@ try:
         find("What the evidence establishes", scroll=True)
         capture("picture-decisions")
         print("PASS: complete bundled photograph fits content width and ratio, with no image zoom, and decision trail opens.")
+        tap("Home", navigate=True)
+        tap("Find support", scroll=True, navigate=True)
+        support_directory_checks()
+        tap("Home", navigate=True)
+    if "--law-release-check" in sys.argv[2:]:
+        tap("Learn", navigate=True)
+        find("Learning Centre")
+        law_rights_kinship_checks()
         tap("Home", navigate=True)
         tap("Find support", scroll=True, navigate=True)
         support_directory_checks()
