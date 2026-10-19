@@ -112,7 +112,9 @@ def capture(name):
     (OUT / (name + ".xml")).write_text(adb("shell", "cat", "/sdcard/window.xml", check=False))
 
 
-\n\ndef night_forest_design_checks():
+
+
+def night_forest_design_checks():
     top()
     find("Protect curiosity. Build understanding.", scroll=True)
     tap("Safe Curiosity Lab", scroll=True, navigate=True)
@@ -129,7 +131,8 @@ def capture(name):
     tap("Back to Learn", scroll=True, navigate=True)
     tap("Home", navigate=True, exact=True)
     print("PASS: forest home, curiosity lesson, accordion and return navigation.")
-\ndef law_rights_kinship_checks():
+
+def law_rights_kinship_checks():
     tap("Law, Rights & Kinship", scroll=True, navigate=True)
     find("Understand rights. Respect kinship.", scroll=True)
     find("many Aboriginal Nations", scroll=True)
