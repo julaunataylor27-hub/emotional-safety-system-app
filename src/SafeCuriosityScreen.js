@@ -45,7 +45,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
     </View>
 
     <Text style={s.heading}>1. Choose an example age range</Text>
-    <Text style={s.small}>This only changes the wording of learning guidance. No birthday, account or identity is needed.</Text>
+    <Text style={s.small}>This changes the wording of some learning guidance. No birthday, account or identity is needed.</Text>
     <View style={s.choices}>
       {Lab.AGE_GROUPS.map(group => <Button key={group.id} id={'safe-curiosity-age-' + group.id} label={group.label} selected={ageGroup === group.id}
         onPress={() => {setAgeGroup(group.id); setResult(null);}}/>)}
@@ -60,7 +60,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
       value={question} onChangeText={value => {setQuestion(value); setResult(null);}}
       multiline maxLength={500} textAlignVertical="top" placeholder="For example: Why do websites recommend videos?"
       placeholderTextColor={P.muted} style={s.input}/>
-    <Text style={s.small}>Your question stays in this screen's temporary memory. The lab does not upload it or save it to device storage. Leaving the app or clearing the field removes this lab's copy.</Text>
+    <Text style={s.small}>Your question stays in this screen's temporary memory. The lab does not upload it or save it to device storage. Navigating away from this lab or clearing the field removes this lab's copy.</Text>
     <Button id="safe-curiosity-review" label="Explore safely" primary disabled={!question.trim()} onPress={review}/>
     <Button id="safe-curiosity-clear" label="Clear question and result" onPress={clear}/>
 
