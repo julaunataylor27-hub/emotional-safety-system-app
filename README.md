@@ -1,5 +1,11 @@
 # Emotional Safety System — Mobile App Prototype
 
+## Safe Curiosity Lab · version 1.9.0 (offline demonstration)
+
+Open **Learn → Safe Curiosity Lab**, also available in **More**. Explore five fictional examples covering online privacy, pressure, puberty, feelings and recommendation algorithms. Choose a broad age band or enter a non-identifying question. Tap **Explore safely** to see a simple keyword-rule match, transparent explanation, educational wording and possible support. Unknown questions remain **unknown** rather than being declared safe. Possible danger gets support information.
+
+**This does not monitor the device, scan the internet, classify videos, provide reliable child safeguarding, run an AI model, or use a dedicated chip.** It makes no network calls and does not persist lab questions. Privacy, cultural suitability, accessibility, child safeguarding and accuracy reviews must come before any supervised real-world trial. See [scope and test plan](docs/SAFE_CURIOSITY_LAB.md). The feature is included in the Android v1.9.0 / versionCode 29 build; an existing installed APK will not update on its own.
+
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
 ## Independence & commitment · version 1.8.1
