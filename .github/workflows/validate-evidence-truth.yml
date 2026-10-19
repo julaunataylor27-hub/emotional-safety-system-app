@@ -17,10 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Test rules, uncertainty, and in-app navigation
-        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs tests/knowledge-trail.test.cjs tests/learning-together.test.cjs tests/explore-connections.test.cjs tests/law-rights-kinship.test.cjs tests/independence-commitment.test.cjs tests/safe-curiosity.test.cjs tests/safe-curiosity-knowledge.test.cjs tests/night-forest-interactions.test.cjs
       - name: Install React Native tooling
         run: npm install --include=dev
+      - name: Test rules, uncertainty, and in-app navigation
+        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs tests/knowledge-trail.test.cjs tests/learning-together.test.cjs tests/explore-connections.test.cjs tests/law-rights-kinship.test.cjs tests/independence-commitment.test.cjs tests/safe-curiosity.test.cjs tests/safe-curiosity-knowledge.test.cjs tests/night-forest-interactions.test.cjs
       - name: Prepare the same app source as the Android build
         run: |
           python3 - <<'PYBUILD'
