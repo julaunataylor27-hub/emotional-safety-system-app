@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-export const P={bg:'#06241E',panel:'#0D3028',panel2:'#123B31',line:'#3D6152',text:'#FAF5E8',muted:'#C0D1C6',gold:'#E6CF91',green:'#A9DBC1',red:'#F0B4AD',amber:'#F0D28D'};
+export const P={bg:'#061B1D',panel:'#0C302D',panel2:'#103B38',line:'#6F7554',text:'#FFF3DA',muted:'#C7D5CD',gold:'#F2CF82',green:'#A9DBC1',red:'#F5A394',amber:'#F1D28B'};
 export function cleanLabel(value){if(typeof value!=='string')return value;const clean=value.replace(/\\n/g,'\n').replace(/[🌱❤️🌳🧠📖🎨🌏🛡🔗💡✦◉]+\s*/gu,'').trim();if(!/[a-z]/.test(clean)&&/[A-Z]{3}/.test(clean))return clean.toLowerCase().replace(/(^|[.!?]\s+|\n)([a-z])/g,(_,p,c)=>p+c.toUpperCase()).replace(/\b(pdf|ai|ei|wa|ndis)\b/gi,x=>x.toUpperCase());return clean;}
 export function presentationStyles(input,core=true){
  const out={};
