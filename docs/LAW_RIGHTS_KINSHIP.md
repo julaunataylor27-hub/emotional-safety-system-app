@@ -96,3 +96,26 @@ legal-question validation passes. The Android release workflow includes
 `--law-rights-kinship` for installed-screen checks and screenshots. A workflow
 result, not these local tests, establishes whether that particular APK passed
 installed Android verification.
+
+## Verified Android release · 19 October 2026
+
+The exact 1.8.0 APK compiled from application source commit
+`106d4175ecaa79ffb95540478289110160ed707b` passed installed Android 16 checks in
+[run 39194694883](https://github.com/julaunataylor27-hub/emotional-safety-system-app/actions/runs/39194694883).
+The corrected test source is `b09b9270d83ae415a97aefc17cc5637a53b5030c`.
+The app opens the law library, switches information areas and cultural scope,
+shows marriage and Parliament limits, reaches support filters, restores Life
+Journey notes and operates both native reflection graphics. The 129-test full
+JavaScript suite also passed GitHub validation run 39194758136.
+
+APK SHA-256:
+`7cfb90285c980cdaf117771e6be1aac54285ad65ff033ebe156cbdf82dc1d0ff`.
+Its signing-certificate fingerprint matches the previous verified package:
+`fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`.
+
+The initial full build, run 39192424835, compiled and opened the app but stopped
+because the new menu test required an exact title. Android’s existing MenuRow
+label also includes its subtitle and chevron. The follow-up fixes that selector
+and tests the same compiled APK; no app source or native package was changed.
+Installed test success establishes software behaviour, not professional legal or
+cultural approval. Those reviews remain pending.
