@@ -127,7 +127,9 @@ def night_forest_design_checks():
     tap("Why do I see similar videos?", scroll=True)
     find("A platform may predict", scroll=True)
     capture("night-forest-knowledge")
-    tap("Back to Safe Curiosity", scroll=True, navigate=True)
+    # Back is at the top of the scroll content; searching downwards skips it.
+    top()
+    tap("Back to Safe Curiosity", navigate=True)
     tap("Back to Learn", scroll=True, navigate=True)
     tap("Home", navigate=True, exact=True)
     print("PASS: forest home, curiosity lesson, accordion and return navigation.")
