@@ -18,7 +18,7 @@ function branch(x,y,len,angle,depth,seed,paths,leaves){
  for(let j=0;j<children;j++)branch(nx,ny,len*(.62+(j%2)*.055),angle+(-1+j)*(0.33+((seed+j)%3)*.08),depth-1,seed*3+j+1,paths,leaves);
 }
 const BRANCHES=[],LEAVES=[];
-branch(113,219,40,-Math.PI/2,5,3,BRANCHES,LEAVES);
+branch(113,219,43,-Math.PI/2,4,3,BRANCHES,LEAVES);
 const PINES=Array.from({length:19},(_,i)=>({x:i*24-10,scale:.45+(i%5)*.12}));
 export default function NightForestScene({height=260,style,testID,accessibilityLabel,fade=true}){
  return <View accessible testID={testID} accessibilityLabel={accessibilityLabel||'Illustrated golden tree and moonlit water'} style={[styles.wrap,{height},style]}>
