@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import Svg, {Defs,LinearGradient,Stop,Rect,Path,Circle,Ellipse,G} from 'react-native-svg';
+import Svg, {Defs,LinearGradient,Stop,Rect,Path,Circle,G} from 'react-native-svg';
 
 // All scenery is native SVG, not a screenshot: every control drawn above it remains accessible and clickable.
 const STARS=Array.from({length:85},(_,i)=>{
@@ -41,7 +41,7 @@ export default function NightForestScene({height=260,style,testID,accessibilityL
     <Rect x="0" y="216" width="400" height="54" fill="url(#waterNight)"/>
     {Array.from({length:18},(_,i)=><Path key={'w'+i} d={`M ${235+i*8} ${223+i*2.4} q ${12+i%7} 1 ${23+i%12} 0`} stroke="#FAD58A" strokeWidth={i%3===0?1.2:.65} opacity={.21+(i%4)*.1}/>)}
     <Path d="M0 242 Q39 205 75 227 Q115 210 158 228 Q175 213 200 233 L244 270 H0Z" fill="#091C1E"/>
-    <Ellipse cx="110" cy="224" rx="69" ry="10" fill="#E1B461" opacity=".14"/>
+    <Path d="M41 224 Q110 205 179 224 Q110 243 41 224 Z" fill="#E1B461" opacity=".14"/>
     <Path d="M109 222Q111 177 113 141" stroke="url(#goldBark)" strokeWidth="10" fill="none" strokeLinecap="round"/>
     {BRANCHES.map((b,i)=><Path key={'b'+i} d={b.d} stroke="url(#goldBark)" strokeWidth={b.width} fill="none" strokeLinecap="round" opacity=".88"/>)}
     {LEAVES.map((l,i)=><Circle key={'l'+i} cx={l.x} cy={l.y} r={l.r+(i%8===0?2:0)} fill={l.tone===0?'#FFF1B9':l.tone===1?'#EBC66B':'#B9933D'} opacity={i%9===0?.95:.70}/>)}
