@@ -2,6 +2,8 @@ import React,{useEffect,useState} from 'react';
 import {View,Pressable,StyleSheet,Linking,BackHandler} from 'react-native';
 import {AppText as Text,AppInput as TextInput} from './AppPreferences';
 import {P} from './PresentationTheme';
+import NightForestScene from './NightForestScene';
+import GoldenTreeIcon from './GoldenTreeIcons';
 const {DIRECTORY,REGIONS,CATEGORIES,EMERGENCY,filterServices}=require('./supportDirectory.cjs');
 
 function LinkButton({id,label,url,open,secondary=false}) {
@@ -69,11 +71,19 @@ export default function SupportDirectoryScreen({filters,onChange,onBack,existing
   const showExisting=filters.region==='National'&&['all','wellbeing','first-nations'].includes(filters.category)
     &&(!filters.query.trim()||/13yarn|aboriginal|crisis/i.test(filters.query.trim()));
   return <View testID="support-directory-screen" style={styles.screen}>
+    <View style={styles.scenicHero} testID="support-night-forest-banner">
+      <NightForestScene height={192}/>
+      <View style={styles.heroOverlay} pointerEvents="none">
+        <GoldenTreeIcon name="Humanity" size={38} color={P.gold}/>
+        <Text accessibilityRole="header" style={styles.heroTitle}>Support Resources</Text>
+        <Text style={styles.heroSub}>Find help, guidance and safe next steps.</Text>
+      </View>
+    </View>
     <View style={styles.emergency}>
       <Text style={styles.body}>Immediate danger or a life-threatening emergency</Text>
       <LinkButton id="support-emergency" label="Emergency · 000" url={EMERGENCY.contacts[0].url} open={open}/>
     </View>
-    <Text style={styles.lead}>Find support across Australia.</Text>
+    <Text style={styles.lead}>Support across Australia</Text>
     <Text style={styles.muted}>National services are available in every state and territory. Choose a location and the kind of help you want.</Text>
     <View style={styles.filters}>
       <Pressable testID="support-choose-region" accessibilityRole="button" accessibilityState={{expanded:picker==='region'}}
@@ -124,7 +134,12 @@ export default function SupportDirectoryScreen({filters,onChange,onBack,existing
 }
 
 const styles=StyleSheet.create({
-  screen:{gap:12},lead:{fontSize:21,lineHeight:30,color:P.gold,fontWeight:'700'},
+  screen:{gap:12},
+  scenicHero:{borderRadius:21,overflow:'hidden',borderColor:P.line,borderWidth:1},
+  heroOverlay:{position:'absolute',top:0,left:0,right:0,bottom:0,alignItems:'center',justifyContent:'center',backgroundColor:'rgba(1,20,20,.19)',padding:14},
+  heroTitle:{fontFamily:'ESSHeading',fontSize:30,lineHeight:40,color:P.text,textShadowColor:'#021018',textShadowRadius:8,textAlign:'center'},
+  heroSub:{fontSize:15,lineHeight:22,color:P.text,textAlign:'center',textShadowColor:'#021018',textShadowRadius:6},
+  lead:{fontSize:21,lineHeight:30,color:P.gold,fontFamily:'ESSHeading'},
   body:{fontSize:16,lineHeight:25,color:P.text},muted:{fontSize:14,lineHeight:22,color:P.muted,marginTop:5},
   strong:{fontWeight:'700'},emergency:{backgroundColor:P.panel2,borderWidth:1,borderColor:P.red,borderRadius:18,padding:16},
   filters:{gap:9,marginVertical:5},selector:{minHeight:66,padding:14,borderRadius:14,backgroundColor:P.panel2,borderWidth:1,borderColor:P.line},

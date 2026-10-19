@@ -1,5 +1,19 @@
 # Emotional Safety System — Mobile App Prototype
 
+## Night Forest redesign · version 2.0.0
+
+**Working app redesign, not a flat mock-up.** The Home screen now shows a native SVG moonlit golden tree, lake, stars, mountain silhouettes and gold-framed navigation cards inspired by the approved concept. Five main Home actions launch **Start Assessment**, **Safe Curiosity Lab**, **Evidence & Truth**, **Support Resources**, and **More**. The existing journey, eight interactive Home values, cultural reading, PDF exports, preferences, educational lessons and support links remain available.
+
+The Safe Curiosity Lab has a scenic header and a working **Explore the knowledge** button. It opens its own view, including expandable explanations, follow-up questions, quiz feedback and sources, and the Back action returns to the original question without losing the example. The Evidence & Truth engine and Australian support directory use matching forest-night scenic headers while keeping their analysis rules, jurisdiction filtering and contact links. General presentation headings, panels and navigation share a dark teal and luminous-gold palette.
+
+**What this is not:** a browser filter, device-wide safety monitor, AI safety classifier or manufactured chip. The redesign does not claim child-safety effectiveness. Child-protection, privacy, cultural and accessibility review are still required before use with children.
+
+### Verify
+
+The tests include real React Native component navigation for the new Home, Safe Curiosity knowledge journey, source links, quiz selections and the Evidence & Truth support route. The GitHub Android workflow builds version **2.0.0 / Android versionCode 31**, then runs Android 16 smoke checks including the night-forest journey. Install the new APK to replace the currently installed version. See [visual redesign and testing notes](docs/NIGHT_FOREST_DESIGN.md).
+
+# Emotional Safety System — Mobile App Prototype
+
 ## Knowledge Trails in Safe Curiosity · version 1.9.1
 
 The Safe Curiosity Lab now includes curated **Knowledge Trails**: four expandable explanations per topic (meaning, causes or mechanisms, consequences, and choices), two follow-up questions, a small optional learning check, and verified original-source links for five fictional topics. Children are directed toward age-appropriate education rather than only a warning. Younger age ranges are shown less explicit privacy content and are linked to eSafety's parent guidance. Urgent examples prioritise help rather than a quiz. Unrecognised topics teach how to check evidence without making up answers.

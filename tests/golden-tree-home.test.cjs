@@ -23,7 +23,7 @@ function load(name){
 const Home=load('GoldenTreeHome').default;
 async function render(props={}){let r;await Renderer.act(async()=>{r=Renderer.create(React.createElement(Home,{onNavigate:()=>{},onValuePress:()=>{},...props}));});return r;}
 test('approved artwork and all eight values render as separate native controls',async()=>{
- const r=await render();assert.equal(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,'Eucalyptus tree at dawn; illustrative artwork');
+ const r=await render();assert.equal(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,'Moonlit golden tree beside water; illustrative artwork');
  for(const name of ['Knowledge','Understanding','Love','Kindness','Patience','Growth','Humanity','Life'])assert.equal(r.root.findByProps({testID:'home-value-'+name.toLowerCase()}).props.accessibilityLabel,'Explore '+name);
  assert.equal(r.root.findByProps({testID:'home-nav-home'}).props.accessibilityState.selected,true);
  await Renderer.act(async()=>r.unmount());
@@ -83,5 +83,15 @@ test('Android Back and backdrop dismiss; each opening resets sources; link error
  assert.equal(alerts[0][0],'Source could not open');assert.ok(r.root.findByProps({testID:'value-meaning-definition'}));linkFailure=false;
  await Renderer.act(async()=>r.root.findByProps({testID:'value-meaning-backdrop'}).props.onPress());
  await open();assert.equal(r.root.findByProps({testID:'value-meaning-sources-toggle'}).props.accessibilityState.expanded,false);
+ await Renderer.act(async()=>r.unmount());
+});
+
+test('forest redesign keeps the five showcased cards connected to real app routes',async()=>{
+ const routes=[];const r=await render({onNavigate:route=>routes.push(route)});
+ for(const id of ['home-explore-situation','home-safe-curiosity','home-evidence-truth','home-find-support','home-more'])
+   await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
+ assert.deepEqual(routes,['assessment','safeCuriosity','evidence','support','more']);
+ assert.ok(r.root.findByProps({testID:'golden-tree-home-artwork'}));
+ assert.ok(r.root.findByProps({testID:'home-start-journey'}));
  await Renderer.act(async()=>r.unmount());
 });

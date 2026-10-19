@@ -17,10 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Test rules, uncertainty, and in-app navigation
-        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs tests/knowledge-trail.test.cjs tests/learning-together.test.cjs tests/explore-connections.test.cjs tests/law-rights-kinship.test.cjs tests/independence-commitment.test.cjs tests/safe-curiosity.test.cjs tests/safe-curiosity-knowledge.test.cjs
       - name: Install React Native tooling
         run: npm install --include=dev
+      - name: Test rules, uncertainty, and in-app navigation
+        run: node --test tests/evidence-truth-engine.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs tests/knowledge-trail.test.cjs tests/learning-together.test.cjs tests/explore-connections.test.cjs tests/law-rights-kinship.test.cjs tests/independence-commitment.test.cjs tests/safe-curiosity.test.cjs tests/safe-curiosity-knowledge.test.cjs tests/night-forest-interactions.test.cjs
       - name: Prepare the same app source as the Android build
         run: |
           python3 - <<'PYBUILD'
@@ -34,4 +34,4 @@ jobs:
         run: NODE_ENV=test npm test
       - name: Check JSX syntax of app and learning screens
         run: |
-          node -e "const b=require('@babel/core'); for(const x of ['App.js','src/EvidenceTruthScreen.js','src/CulturalConnectionsScreen.js','src/CulturalInquiryScreen.js','src/KnowledgeTrailScreen.js','src/LearningTogetherScreen.js','src/ExploreConnectionsScreen.js','src/LawRightsKinshipScreen.js','src/IndependenceCommitmentScreen.js','src/SafeCuriosityScreen.js']) { b.transformFileSync(x, {configFile:'./babel.config.js'}); console.log('JSX OK:',x) }"
+          node -e "const b=require('@babel/core'); for(const x of ['App.js','src/EvidenceTruthScreen.js','src/CulturalConnectionsScreen.js','src/CulturalInquiryScreen.js','src/KnowledgeTrailScreen.js','src/LearningTogetherScreen.js','src/ExploreConnectionsScreen.js','src/LawRightsKinshipScreen.js','src/IndependenceCommitmentScreen.js','src/SafeCuriosityScreen.js','src/NightForestScene.js','src/GoldenTreeHome.js','src/PresentationChrome.js','src/SupportDirectoryScreen.js','src/EvidenceTruthScreen.js']) { b.transformFileSync(x, {configFile:'./babel.config.js'}); console.log('JSX OK:',x) }"
