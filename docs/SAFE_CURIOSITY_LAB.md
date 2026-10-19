@@ -35,3 +35,12 @@ Run `node --test tests/safe-curiosity.test.cjs`, then follow the Android workflo
 ## Future engineering hypothesis
 
 With suitable partners, explore a supported-browser test, followed by an on-device AI model running on a phone's existing neural accelerator. Do not promise universal web coverage or physical chip integration before controlled evidence supports either.
+
+
+## Knowledge Trail addition — version 1.9.1
+
+The learner now sees four expandable explanations per supported topic, two optional deeper questions and one check-your-learning question. The quiz is an educational check, not a safety, health or psychological score. Human-edited material sits in `src/safeCuriosityKnowledge.cjs` and uses fixed source URLs (eSafety and Raising Children Network), verified for this draft on 19 October 2026. Sources open externally only after tapping, never automatically. A failed link leaves a copyable URL. Younger audiences see simplified body/privacy content; more explicit adolescent source links are not offered to under-13 bands.
+
+Unknown questions remain unknown and show a research method rather than fabricated subject knowledge. Possible urgent disclosures do not become quiz exercises. No real child disclosures should be used in testing. Source content is static, not refreshed when the internet changes. Before real deployment, commission expert fact review, local cultural review, child safeguarding assessment, usability testing and privacy impact assessment.
+
+Run `node --test tests/safe-curiosity.test.cjs tests/safe-curiosity-knowledge.test.cjs`. The GitHub app build workflow includes both via npm test.

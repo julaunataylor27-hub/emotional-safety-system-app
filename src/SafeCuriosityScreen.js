@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {View, Pressable, StyleSheet, BackHandler} from 'react-native';
+import {View, Pressable, StyleSheet, BackHandler, Linking} from 'react-native';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
 import {P} from './PresentationTheme';
 const Lab = require('./safeCuriosity.cjs');
+const Knowledge = require('./safeCuriosityKnowledge.cjs');
 
 function Button({id, label, onPress, primary, selected, disabled}) {
   return <Pressable testID={id} accessibilityRole="button" accessibilityLabel={label}
@@ -16,22 +17,42 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
   const [ageGroup, setAgeGroup] = useState('10-12');
   const [question, setQuestion] = useState('');
   const [result, setResult] = useState(null);
+  const [openSections, setOpenSections] = useState({0: true});
+  const [followup, setFollowup] = useState(-1);
+  const [quizChoice, setQuizChoice] = useState(null);
+  const [failedSource, setFailedSource] = useState(null);
+  const trail = result ? Knowledge.getKnowledge(result, ageGroup) : null;
+
+  function resetTrail() {
+    setResult(null);
+    setOpenSections({0: true});
+    setFollowup(-1);
+    setQuizChoice(null);
+    setFailedSource(null);
+  }
+
+  async function openSource(source) {
+    setFailedSource(null);
+    try {await Linking.openURL(source.url);}
+    catch {setFailedSource(source.url);}
+  }
+
   useEffect(() => {
     const handler = BackHandler.addEventListener('hardwareBackPress', () => {onBack(); return true;});
     return () => handler.remove();
   }, [onBack]);
 
   function review() {
+    resetTrail();
     setResult(Lab.reviewQuestion(question, ageGroup));
-    onScrollTop?.();
   }
   function chooseExample(sample) {
     setQuestion(sample.question);
-    setResult(null);
+    resetTrail();
   }
   function clear() {
     setQuestion('');
-    setResult(null);
+    resetTrail();
   }
 
   return <View testID="safe-curiosity-screen" style={s.root}>
@@ -48,7 +69,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
     <Text style={s.small}>This changes the wording of some learning guidance. No birthday, account or identity is needed.</Text>
     <View style={s.choices}>
       {Lab.AGE_GROUPS.map(group => <Button key={group.id} id={'safe-curiosity-age-' + group.id} label={group.label} selected={ageGroup === group.id}
-        onPress={() => {setAgeGroup(group.id); setResult(null);}}/>)}
+        onPress={() => {setAgeGroup(group.id); resetTrail();}}/>)}
     </View>
 
     <Text style={s.heading}>2. Explore a fictional question</Text>
@@ -57,7 +78,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
       label={sample.label + ' · ' + sample.question} onPress={() => chooseExample(sample)}/>)}
     <Text style={s.fieldLabel}>Question to explore (optional)</Text>
     <TextInput testID="safe-curiosity-question" accessibilityLabel="Question to explore"
-      value={question} onChangeText={value => {setQuestion(value); setResult(null);}}
+      value={question} onChangeText={value => {setQuestion(value); resetTrail();}}
       multiline maxLength={500} textAlignVertical="top" placeholder="For example: Why do websites recommend videos?"
       placeholderTextColor={P.muted} style={s.input}/>
     <Text style={s.small}>Your question stays in this screen's temporary memory. The lab does not upload it or save it to device storage. Navigating away from this lab or clearing the field removes this lab's copy.</Text>
@@ -74,6 +95,51 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
       <Text style={s.fieldLabel}>One possible next step</Text>
       <Text style={s.body}>{result.next}</Text>
       <Text style={s.small}>{result.limitation}</Text>
+      {trail && <View testID="safe-curiosity-knowledge-trail" style={s.knowledge}>
+        <Text accessibilityRole="header" style={s.title}>Explore the knowledge</Text>
+        <Text style={s.body}>{trail.intro}</Text>
+        <Text style={s.small}>Read the facts below, open another question, then check what you learned. Every source link is optional.</Text>
+        {trail.sections.map((item, index) => <View key={item.title} style={s.lessonCard}>
+          <Pressable testID={'safe-curiosity-lesson-'+index} accessibilityRole="button"
+            accessibilityLabel={item.title} accessibilityState={{expanded: !!openSections[index]}}
+            onPress={() => setOpenSections(old => ({...old, [index]: !old[index]}))}
+            style={({pressed}) => [s.lessonPress, pressed && s.pressed]}>
+            <Text style={s.lessonTitle}>{index + 1}. {item.title} {openSections[index] ? '−' : '+'}</Text>
+          </Pressable>
+          {!!openSections[index] && <Text testID={'safe-curiosity-lesson-body-'+index} style={s.body}>{item.body}</Text>}
+        </View>)}
+        {trail.followups.length > 0 && <View style={s.lessonCard}>
+          <Text accessibilityRole="header" style={s.heading}>What else would you like to know?</Text>
+          {trail.followups.map((item,index) => <View key={item.question}>
+            <Button id={'safe-curiosity-followup-'+index} label={item.question}
+              selected={followup === index} onPress={() => setFollowup(followup === index ? -1 : index)}/>
+            {followup === index && <Text testID="safe-curiosity-followup-answer" style={s.body}>{item.answer}</Text>}
+          </View>)}
+        </View>}
+        {trail.quiz && <View style={s.lessonCard} testID="safe-curiosity-knowledge-check">
+          <Text accessibilityRole="header" style={s.heading}>Check what you've learned</Text>
+          <Text style={s.body}>{trail.quiz.question}</Text>
+          {trail.quiz.choices.map((option,index) => <Button key={option} id={'safe-curiosity-quiz-'+index}
+            label={option} selected={quizChoice === index} onPress={() => setQuizChoice(index)}/>)}
+          {quizChoice !== null && <View testID="safe-curiosity-quiz-feedback" accessibilityLiveRegion="polite">
+            <Text style={s.feedback}>{quizChoice === trail.quiz.correct ? 'That matches the learning!' : 'Try another answer or review the explanation.'}</Text>
+            <Text style={s.body}>{trail.quiz.explanation}</Text>
+          </View>}
+        </View>}
+        <View style={s.lessonCard}>
+          <Text accessibilityRole="header" style={s.heading}>Check the original sources</Text>
+          {trail.sources.length === 0
+            ? <Text style={s.body}>This general research method does not verify the topic you entered. Ask a trusted educator or librarian where to start.</Text>
+            : trail.sources.map((source,index) => <View key={source.url} style={s.source}>
+              <Text style={s.body}>{source.title}</Text>
+              <Text style={s.small}>{source.author} · External website</Text>
+              <Button id={'safe-curiosity-source-'+index} label={'Read original source: ' + source.title} onPress={() => openSource(source)}/>
+              {failedSource === source.url && <Text selectable style={s.small}>Could not open that website. Copy this address to try in a browser: {source.url}</Text>}
+            </View>)}
+          <Text style={s.small}>Sources were reviewed for this draft on 19 October 2026. Their content may change. Opening a source leaves the app and follows that website's privacy policy.</Text>
+          <Text style={s.small}>{trail.review}</Text>
+        </View>
+      </View>}
     </View>}
 
     <View style={s.notice}>
@@ -106,4 +172,10 @@ const s = StyleSheet.create({
   input: {backgroundColor: P.panel, color: P.text, borderColor: P.line, borderWidth: 1, borderRadius: 14, padding: 14, fontSize: 16, lineHeight: 24, minHeight: 110, marginBottom: 8},
   result: {borderWidth: 2, borderColor: P.gold, borderRadius: 18, backgroundColor: P.panel, padding: 18, marginVertical: 18},
   footer: {fontSize: 13, lineHeight: 21, color: P.muted, marginTop: 16},
+  knowledge: {marginTop: 16, gap: 6},
+  lessonCard: {backgroundColor: P.panel2, borderRadius: 14, borderWidth: 1, borderColor: P.line, padding: 14, marginVertical: 7},
+  lessonPress: {minHeight: 46, justifyContent: 'center'},
+  lessonTitle: {fontSize: 17, lineHeight: 26, color: P.gold, fontWeight: '700'},
+  source: {borderTopColor: P.line, borderTopWidth: 1, paddingTop: 11, marginTop: 9},
+  feedback: {fontSize: 16, lineHeight: 25, color: P.gold, marginBottom: 8},
 });
