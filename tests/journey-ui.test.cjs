@@ -1218,3 +1218,50 @@ test('Explore connections isolates optional notes, shares fresh preview, confirm
   assert.ok(byId(tree,'explore-intro'));await pressId(tree,'explore-intro-reflect');assert.equal(byId(tree,'explore-input-question').props.value,'');
   assert.equal(disk.get(MEMORY_KEY),before);await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
 });
+
+test('Law, Rights & Kinship opens from learning search, filters jurisdictions and keeps source links explicit', async () => {
+  const savedBefore=disk.get(MEMORY_KEY), lifeBefore=disk.get(LIFE_MEMORY_KEY), linksBefore=openedLinks.length, sharesBefore=shares.length;
+  const tree=await mount();await press(tree,'Learn');
+  const publicSearch=tree.root.findAllByType('TextInput').find(node=>node.props.accessibilityLabel==='Search learning topics');
+  await act(async()=>publicSearch.props.onChangeText('LGBTQ'));
+  assert.ok(textOf(tree.root).includes('Law, Rights & Kinship'));
+  assert.ok(!textOf(tree.root).includes('No matching topics'));
+  await press(tree,'Law, Rights & Kinship');
+  assert.ok(byId(tree,'law-rights-kinship-screen'));
+  assert.equal(byId(tree,'app-nav-learn').props.accessibilityState.selected,true);
+  assert.match(textOf(tree.root),/many Aboriginal Nations/);
+  await pressId(tree,'law-about');assert.match(textOf(byId(tree,'law-about-details')),/fixed review date/);
+  await pressId(tree,'law-section-law');await pressId(tree,'law-scope-AU');
+  assert.equal(byId(tree,'law-topic-consent'),undefined,'WA consent is not an Australia-wide card');
+  assert.ok(byId(tree,'law-topic-marriage'));
+  await pressId(tree,'law-topic-marriage');assert.ok(byId(tree,'law-detail-marriage'));
+  assert.match(textOf(tree.root),/usual marriage age is 18/);
+  assert.equal(openedLinks.length,linksBefore,'Browsing never opens a website automatically');
+  failLink=true;await pressId(tree,'law-source-marriage');
+  assert.match(textOf(byId(tree,'law-source-error-marriage')),/https:\/\/www.ag.gov.au/);
+  failLink=false;await pressId(tree,'law-source-marriage');
+  assert.equal(openedLinks.at(-1),require('../src/lawRightsKinship.cjs').SOURCES.marriage.url);
+  assert.equal(byId(tree,'law-source-error-marriage'),undefined);
+  await act(async()=>[...backHandlers].at(-1)());
+  assert.ok(byId(tree,'law-topic-marriage'));assert.equal(byId(tree,'law-topic-consent'),undefined);
+  await act(async()=>byId(tree,'law-search').props.onChangeText('no public match zyxwvu'));
+  assert.ok(byId(tree,'law-no-results'));
+  await pressId(tree,'law-reset');await pressId(tree,'law-section-kinship');
+  await pressId(tree,'law-topic-noongar');assert.match(textOf(tree.root),/not a universal rule/);
+  await pressId(tree,'law-cultural-learning');assert.ok(byId(tree,'cultural-connections-screen'));
+  assert.equal(disk.get(MEMORY_KEY),savedBefore);assert.equal(disk.get(LIFE_MEMORY_KEY),lifeBefore);assert.equal(shares.length,sharesBefore);
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
+
+test('law learning also opens from More and presentation, distinguishes proposals and reaches local support',async()=>{
+  const tree=await mount();await press(tree,'More');await press(tree,'Law, Rights & Kinship');
+  await pressId(tree,'law-section-parliament');await pressId(tree,'law-topic-parliament');
+  assert.match(textOf(tree.root),/commencement also matters/);
+  assert.match(textOf(tree.root),/does not mean Parliament has approved/);
+  await pressId(tree,'law-knowledge-trail');assert.ok(byId(tree,'trail-start'));
+  await pressId(tree,'app-nav-home');await press(tree,'Our purpose & vision');
+  await pressId(tree,'presentation-law-rights-kinship');assert.ok(byId(tree,'law-rights-kinship-screen'));
+  await pressId(tree,'law-topic-threepartners');assert.match(textOf(tree.root),/does not allow all three people to marry/);
+  await pressId(tree,'law-support');assert.ok(byId(tree,'support-directory-screen'));
+  await act(async()=>tree.unmount());assert.equal(backHandlers.size,0);
+});
