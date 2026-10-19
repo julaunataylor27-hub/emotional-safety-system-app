@@ -148,6 +148,9 @@ jobs:
       - name: Connect Independence and commitment reflection
         run: python scripts/patch_independence_commitment.py
 
+      - name: Connect offline Safe Curiosity Lab demo
+        run: python scripts/patch_safe_curiosity.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 
