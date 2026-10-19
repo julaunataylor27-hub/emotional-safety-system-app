@@ -163,7 +163,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
       <Text style={s.body}>2. Build an opt-in, privacy-preserving browser prototype that checks permitted website content.</Text>
       <Text style={s.body}>3. Investigate on-device AI on existing phone chips. A purpose-built hardware chip comes much later, if justified.</Text>
       <Text style={s.small}>Real protection would require extensive accuracy, safeguarding, accessibility and cultural reviews, plus support from browsers and operating systems.</Text>
-    </View>
+    </View>}
     <Text style={s.footer}>Educational research prototype only · Not proof that harmful internet content is blocked, not a diagnosis and not an emergency service.</Text>
   </View>;
 }
