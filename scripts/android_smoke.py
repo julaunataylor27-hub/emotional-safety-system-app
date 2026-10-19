@@ -142,6 +142,37 @@ def law_rights_kinship_checks():
     print("PASS: law library opens, switches jurisdiction and cultural scope, and labels proposals separately from commenced law.")
 
 
+def independence_commitment_checks():
+    top()
+    tap("Independence & commitment", scroll=True, navigate=True, exact=True)
+    find("Room to be yourself. Care you freely choose.", scroll=True)
+    capture("independence-commitment-intro")
+    tap("Start or continue my reflection", scroll=True, navigate=True, exact=True)
+    find("My space", scroll=True, exact=True)
+    tap("Next part", scroll=True, navigate=True, exact=True)
+    find("My chosen commitment", scroll=True, exact=True)
+    tap("Next part", scroll=True, navigate=True, exact=True)
+    tap("I'm not sure", scroll=True, exact=True)
+    find("pause before agreeing", scroll=True)
+    capture("independence-commitment-choice")
+    tap("Pause here", scroll=True, navigate=True, exact=True)
+    find("Room to pause.", scroll=True)
+    tap("Continue when ready", scroll=True, navigate=True, exact=True)
+    find("pause before agreeing", scroll=True)
+    tap("Next part", scroll=True, navigate=True, exact=True)
+    find("does not set a reminder", scroll=True)
+    tap("Review my reflection", scroll=True, navigate=True, exact=True)
+    find("My space. My chosen care.", scroll=True)
+    find("Left open", scroll=True)
+    capture("independence-commitment-summary")
+    tap("Preview a copy of my reflection", scroll=True, navigate=True, exact=True)
+    find("Another person has not agreed", scroll=True)
+    capture("independence-commitment-preview")
+    tap("Learn", navigate=True, exact=True)
+    find("Learning Centre")
+    print("PASS: Independence and commitment preserves open answers, uncertainty and pause, and previews a personal reflection.")
+
+
 def support_directory_checks():
     find("Find support across Australia.", scroll=True)
     capture("support-directory-wa")
@@ -238,6 +269,8 @@ try:
         print("PASS: all eight circles open cultural meanings and return to Home.")
         tap("Learn", navigate=True)
         find("Learning Centre")
+        if "--independence-commitment" in sys.argv[2:]:
+            independence_commitment_checks()
         if "--law-rights-kinship" in sys.argv[2:]:
             law_rights_kinship_checks()
         if "--living-connections" in sys.argv[2:]:
