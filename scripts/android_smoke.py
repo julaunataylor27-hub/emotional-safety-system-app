@@ -112,7 +112,24 @@ def capture(name):
     (OUT / (name + ".xml")).write_text(adb("shell", "cat", "/sdcard/window.xml", check=False))
 
 
-def law_rights_kinship_checks():
+\n\ndef night_forest_design_checks():
+    top()
+    find("Protect curiosity. Build understanding.", scroll=True)
+    tap("Safe Curiosity Lab", scroll=True, navigate=True)
+    find("Proof of Concept", scroll=True)
+    tap("How the web works", scroll=True)
+    tap("Explore safely", scroll=True)
+    find("Understanding the internet", scroll=True)
+    tap("Explore the knowledge", scroll=True, navigate=True)
+    find("What is an algorithm?", scroll=True)
+    tap("Why am I seeing similar videos?", scroll=True)
+    find("A platform may predict", scroll=True)
+    capture("night-forest-knowledge")
+    tap("Back to Safe Curiosity", scroll=True, navigate=True)
+    tap("Back to Learn", scroll=True, navigate=True)
+    tap("Home", navigate=True, exact=True)
+    print("PASS: forest home, curiosity lesson, accordion and return navigation.")
+\ndef law_rights_kinship_checks():
     tap("Law, Rights & Kinship", scroll=True, navigate=True)
     find("Understand rights. Respect kinship.", scroll=True)
     find("many Aboriginal Nations", scroll=True)
@@ -174,7 +191,7 @@ def independence_commitment_checks():
 
 
 def support_directory_checks():
-    find("Find support across Australia.", scroll=True)
+    find("Support across Australia", scroll=True)
     capture("support-directory-wa")
     tap("Choose state or territory. Current: Western Australia", scroll=True, exact=True)
     find("Northern Territory", scroll=True)
@@ -202,10 +219,12 @@ try:
         print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity", timeout=60))
     except (RuntimeError, subprocess.TimeoutExpired) as error:
         print("Launch command failed:", error)
-    find("Eucalyptus tree at dawn; illustrative artwork")
-    find("Grow yourself.")
+    find("Moonlit golden tree beside water; illustrative artwork")
+    find("Protect curiosity. Build understanding.")
     capture("home")
     print("PASS: installed release renders the approved golden-tree Home.")
+    if "--night-forest" in sys.argv[2:]:
+        night_forest_design_checks()
     if "--picture-release-check" in sys.argv[2:]:
         tap("Learn", navigate=True)
         tap("Knowledge Trail", scroll=True, navigate=True)
@@ -239,7 +258,7 @@ try:
         capture("picture-decisions")
         print("PASS: complete bundled photograph fits content width and ratio, with no image zoom, and decision trail opens.")
         tap("Home", navigate=True)
-        tap("Find support", scroll=True, navigate=True)
+        tap("Support Resources", scroll=True, navigate=True)
         support_directory_checks()
         tap("Home", navigate=True)
     if "--balance-release-check" in sys.argv[2:]:
@@ -252,7 +271,7 @@ try:
         find("Learning Centre")
         law_rights_kinship_checks()
         tap("Home", navigate=True)
-        tap("Find support", scroll=True, navigate=True)
+        tap("Support Resources", scroll=True, navigate=True)
         support_directory_checks()
         tap("Home", navigate=True)
     # Diagnose journey/reflection independently after navigation has passed.
@@ -420,7 +439,7 @@ try:
             find("Learning Centre")
             print("PASS: Explore connections follows explained links, distinguishes fiction, sources and unknowns, pauses and previews optional reflection.")
         tap("Home", navigate=True)
-        tap("Find support", scroll=True, navigate=True)
+        tap("Support Resources", scroll=True, navigate=True)
         find("Support Resources")
         if "--support-directory" in sys.argv[2:]:
             support_directory_checks()
