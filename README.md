@@ -2,6 +2,29 @@
 
 A privacy-first Expo / React Native prototype for Android and iPhone.
 
+
+## Law, Rights & Kinship · version 1.8.0
+
+Open **Learn → Law, Rights & Kinship**, the matching entry in **More**, or its
+button in **Our Purpose & Vision**. Eighteen sourced topics explain selected
+Australian and WA rights, consent, relationships, privacy, family violence,
+child safety, kinship responsibilities and ways to engage Parliament. Topic and
+information-area filters keep WA-specific rules out of the Australia-wide law
+view. Each topic shows its jurisdiction, status, limits and original sources.
+
+The cultural framing recognises many Aboriginal Nations and their distinct
+kinship and knowledge responsibilities. Public Whadjuk/Nyungar accounts remain
+attributed; cultural family labels do not determine legal relationships. Current
+legal information, cultural guidance and proposals stay distinct. Sources were
+checked 19 October 2026; professional legal and cultural review remain pending.
+This is selected educational reading, not every law or individual legal advice.
+
+The section works offline; websites open only after a tap and failures keep a
+copyable URL. It does not determine guilt, certify consent, infer ancestry or send
+personal writing. See [scope, sources and verification](docs/LAW_RIGHTS_KINSHIP.md).
+Install the newly built **1.8.0 / Android versionCode 27 APK** to see the addition
+on an existing phone installation.
+
 ## Tim's picture and decision trail · version 1.7.8
 
 Open **Learn → Knowledge Trail → Explore Tim’s story** for twelve historical

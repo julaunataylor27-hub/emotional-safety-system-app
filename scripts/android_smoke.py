@@ -112,6 +112,36 @@ def capture(name):
     (OUT / (name + ".xml")).write_text(adb("shell", "cat", "/sdcard/window.xml", check=False))
 
 
+def law_rights_kinship_checks():
+    tap("Law, Rights & Kinship", scroll=True, navigate=True, exact=True)
+    find("Understand rights. Respect kinship.", scroll=True)
+    find("many Aboriginal Nations", scroll=True)
+    capture("law-rights-kinship-intro")
+    tap("Rights & law", scroll=True, exact=True)
+    tap("Australia-wide", scroll=True, exact=True)
+    tap("Read Marriage equality and who can marry. Australia-wide", scroll=True, navigate=True, exact=True)
+    find("Limits to understand", scroll=True)
+    find("The usual marriage age is 18", scroll=True)
+    capture("law-marriage-rights")
+    top()
+    tap("Back to topics", scroll=True, navigate=True, exact=True)
+    tap("Kinship & culture", scroll=True, exact=True)
+    tap("Community context", scroll=True, exact=True)
+    tap("Read Noongar kinship, family and responsibilities. Selected public Whadjuk / Nyungar accounts · south-west WA", scroll=True, navigate=True, exact=True)
+    find("not a universal rule", scroll=True)
+    capture("law-noongar-scope")
+    top()
+    tap("Back to topics", scroll=True, navigate=True, exact=True)
+    tap("Parliament & change", scroll=True, exact=True)
+    tap("All areas", scroll=True, exact=True)
+    tap("Read How a proposal becomes law. Federal Parliament · WA has its own law-making process", scroll=True, navigate=True, exact=True)
+    find("commencement also matters", scroll=True)
+    capture("law-parliament-proposals")
+    tap("Learn", navigate=True, exact=True)
+    find("Learning Centre")
+    print("PASS: law library opens, switches jurisdiction and cultural scope, and labels proposals separately from commenced law.")
+
+
 def support_directory_checks():
     find("Find support across Australia.", scroll=True)
     capture("support-directory-wa")
@@ -200,6 +230,8 @@ try:
         print("PASS: all eight circles open cultural meanings and return to Home.")
         tap("Learn", navigate=True)
         find("Learning Centre")
+        if "--law-rights-kinship" in sys.argv[2:]:
+            law_rights_kinship_checks()
         if "--living-connections" in sys.argv[2:]:
             tap("Living connections", scroll=True, navigate=True)
             find("Research draft", scroll=True)

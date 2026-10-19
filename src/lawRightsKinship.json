@@ -1,0 +1,742 @@
+{
+  "meta": {
+    "title": "Law, Rights & Kinship",
+    "version": "1.8.0",
+    "checked": "19 October 2026",
+    "status": "Public-source educational draft",
+    "review": "Professional legal and cultural review pending. No government or community endorsement claimed.",
+    "lead": "Understand rights. Respect kinship. Know where to ask.",
+    "scope": "Selected Australian and WA topics, with separately attributed cultural learning. This is not every law, personal legal advice or an automated legal decision.",
+    "time": "Sources checked 19 October 2026. This is a fixed review date, not a live law feed. Laws and commencement dates can change; check the official source and the law at the time of an event.",
+    "privacy": "Reading works offline. Source websites open only after a tap. This section does not upload reflections, determine guilt, certify consent or calculate cultural identity.",
+    "framing": "Living across legal and cultural systems in WA: many Aboriginal Nations have their own laws, kinship and responsibilities. Australian and WA legislation also applies; recognition and interaction depend on the particular law and context."
+  },
+  "sources": {
+    "marriage": {
+      "id": "marriage",
+      "title": "Marriage equality in Australia",
+      "author": "Australian Attorney-General’s Department",
+      "url": "https://www.ag.gov.au/families-and-marriage/marriage/marriage-equality-australia",
+      "locator": "Marriage definition; family law and same-sex marriage",
+      "scope": "Australia-wide marriage law",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "marry": {
+      "id": "marry",
+      "title": "Get married",
+      "author": "Australian Attorney-General’s Department",
+      "url": "https://www.ag.gov.au/families-and-marriage/marriage/get-married",
+      "locator": "Rules to get married in Australia",
+      "scope": "Eligibility, notice and authorised celebrants; individual circumstances need advice",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "plural": {
+      "id": "plural",
+      "title": "Evolving families and the regulation of families",
+      "author": "Justice Sarah Derrington · Federal Court of Australia",
+      "url": "https://www.fedcourt.gov.au/digital-law-library/judges-speeches/justice-s-derrington/s-derrington-j-20191121",
+      "locator": "Paragraphs 4–11",
+      "scope": "Judicial discussion of marriage, concurrent de facto relationships and varied families; not advice about a particular household",
+      "kind": "Judicial speech",
+      "date": "21 November 2019",
+      "checked": "19 October 2026"
+    },
+    "consent": {
+      "id": "consent",
+      "title": "Sex and consent",
+      "author": "Legal Aid WA",
+      "url": "https://www.legalaid.wa.gov.au/find-legal-answers/young-people/sex-and-law/sex-and-consent",
+      "locator": "Age of consent; free agreement; capacity; withdrawing consent",
+      "scope": "Western Australia; not the consent law of every state",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "forced": {
+      "id": "forced",
+      "title": "Forced marriage",
+      "author": "Australian Attorney-General’s Department",
+      "url": "https://www.ag.gov.au/crime/modern-slavery/forced-marriage",
+      "locator": "Free and full consent; forced and arranged marriages",
+      "scope": "Australia-wide offences; cultural, civil and religious ceremonies",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "control": {
+      "id": "control",
+      "title": "Coercive control",
+      "author": "Government of Western Australia",
+      "url": "https://www.wa.gov.au/government/coercive-control",
+      "locator": "What coercive control is; signs; help and support",
+      "scope": "WA education and support; not a finding that an offence occurred",
+      "kind": "Official legal information",
+      "date": "Page updated 30 September 2026",
+      "checked": "19 October 2026"
+    },
+    "orders": {
+      "id": "orders",
+      "title": "Restraining Orders Act 1997",
+      "author": "Western Australian Legislation",
+      "url": "https://www.legislation.wa.gov.au/legislation/statutes.nsf/main_mrtitle_822_homepage.html",
+      "locator": "Section 5A; current version and version history",
+      "scope": "WA family-violence definition; other requirements govern protection orders",
+      "kind": "Primary legislation",
+      "date": "Current compilation 05-u0-01 from 25 September 2025",
+      "checked": "19 October 2026"
+    },
+    "recording": {
+      "id": "recording",
+      "title": "Surveillance Devices Act 1998",
+      "author": "Western Australian Legislation",
+      "url": "https://www.legislation.wa.gov.au/legislation/statutes.nsf/main_mrtitle_2979_homepage.html",
+      "locator": "Sections 5, 6 and 9; current version and version history",
+      "scope": "WA restrictions on recording and communicating private material; exceptions need advice",
+      "kind": "Primary legislation",
+      "date": "Current compilation 02-g0-00 from 5 April 2023",
+      "checked": "19 October 2026"
+    },
+    "evidence": {
+      "id": "evidence",
+      "title": "Collecting evidence safely",
+      "author": "eSafety Commissioner",
+      "url": "https://www.esafety.gov.au/key-topics/domestic-family-violence/collecting-evidence-safely",
+      "locator": "Safety before collection; retaining digital evidence",
+      "scope": "Practical Australian online-safety guidance; not permission to record unlawfully",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "images": {
+      "id": "images",
+      "title": "Image-based abuse",
+      "author": "Legal Aid WA",
+      "url": "https://www.legalaid.wa.gov.au/find-legal-answers/young-people/sex-and-law/image-based-abuse",
+      "locator": "Sharing or threatening to share; permission; under-18 images",
+      "scope": "Explains Commonwealth and WA rules; specific offences and exceptions need advice",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "children": {
+      "id": "children",
+      "title": "Concerns for the safety or wellbeing of a child or young person",
+      "author": "WA Department of Communities",
+      "url": "https://www.wa.gov.au/organisation/department-of-communities/concerns-the-safety-or-wellbeing-of-child-or-young-person",
+      "locator": "Raising a concern; child-protection contact routes",
+      "scope": "WA child protection; reporting duties depend on role and law",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "equality": {
+      "id": "equality",
+      "title": "Information for people making complaints",
+      "author": "Australian Human Rights Commission",
+      "url": "https://www.humanrights.gov.au/our-work/complaint-information-service/information-people-making-complaints",
+      "locator": "Discrimination grounds and areas of public life; complaint process",
+      "scope": "Federal discrimination complaints; coverage, exceptions and time limits need advice",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "moort": {
+      "id": "moort",
+      "title": "Moort | Family",
+      "author": "Derbal Nara · public Nyungar cultural project",
+      "url": "https://www.derbalnara.org.au/moort",
+      "locator": "Family introduction and named Nyungar contributors",
+      "scope": "Selected Nyungar accounts of family; not one account for every Aboriginal Nation",
+      "kind": "Public cultural account",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "whadjuk": {
+      "id": "whadjuk",
+      "title": "Moieties and Totems",
+      "author": "Derbal Nara · public Whadjuk Nyungar cultural project",
+      "url": "https://www.derbalnara.org.au/moort-totems",
+      "locator": "Whadjuk social groups, relationships and care for totems",
+      "scope": "An attributed Whadjuk account; not a marriage-matching rule for all Noongar people",
+      "kind": "Public cultural account",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "kinship": {
+      "id": "kinship",
+      "title": "Kinship Connections",
+      "author": "Kinship Connections Aboriginal Corporation",
+      "url": "https://kinshipconnections.org.au/",
+      "locator": "Public description of family, belonging and cultural connections work",
+      "scope": "WA Aboriginal organisation; contact the organisation about its actual service scope",
+      "kind": "Aboriginal organisation resource",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "ethics": {
+      "id": "ethics",
+      "title": "AIATSIS Code of Ethics for Aboriginal and Torres Strait Islander Research",
+      "author": "AIATSIS",
+      "url": "https://aiatsis.gov.au/sites/default/files/2020-10/aiatsis-code-ethics.pdf",
+      "locator": "Indigenous self-determination, leadership, consent and accountability",
+      "scope": "Research ethics framework; public availability does not remove cultural or copyright obligations",
+      "kind": "Ethics guidance",
+      "date": "2020",
+      "checked": "19 October 2026"
+    },
+    "title": {
+      "id": "title",
+      "title": "About native title applications",
+      "author": "National Native Title Tribunal",
+      "url": "https://www.nntt.gov.au/native-title-applications",
+      "locator": "Claimant applications and native title determinations",
+      "scope": "Recognition of rights and interests in land and waters; specific to the group and area",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "childculture": {
+      "id": "childculture",
+      "title": "Best interests of children",
+      "author": "Legal Aid WA",
+      "url": "https://www.legalaid.wa.gov.au/find-legal-answers/family/making-decisions-about-children/best-interests-child",
+      "locator": "Additional considerations for Aboriginal and Torres Strait Islander children",
+      "scope": "Parenting decisions and the child’s right to enjoy culture; individual cases need advice",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "familyled": {
+      "id": "familyled",
+      "title": "Aboriginal Family Led Decision Making",
+      "author": "WA Department of Communities",
+      "url": "https://www.wa.gov.au/organisation/department-of-communities/aboriginal-family-led-decision-making",
+      "locator": "Family participation; culturally safe child-protection decisions; program locations",
+      "scope": "Describes a program with particular locations and eligibility; not a statewide guarantee",
+      "kind": "Official legal information",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "levels": {
+      "id": "levels",
+      "title": "Three levels of government",
+      "author": "Parliamentary Education Office",
+      "url": "https://peo.gov.au/understand-our-parliament/how-parliament-works/three-levels-of-government",
+      "locator": "Federal, state/territory and local responsibilities",
+      "scope": "Civic education; some responsibilities overlap",
+      "kind": "Parliamentary education",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "lawmaking": {
+      "id": "lawmaking",
+      "title": "Law-making",
+      "author": "Parliamentary Education Office",
+      "url": "https://peo.gov.au/understand-our-parliament/how-parliament-works/bills-and-laws/law-making",
+      "locator": "Ideas; bills; passage through both houses; Royal Assent and commencement",
+      "scope": "Australian federal process; WA has its own parliamentary process",
+      "kind": "Parliamentary education",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "wapetitions": {
+      "id": "wapetitions",
+      "title": "Preparing a petition for the Legislative Assembly",
+      "author": "Parliament of Western Australia",
+      "url": "https://www.parliament.wa.gov.au/WebCMS/webcms.nsf/content/legislative-assembly-publications-legislative-assembly-guides-preparing-a-petition-for-the-legislative-assembly",
+      "locator": "Petition requirements; paper and electronic processes",
+      "scope": "WA Legislative Assembly; follow the current House rules",
+      "kind": "Parliamentary procedure",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "federalpetitions": {
+      "id": "federalpetitions",
+      "title": "e-petitions",
+      "author": "Parliament of Australia",
+      "url": "https://www.aph.gov.au/e-petitions",
+      "locator": "Create, browse or sign a petition; current eligibility and rules",
+      "scope": "Federal House of Representatives petitions",
+      "kind": "Parliamentary procedure",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "submissions": {
+      "id": "submissions",
+      "title": "Making a submission to a committee inquiry",
+      "author": "Parliament of Australia",
+      "url": "https://www.aph.gov.au/MakeSubmission",
+      "locator": "How to make a submission; inquiry terms; publication and confidentiality",
+      "scope": "Federal committee submissions; check the specific inquiry’s current instructions",
+      "kind": "Parliamentary procedure",
+      "date": "Undated public resource",
+      "checked": "19 October 2026"
+    },
+    "criminal": {
+      "id": "criminal",
+      "title": "The Criminal Code",
+      "author": "Western Australian Legislation",
+      "url": "https://www.legislation.wa.gov.au/legislation/statutes.nsf/main_mrtitle_218_homepage.html",
+      "locator": "Sections 319–322 and 329; current version and version history",
+      "scope": "WA consent, age, authority and specified-relative offences; particular offences and defences require advice",
+      "kind": "Primary legislation",
+      "date": "Current compilation 19-aq0-01 from 1 May 2026",
+      "checked": "19 October 2026"
+    }
+  },
+  "topics": [
+    {
+      "id": "systems",
+      "title": "Living across legal and cultural systems",
+      "section": "kinship",
+      "scope": [
+        "AU",
+        "WA",
+        "community"
+      ],
+      "jurisdiction": "Australia · many distinct Aboriginal Nations",
+      "status": "Context and cultural learning",
+      "summary": "People can live with Aboriginal laws, kinship and cultural responsibilities as well as Australian and WA legislation. These systems have different sources of authority and interact in particular ways.",
+      "can": [
+        "Learn whose Country and community a cultural account concerns, and ask the appropriate knowledge holders how it applies.",
+        "Check whether a legal question involves federal, state or territory law, or a local rule."
+      ],
+      "limits": [
+        "WA is home to many Aboriginal Nations and diverse communities. “Two societies” is too broad to describe everyone’s identity or legal position.",
+        "Cultural recognition does not create a general exemption from legislation. Recognition depends on the particular law, rights and circumstances."
+      ],
+      "question": "Which legal rule and which community’s cultural responsibility am I trying to understand?",
+      "sources": [
+        "levels",
+        "title",
+        "moort"
+      ]
+    },
+    {
+      "id": "marriage",
+      "title": "Marriage equality and who can marry",
+      "section": "law",
+      "scope": [
+        "AU"
+      ],
+      "jurisdiction": "Australia-wide",
+      "status": "Current legal information",
+      "summary": "The right to marry does not depend on sex or gender. Two women, two men and couples including trans or non-binary people can marry when they meet the usual legal requirements.",
+      "can": [
+        "Choose whether and whom to marry, with the other person’s free agreement.",
+        "Ask an authorised celebrant about identification, notice and the ceremony."
+      ],
+      "limits": [
+        "Marriage involves two people, and neither can already be married. Prohibited family relationships also apply.",
+        "The usual marriage age is 18. A 16- or 17-year-old needs exceptional court approval and required consents to marry an adult; nobody under 16 can marry."
+      ],
+      "question": "What paperwork, notice and eligibility requirements apply to us?",
+      "sources": [
+        "marriage",
+        "marry",
+        "forced"
+      ]
+    },
+    {
+      "id": "threepartners",
+      "title": "Three adults in a relationship",
+      "section": "law",
+      "scope": [
+        "AU",
+        "WA"
+      ],
+      "jurisdiction": "Australia · WA property and family-law questions need advice",
+      "status": "Relationship information; marriage limit",
+      "summary": "Three consenting adults can choose a relationship together. Such a relationship is different from a legally recognised marriage involving all three people.",
+      "can": [
+        "Discuss boundaries, commitments and each adult’s freedom to agree, disagree or leave.",
+        "Ask a WA family lawyer about property, wills, parenting and any de facto rights arising from your particular relationships."
+      ],
+      "limits": [
+        "Current Australian law does not allow all three people to marry each other. A person already married cannot enter another legal marriage.",
+        "A throuple does not automatically receive all the rights of a married couple. Different laws may treat the individual relationships differently."
+      ],
+      "question": "What rights and obligations arise for each person, and what arrangements need individual advice?",
+      "sources": [
+        "marriage",
+        "marry",
+        "plural"
+      ]
+    },
+    {
+      "id": "consent",
+      "title": "Consent is a continuing choice",
+      "section": "law",
+      "scope": [
+        "WA"
+      ],
+      "jurisdiction": "Western Australia",
+      "status": "Current legal information",
+      "summary": "Consent means freely agreeing to the particular sexual activity at the time. Anyone can change their mind, including after activity has started.",
+      "can": [
+        "Say yes, no, pause or stop, and ask whether the other person freely wants to continue.",
+        "Stop when consent is withdrawn or is unclear; seek help if you feel pressured."
+      ],
+      "limits": [
+        "A person who is asleep or unconscious cannot consent. Intoxication can prevent a person from freely consenting.",
+        "A signature, relationship, marriage, past agreement, affection or apparent enjoyment cannot replace current consent. An app cannot certify consent or prevent someone reporting harm."
+      ],
+      "question": "Is everyone freely choosing this now, with capacity and room to stop?",
+      "sources": [
+        "consent",
+        "criminal"
+      ]
+    },
+    {
+      "id": "ages",
+      "title": "Age, authority and sexual safety",
+      "section": "law",
+      "scope": [
+        "WA"
+      ],
+      "jurisdiction": "Western Australia only · other jurisdictions differ",
+      "status": "Current legal information",
+      "summary": "Legal Aid WA explains that the general age of sexual consent in WA is 16. A higher age of 18 applies to specified relationships involving care, supervision or authority.",
+      "can": [
+        "Ask a qualified service about exact ages, roles and the applicable law.",
+        "Seek child-safety advice when a child may be at risk, even if some details are uncertain."
+      ],
+      "limits": [
+        "A “yes” does not make conduct lawful where age, authority or prohibited-relative rules prevent it.",
+        "The age of sexual consent is different from marriage eligibility and rules about sexual images. This summary is not a defence, eligibility test or permission for conduct."
+      ],
+      "question": "What are the exact ages, relationship and positions of authority involved?",
+      "sources": [
+        "consent",
+        "images",
+        "children",
+        "criminal"
+      ]
+    },
+    {
+      "id": "violence",
+      "title": "Control, family violence and protection",
+      "section": "law",
+      "scope": [
+        "WA"
+      ],
+      "jurisdiction": "Western Australia",
+      "status": "Current definition and support information",
+      "summary": "Coercive control can involve a pattern of behaviours that restricts freedom. WA’s family-violence definition includes coercion, control, fear and the cumulative effect of behaviour.",
+      "can": [
+        "Seek advice about safety planning, support and whether a restraining order may be available.",
+        "Record specific behaviours and their dates when doing so is safe."
+      ],
+      "limits": [
+        "Not every hurt feeling, disagreement or unkind act is a criminal offence. The conduct, context and relevant law matter.",
+        "The family-violence definition is not itself proof of a standalone coercive-control offence. This card does not declare such an offence commenced or decide whether any offence occurred."
+      ],
+      "question": "What protection or advice is available while the facts and applicable offences are clarified?",
+      "sources": [
+        "orders",
+        "control"
+      ]
+    },
+    {
+      "id": "forcedmarriage",
+      "title": "Marriage must be freely chosen",
+      "section": "law",
+      "scope": [
+        "AU"
+      ],
+      "jurisdiction": "Australia-wide",
+      "status": "Current legal information",
+      "summary": "Forced marriage is a crime. Pressure can include threats, violence, deception or severe emotional pressure. It is not confined to any culture, religion or gender.",
+      "can": [
+        "Decline a marriage and seek help if you cannot freely choose.",
+        "Have family involvement in introductions or arrangements while both people remain free to consent or refuse."
+      ],
+      "limits": [
+        "Family, cultural or religious expectations cannot replace each person’s free and full consent.",
+        "An arranged marriage with free consent is different from a forced marriage. Offences can involve cultural or religious ceremonies as well as civil ones."
+      ],
+      "question": "Can each person safely refuse without coercion or punishment?",
+      "sources": [
+        "forced"
+      ]
+    },
+    {
+      "id": "recording",
+      "title": "Privacy, recording and keeping evidence",
+      "section": "law",
+      "scope": [
+        "WA"
+      ],
+      "jurisdiction": "WA recording law · Australian digital-safety guidance",
+      "status": "Current legal information",
+      "summary": "Keeping a dated account of what you observed can help you ask for advice. Secretly recording private conversations or activities, or sharing recordings, is restricted in WA.",
+      "can": [
+        "Separate what you directly observed, what someone told you, interpretations and unknowns.",
+        "Ask about lawful, safe evidence collection and keep original digital context when appropriate."
+      ],
+      "limits": [
+        "Being part of a conversation does not automatically make every secret recording or disclosure lawful. Exceptions need legal advice.",
+        "Do not put yourself at risk to collect evidence. Recording law in another state may differ; public accusations may also create legal risks."
+      ],
+      "question": "What can I lawfully preserve or share, and could collecting it increase danger?",
+      "sources": [
+        "recording",
+        "evidence"
+      ]
+    },
+    {
+      "id": "images",
+      "title": "Intimate images and online safety",
+      "section": "law",
+      "scope": [
+        "AU",
+        "WA"
+      ],
+      "jurisdiction": "Australia-wide and WA rules overlap",
+      "status": "Current legal information",
+      "summary": "Sharing or threatening to share someone’s intimate image without consent can be unlawful. Consent to one use does not automatically authorise other uses.",
+      "can": [
+        "Ask for help with image-based abuse and use the official reporting and removal pathways.",
+        "Respect each person’s separate choice about taking, keeping and sharing intimate material."
+      ],
+      "limits": [
+        "Rules concerning sexual images of people under 18 are different from the age of sexual consent. Do not create, request or circulate those images; seek qualified advice about handling existing material.",
+        "Specific legal definitions and exceptions matter. This app does not authorise sharing or ask you to upload intimate images."
+      ],
+      "question": "What reporting or removal option applies, and how should existing material be handled safely?",
+      "sources": [
+        "images"
+      ]
+    },
+    {
+      "id": "childsafety",
+      "title": "Child safety and reporting concerns",
+      "section": "law",
+      "scope": [
+        "WA"
+      ],
+      "jurisdiction": "Western Australia",
+      "status": "Safeguarding and reporting information",
+      "summary": "You can ask WA Child Protection for advice about a child’s safety or wellbeing. A concern can be raised without an app establishing that abuse occurred.",
+      "can": [
+        "Describe direct observations, who said what, dates, missing details and any immediate risk.",
+        "Ask an appropriate service about next steps and any reporting duties attached to your profession or role."
+      ],
+      "limits": [
+        "A report is not a finding of guilt. Do not repeatedly question a child or attempt your own investigation.",
+        "Reporting duties depend on the role, facts and current legislation. In immediate danger in Australia, call 000."
+      ],
+      "question": "What needs protection now, and what firsthand information does the service need?",
+      "sources": [
+        "children"
+      ]
+    },
+    {
+      "id": "equality",
+      "title": "Equality and discrimination complaints",
+      "section": "law",
+      "scope": [
+        "AU"
+      ],
+      "jurisdiction": "Australia-wide federal protections · state pathways also exist",
+      "status": "Current legal information",
+      "summary": "Federal discrimination laws protect people on specified grounds in areas of public life. These include race, disability, sex, sexual orientation, gender identity and other grounds.",
+      "can": [
+        "Ask about a discrimination complaint involving work, education, housing or services.",
+        "Keep a factual account and seek advice about the right complaint body and relevant time limits."
+      ],
+      "limits": [
+        "Coverage and exceptions depend on the law and circumstances. Not every disagreement or unfair experience meets a legal definition.",
+        "Marriage equality does not mean every other law or service rule is identical across states and territories."
+      ],
+      "question": "Which protected ground, public activity and complaint pathway may apply?",
+      "sources": [
+        "equality"
+      ]
+    },
+    {
+      "id": "noongar",
+      "title": "Noongar kinship, family and responsibilities",
+      "section": "kinship",
+      "scope": [
+        "community",
+        "WA"
+      ],
+      "jurisdiction": "Selected public Whadjuk / Nyungar accounts · south-west WA",
+      "status": "Public cultural learning draft",
+      "summary": "Derbal Nara’s public Nyungar accounts connect family, Country and knowledge. Its Whadjuk account describes inherited social groups, relationships and responsibilities to care for totems.",
+      "can": [
+        "Follow the named public accounts and ask relevant family or community knowledge holders for guidance.",
+        "Use the existing Living connections section to explore other separately attributed accounts."
+      ],
+      "limits": [
+        "This Whadjuk account is not a universal rule for all Noongar families, Yamatji peoples or other Aboriginal Nations.",
+        "The app does not assign anyone a skin group, totem, cultural authority or permitted partner. Cultural review remains pending."
+      ],
+      "question": "Whose account is this, and who has authority to explain its application to my family?",
+      "sources": [
+        "moort",
+        "whadjuk"
+      ]
+    },
+    {
+      "id": "kinshipmeaning",
+      "title": "Cultural kinship and legal family categories",
+      "section": "kinship",
+      "scope": [
+        "AU",
+        "community"
+      ],
+      "jurisdiction": "Community-specific kinship · Australian legal definitions",
+      "status": "Cultural context and legal distinction",
+      "summary": "Kinship includes relationships and responsibilities that may extend beyond a simple biological family tree. A cultural family term alone does not establish a particular legal relationship.",
+      "can": [
+        "Explain the meaning of family terms and the actual relationship when speaking with a service or lawyer.",
+        "Ask the relevant community about kinship, and a qualified lawyer about the particular legal rule."
+      ],
+      "limits": [
+        "Do not assume that a cultural term such as brother, sister, aunty or uncle proves a particular biological or legal relationship.",
+        "Legal prohibitions involving relatives, age or authority still need examination. The app cannot determine ancestry, partner eligibility or whether conduct is lawful from a name or family label."
+      ],
+      "question": "What does this kinship term mean here, and what relationship does the relevant law actually define?",
+      "sources": [
+        "moort",
+        "kinship",
+        "marry",
+        "consent",
+        "criminal"
+      ]
+    },
+    {
+      "id": "recognition",
+      "title": "How Australian law can recognise cultural rights",
+      "section": "kinship",
+      "scope": [
+        "AU",
+        "community"
+      ],
+      "jurisdiction": "Australia-wide framework · rights specific to group and Country",
+      "status": "Legal recognition example",
+      "summary": "Native title is one example of Australian law recognising rights and interests connected with traditional laws and customs. Applications and determinations concern particular groups, land and waters.",
+      "can": [
+        "Read the relevant public determination and seek guidance from the proper Traditional Owner body or legal service.",
+        "Keep cultural authority, native title rights and a particular statutory obligation clearly identified."
+      ],
+      "limits": [
+        "Native title is not a general permission to enter every place or exercise any claimed right. The actual determination and other laws matter.",
+        "It does not create a general exemption from criminal law or decide family, marriage or consent questions. This app does not determine native title."
+      ],
+      "question": "Which group, area, determination and legal question are involved?",
+      "sources": [
+        "title",
+        "forced",
+        "marry"
+      ]
+    },
+    {
+      "id": "childrenandculture",
+      "title": "Children: safety, family and cultural connection",
+      "section": "kinship",
+      "scope": [
+        "WA",
+        "community"
+      ],
+      "jurisdiction": "Western Australia · parenting and child-protection contexts differ",
+      "status": "Legal information and cultural support",
+      "summary": "Legal Aid WA explains that parenting decisions for Aboriginal and Torres Strait Islander children consider their right to enjoy culture and connections with family, community, Country and language.",
+      "can": [
+        "Ask how the child’s safety, views and cultural connections will be considered together.",
+        "Ask about Aboriginal family-led decision-making or an appropriate Aboriginal service, including local eligibility."
+      ],
+      "limits": [
+        "Cultural connection does not remove child-safety duties, and family wishes do not automatically decide a parenting order.",
+        "The Aboriginal Family Led Decision Making program operates in specified locations and circumstances; it is not a guaranteed option everywhere."
+      ],
+      "question": "Who can support this child’s safety and cultural connections in the process involved?",
+      "sources": [
+        "childculture",
+        "familyled",
+        "children"
+      ]
+    },
+    {
+      "id": "permissions",
+      "title": "Who can share cultural knowledge?",
+      "section": "kinship",
+      "scope": [
+        "community"
+      ],
+      "jurisdiction": "Relevant Aboriginal Nation, community and knowledge holders",
+      "status": "Cultural protocol and research ethics",
+      "summary": "The AIATSIS ethics framework centres Indigenous self-determination, leadership, consent and accountability. Community knowledge holders guide whether and how particular knowledge can be shared.",
+      "can": [
+        "Use clearly attributed public material within its stated scope and permissions.",
+        "Ask appropriate knowledge holders about restricted material, consent, attribution and review."
+      ],
+      "limits": [
+        "A public web page is not permission to copy everything, reveal restricted knowledge or speak for a whole community.",
+        "This app claims no community endorsement. It does not publish restricted teachings, adjudicate cultural disputes or present ethical guidance as a new criminal law."
+      ],
+      "question": "Who has authority to give permission, and what conditions apply to this specific use?",
+      "sources": [
+        "ethics"
+      ]
+    },
+    {
+      "id": "parliament",
+      "title": "How a proposal becomes law",
+      "section": "parliament",
+      "scope": [
+        "AU",
+        "WA"
+      ],
+      "jurisdiction": "Federal Parliament · WA has its own law-making process",
+      "status": "Parliamentary process; proposals are not current law",
+      "summary": "A wish, petition, recommendation or bill is different from a law that is in force. For federal legislation, both houses must agree on the bill and it receives Royal Assent; commencement also matters.",
+      "can": [
+        "Identify which Parliament has responsibility, read the bill and check the official status and start date.",
+        "Use evidence and community perspectives to explain the change you want."
+      ],
+      "limits": [
+        "Marriage law is federal. WA alone cannot create a recognised three-person marriage under the current federal framework.",
+        "A meeting with an official, a grant or an app feature does not mean Parliament has approved the project or changed a law."
+      ],
+      "question": "Is this an idea, consultation, bill, enacted law or provision that has actually commenced?",
+      "sources": [
+        "levels",
+        "lawmaking",
+        "marriage"
+      ]
+    },
+    {
+      "id": "haveyoursay",
+      "title": "Have your say in Parliament",
+      "section": "parliament",
+      "scope": [
+        "AU",
+        "WA"
+      ],
+      "jurisdiction": "Choose federal or WA process for the issue",
+      "status": "Participation pathways; no automatic submission",
+      "summary": "People can raise proposals with their representatives, use parliamentary petitions and contribute to relevant committee inquiries. The rules depend on the Parliament, House and inquiry.",
+      "can": [
+        "For federal matters, read the House of Representatives petition rules or a relevant committee’s submission instructions.",
+        "For WA matters, follow the WA Parliament’s petition guidance and seek the appropriate member or committee."
+      ],
+      "limits": [
+        "A petition does not guarantee a law change. A submission may become public; check confidentiality arrangements before including personal or cultural information.",
+        "The app does not send your writing, sign a petition, lodge a submission or speak for a community."
+      ],
+      "question": "What change am I requesting, which body can act, and what evidence can I lawfully and respectfully share?",
+      "sources": [
+        "wapetitions",
+        "federalpetitions",
+        "submissions"
+      ]
+    }
+  ]
+}
