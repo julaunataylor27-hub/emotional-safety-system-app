@@ -116,7 +116,13 @@ def capture(name):
 
 def night_forest_design_checks():
     top()
-    find("Protect curiosity. Build understanding.", scroll=True)
+    find("KNOWLEDGE · CULTURE", scroll=True)
+    # Capture the photographic Home cards after scrolling them into view.
+    top()
+    screen()
+    swipe_body(up=True)
+    swipe_body(up=True)
+    capture("moonlit-riders-cards")
     tap("Emotional Safety", scroll=True, navigate=True)
     find("Proof of Concept", scroll=True)
     tap("How the web works", scroll=True)
