@@ -31,6 +31,7 @@ function HomeContent({onNavigate,onValuePress}){
  const contentWidth=Math.min(width-insets.left-insets.right,640);
  const largeText=fontScale>1.25||preferences.readingSize==='large'||preferences.language!=='en'||contentWidth<360;
  const columns=largeText?2:4;
+ const singleColumnCards=contentWidth<355||fontScale>1.2||preferences.readingSize==='large'||preferences.language!=='en';
  const heading={fontFamily:fontsLoaded?'ESSHeading':Platform.select({ios:'Georgia',android:'serif',default:'serif'})};
  const body={fontFamily:fontsLoaded?'ESSBody':undefined};
  const navigate=route=>onNavigate(route);
@@ -40,7 +41,7 @@ function HomeContent({onNavigate,onValuePress}){
    <StatusBar style="light"/>
    <ScrollView testID="golden-tree-home-scroll" style={s.scroll} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
 
-    <View style={[s.hero,{height:Math.max(490,contentWidth*1.35)}]}>
+    <View style={[s.hero,{height:Math.max(490,contentWidth*1.35)*(largeText?1.25:1)}]}>
       <Image testID="golden-tree-home-artwork" accessibilityLabel="Symbolic Aboriginal riders on horseback in a cinematic Australian night landscape" source={RIDERS} resizeMode="cover" style={s.heroPhoto}/>
       <View pointerEvents="none" style={s.heroWash}/>
       <View style={s.heroText} pointerEvents="box-none">
@@ -49,7 +50,7 @@ function HomeContent({onNavigate,onValuePress}){
             <View style={s.brandEmblem}><GoldenTreeIcon name="Globe" size={30} color={P.gold}/></View>
             <View style={s.brandCopy}>
               <Text style={[s.brandName,heading]}>EMOTIONAL{'\n'}SAFETY SYSTEM</Text>
-              <Text style={[s.brandTag,body]}>KNOWLEDGE · CULTURE · PEOPLE · CHOICE</Text>
+              <Text style={[s.brandTag,body]}>KNOWLEDGE · CULTURE{'\n'}PEOPLE · CHOICE</Text>
             </View>
           </View>
           <Pressable testID="home-open-menu" accessibilityRole="button" accessibilityLabel="Open menu" onPress={()=>navigate('more')} style={s.profile}><GoldenTreeIcon name="Humanity" size={25} color={P.gold}/></Pressable>
@@ -64,7 +65,7 @@ function HomeContent({onNavigate,onValuePress}){
     </View>
     <View style={s.featureStack}>
       {FEATURES.map(item=><Pressable key={item.route} testID={item.id} accessibilityRole="button" accessibilityLabel={item.name} onPress={()=>navigate(item.route)}
-        style={({pressed})=>[s.featureCard,pressed&&s.pressed]}>
+        style={({pressed})=>[s.featureCard,singleColumnCards&&s.featureCardWide,pressed&&s.pressed]}>
         <Image accessible={false} source={item.image} resizeMode="cover" style={s.featurePhoto}/>
         <View pointerEvents="none" style={s.featureWash}/>
         <View style={s.featureContent}>
@@ -183,23 +184,24 @@ Object.assign(s,{
  brandCluster:{flex:1,flexDirection:'row',alignItems:'center',gap:10},
  brandEmblem:{width:50,height:50,borderRadius:25,borderWidth:2,borderColor:'#E6A850',backgroundColor:'rgba(4,14,20,0.8)',alignItems:'center',justifyContent:'center'},
  brandCopy:{flex:1},brandName:{fontSize:19,lineHeight:22,letterSpacing:1.2,color:'#FFF5E8',textShadowColor:'#000',textShadowRadius:9},
- brandTag:{fontSize:8.5,lineHeight:14,letterSpacing:.9,color:'#FFE3BB',textShadowColor:'#000',textShadowRadius:8},
+ brandTag:{fontSize:8.5,lineHeight:13,letterSpacing:.6,color:'#FFE3BB',textShadowColor:'#000',textShadowRadius:8},
  profile:{width:42,height:42,borderRadius:23,borderColor:'#D1A263',borderWidth:1,backgroundColor:'rgba(5,13,18,.7)',alignItems:'center',justifyContent:'center'},
  heroTitle:{fontSize:39,lineHeight:43,color:'#FFF6E7',textShadowColor:'#000',textShadowRadius:11},
  subtitle:{fontSize:15,lineHeight:23,color:'#FFF4E7',marginTop:10,marginBottom:19,textShadowColor:'#000',textShadowRadius:7,maxWidth:330},
  exploreButton:{minHeight:49,backgroundColor:'#DFA95F',borderRadius:12,flexDirection:'row',gap:8,alignItems:'center',alignSelf:'flex-start',paddingHorizontal:17},
  exploreLabel:{fontWeight:'800',fontSize:13,letterSpacing:1.2,color:'#221207'},
  featureStack:{paddingHorizontal:11,marginTop:13,flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',gap:9},
- featureCard:{width:'48.6%',height:206,overflow:'hidden',borderRadius:16,borderColor:'#C99B5B',borderWidth:1.2,backgroundColor:'#132330',justifyContent:'flex-end'},
+ featureCard:{width:'48.6%',minHeight:224,overflow:'hidden',borderRadius:16,borderColor:'#C99B5B',borderWidth:1.2,backgroundColor:'#132330',justifyContent:'flex-end'},
+ featureCardWide:{width:'100%',minHeight:204},
  featurePhoto:{position:'absolute',left:0,top:0,width:'100%',height:'100%'},
  featureWash:{position:'absolute',top:0,left:0,right:0,bottom:0,backgroundColor:'rgba(0,0,0,0.22)'},
- featureContent:{padding:11,paddingBottom:15,minHeight:135,backgroundColor:'rgba(0,0,0,0.65)',justifyContent:'flex-end'},
+ featureContent:{padding:11,paddingRight:24,paddingBottom:15,minHeight:150,backgroundColor:'rgba(0,0,0,0.65)',justifyContent:'flex-end'},
  featureIcon:{width:42,height:42,borderRadius:22,borderWidth:1,borderColor:'#E8B66F',backgroundColor:'rgba(0,0,0,.6)',alignItems:'center',justifyContent:'center',marginBottom:8},
  featureTitle:{fontSize:16.5,lineHeight:22,color:'#FFF8EE'},
- featureSub:{fontSize:12,lineHeight:17,color:'#F1E6DA',marginTop:5,paddingRight:6},
+ featureSub:{fontSize:12,lineHeight:18,color:'#F1E6DA',marginTop:5,paddingRight:3,flexShrink:1},
  featureArrow:{position:'absolute',right:6,bottom:9},
  moreLink:{minHeight:51,marginHorizontal:15,paddingHorizontal:7,borderBottomColor:'#5D4730',borderBottomWidth:1,flexDirection:'row',alignItems:'center',gap:7},
- moreLabel:{color:'#DEBA81',flex:1,fontSize:13},
+ moreLabel:{color:'#DEBA81',flex:1,fontSize:13,lineHeight:19,flexShrink:1},
  extras:{paddingHorizontal:16,marginTop:17},
  primary:{minHeight:55,borderRadius:14,backgroundColor:'#E0AC67',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:12,padding:12},
  sectionHeading:{fontSize:24,lineHeight:32,color:'#E5B471',textAlign:'center',marginTop:25},
@@ -209,8 +211,8 @@ Object.assign(s,{
  nav:{backgroundColor:'#05090F',borderTopColor:'#876844',borderTopWidth:1,paddingTop:6,paddingHorizontal:7},
  navContent:{width:'100%',maxWidth:640,alignSelf:'center',flexDirection:'row'},
  navItem:{flex:1,minHeight:49,alignItems:'center',justifyContent:'center',gap:3,paddingBottom:3},
- navLabel:{fontSize:10,lineHeight:15,textAlign:'center'},
+ navLabel:{fontSize:10,lineHeight:15,textAlign:'center',flexShrink:1,width:'100%'},
  supportNow:{minHeight:45,backgroundColor:'#7D2518',marginHorizontal:10,marginTop:6,marginBottom:2,borderWidth:1.3,borderColor:'#C65836',borderRadius:24,alignItems:'center',justifyContent:'center'},
- supportNowText:{fontSize:13,letterSpacing:1,fontWeight:'800',color:'#FFF5ED'},
+ supportNowText:{fontSize:13,letterSpacing:.5,fontWeight:'800',color:'#FFF5ED',textAlign:'center',paddingHorizontal:8},
  pressed:{opacity:.76}
 });
