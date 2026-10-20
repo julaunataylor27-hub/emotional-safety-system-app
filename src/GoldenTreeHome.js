@@ -12,6 +12,7 @@ const {VALUE_MEANINGS}=require('./valueMeanings.cjs');
 
 const COLORS={background:P.bg,gold:P.gold,ivory:P.text,muted:P.muted,rule:P.line};
 const NAV=[['home','Home'],['journey','Journey'],['learn','Knowledge'],['evidence','Evidence'],['support','Services'],['more','More']];
+const NAV_ICONS={home:'Home',journey:'Journey',learn:'Knowledge',evidence:'Knowledge',support:'Humanity',more:'More'};
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
 // Locally bundled artwork. Each card uses a real native button and works offline.
 const RIDERS=require('../assets/graphics/primary-riders-v1.webp');
@@ -113,8 +114,8 @@ function HomeContent({onNavigate,onValuePress}){
     <View style={s.navContent}>{NAV.map(([route,label])=><Pressable key={route} testID={'home-nav-'+route} accessibilityRole="tab"
       accessibilityLabel={label} accessibilityState={{selected:route==='home'}} onPress={()=>navigate(route)}
       style={({pressed})=>[s.navItem,pressed&&s.pressed]}>
-     <GoldenTreeIcon name={label} size={25} color={route==='home'?P.gold:P.muted} filled={route==='home'}/>
-     <Text style={[s.navLabel,body,{color:route==='home'?P.gold:P.muted}]}>{t(route)}</Text>
+     <GoldenTreeIcon name={NAV_ICONS[route]} size={25} color={route==='home'?P.gold:P.muted} filled={route==='home'}/>
+     <Text style={[s.navLabel,body,{color:route==='home'?P.gold:P.muted}]}>{route==='evidence'?'Evidence':t(route)}</Text>
      {route==='home'&&<View style={s.activeTab}/>}
     </Pressable>)}</View>
     <Pressable testID="home-support-now" accessibilityRole="button" accessibilityLabel="I need support now" onPress={()=>navigate('support')} style={({pressed})=>[s.supportNow,pressed&&s.pressed]}>
