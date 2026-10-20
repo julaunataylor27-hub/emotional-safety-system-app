@@ -117,7 +117,7 @@ def capture(name):
 def night_forest_design_checks():
     top()
     find("Protect curiosity. Build understanding.", scroll=True)
-    tap("Safe Curiosity Lab", scroll=True, navigate=True)
+    tap("Emotional Safety", scroll=True, navigate=True)
     find("Proof of Concept", scroll=True)
     tap("How the web works", scroll=True)
     tap("Explore safely", scroll=True)
@@ -132,7 +132,7 @@ def night_forest_design_checks():
     tap("Back to Safe Curiosity", navigate=True)
     tap("Back to Learn", scroll=True, navigate=True)
     tap("Home", navigate=True, exact=True)
-    print("PASS: forest home, curiosity lesson, accordion and return navigation.")
+    print("PASS: Moonlit Riders home, curiosity lesson, accordion and return navigation.")
 
 def law_rights_kinship_checks():
     tap("Law, Rights & Kinship", scroll=True, navigate=True)
@@ -224,10 +224,10 @@ try:
         print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity", timeout=60))
     except (RuntimeError, subprocess.TimeoutExpired) as error:
         print("Launch command failed:", error)
-    find("Moonlit golden tree beside water; illustrative artwork")
-    find("Protect curiosity. Build understanding.")
+    find("Symbolic Aboriginal riders on horseback in a cinematic Australian night landscape")
+    find("KNOWLEDGE · CULTURE · PEOPLE · CHOICE")
     capture("home")
-    print("PASS: installed release renders the approved golden-tree Home.")
+    print("PASS: installed release renders the Moonlit Riders cinematic Home.")
     if "--night-forest" in sys.argv[2:]:
         night_forest_design_checks()
     if "--picture-release-check" in sys.argv[2:]:
@@ -263,7 +263,7 @@ try:
         capture("picture-decisions")
         print("PASS: complete bundled photograph fits content width and ratio, with no image zoom, and decision trail opens.")
         tap("Home", navigate=True)
-        tap("Support Resources", scroll=True, navigate=True)
+        tap("Support & Services", scroll=True, navigate=True)
         support_directory_checks()
         tap("Home", navigate=True)
     if "--balance-release-check" in sys.argv[2:]:
@@ -276,7 +276,7 @@ try:
         find("Learning Centre")
         law_rights_kinship_checks()
         tap("Home", navigate=True)
-        tap("Support Resources", scroll=True, navigate=True)
+        tap("Support & Services", scroll=True, navigate=True)
         support_directory_checks()
         tap("Home", navigate=True)
     # Diagnose journey/reflection independently after navigation has passed.
@@ -444,7 +444,7 @@ try:
             find("Learning Centre")
             print("PASS: Explore connections follows explained links, distinguishes fiction, sources and unknowns, pauses and previews optional reflection.")
         tap("Home", navigate=True)
-        tap("Support Resources", scroll=True, navigate=True)
+        tap("Support & Services", scroll=True, navigate=True)
         find("Support Resources")
         if "--support-directory" in sys.argv[2:]:
             support_directory_checks()
@@ -483,7 +483,7 @@ try:
     capture("home-actions")
     # The redesigned first card is called Start Assessment and is above the journey link.
     top()
-    tap("Start Assessment", scroll=True, navigate=True, exact=True)
+    tap("Explore the system with a new assessment", scroll=True, navigate=True, exact=True)
     node = find("android.widget.EditText", scroll=True, by_class=True)
     x, y = bounds(node)
     adb("shell", "input", "tap", str(x), str(y))
