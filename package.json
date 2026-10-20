@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "node --test --test-concurrency=1 tests/journey-memory.test.cjs tests/journey-pdf.test.cjs tests/journey-progress.test.cjs tests/diamond-effect.test.cjs tests/observed-responses.test.cjs tests/legal-decision-review.test.cjs tests/journey-ui.test.cjs tests/reflection-graphics.test.cjs tests/evidence-truth-engine.test.cjs tests/golden-tree-home.test.cjs tests/life-journey.test.cjs tests/app-preferences.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs tests/knowledge-trail.test.cjs tests/learning-together.test.cjs tests/explore-connections.test.cjs tests/support-directory.test.cjs tests/law-rights-kinship.test.cjs tests/independence-commitment.test.cjs tests/safe-curiosity.test.cjs tests/safe-curiosity-knowledge.test.cjs tests/night-forest-interactions.test.cjs"
+    "test": "node --test --test-concurrency=1 tests/journey-memory.test.cjs tests/journey-pdf.test.cjs tests/journey-progress.test.cjs tests/diamond-effect.test.cjs tests/observed-responses.test.cjs tests/legal-decision-review.test.cjs tests/journey-ui.test.cjs tests/reflection-graphics.test.cjs tests/evidence-truth-engine.test.cjs tests/golden-tree-home.test.cjs tests/life-journey.test.cjs tests/app-preferences.test.cjs tests/cultural-connections.test.cjs tests/cultural-inquiry.test.cjs tests/knowledge-trail.test.cjs tests/learning-together.test.cjs tests/explore-connections.test.cjs tests/support-directory.test.cjs tests/law-rights-kinship.test.cjs tests/independence-commitment.test.cjs tests/safe-curiosity.test.cjs tests/safe-curiosity-knowledge.test.cjs tests/night-forest-interactions.test.cjs tests/unified-humanity-theme.test.cjs",
+    "test:theme": "node --test tests/unified-humanity-theme.test.cjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",

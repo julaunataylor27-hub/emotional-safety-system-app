@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'design/unified-humanity-theme-foundation']
   workflow_dispatch:
 
 permissions:
