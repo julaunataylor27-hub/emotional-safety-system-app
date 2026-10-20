@@ -96,7 +96,7 @@ function HomeContent({onNavigate,onValuePress}){
           <View style={s.valueCircle}><GoldenTreeIcon name={value.name} size={33}/>
             <View testID={'home-value-info-'+value.name.toLowerCase()} pointerEvents="none" accessible={false} style={s.infoBadge}><Text style={s.infoText}>i</Text></View>
           </View>
-          <Text style={[s.valueLabel,body,largeText&&s.largeValueLabel]}>{t(value.name.toLowerCase())}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[s.valueLabel,body,largeText&&s.largeValueLabel]}>{t(value.name.toLowerCase())}</Text>
         </Pressable>)}
       </View>
       {[
@@ -207,7 +207,7 @@ Object.assign(s,{
  sectionHeading:{fontSize:24,lineHeight:32,color:'#E5B471',textAlign:'center',marginTop:25},
  sectionSub:{color:'#CFBDA8',fontSize:14,lineHeight:22,textAlign:'center',marginTop:7,marginBottom:18},
  valueCircle:{width:62,height:62,borderRadius:32,borderWidth:1.2,borderColor:'#DAB076',backgroundColor:'#18222C',alignItems:'center',justifyContent:'center'},
- valueLabel:{color:'#FFF1DE',fontSize:13,lineHeight:19,marginTop:6,textAlign:'center'},
+ valueLabel:{color:'#FFF1DE',fontSize:13,lineHeight:19,marginTop:6,textAlign:'center',alignSelf:'stretch',width:'100%',flexShrink:1},
  nav:{backgroundColor:'#05090F',borderTopColor:'#876844',borderTopWidth:1,paddingTop:6,paddingHorizontal:7},
  navContent:{width:'100%',maxWidth:640,alignSelf:'center',flexDirection:'row'},
  navItem:{flex:1,minHeight:49,alignItems:'center',justifyContent:'center',gap:3,paddingBottom:3},
