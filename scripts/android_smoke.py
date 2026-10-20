@@ -231,8 +231,17 @@ try:
     except (RuntimeError, subprocess.TimeoutExpired) as error:
         print("Launch command failed:", error)
     find("Symbolic Aboriginal riders on horseback in a cinematic Australian night landscape")
-    find("KNOWLEDGE · CULTURE · PEOPLE · CHOICE")
+    # The tagline is intentionally rendered on two lines; assert both halves.
+    find("KNOWLEDGE · CULTURE")
+    find("PEOPLE · CHOICE")
     capture("home")
+    # Verify the value label remains on one physical line on Android.
+    value = find("Understanding", scroll=True, exact=True)
+    coordinates = list(map(int, re.findall(r"\\d+", value.get("bounds", ""))))
+    if len(coordinates) != 4 or coordinates[3] - coordinates[1] > 85:
+        raise AssertionError("Understanding value label wraps or has invalid layout bounds: " + str(coordinates))
+    capture("home-aligned-values")
+    top()
     print("PASS: installed release renders the Moonlit Riders cinematic Home.")
     if "--night-forest" in sys.argv[2:]:
         night_forest_design_checks()
