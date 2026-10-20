@@ -11,7 +11,7 @@ import ValueMeaningSheet from './ValueMeaningSheet';
 const {VALUE_MEANINGS}=require('./valueMeanings.cjs');
 
 const COLORS={background:P.bg,gold:P.gold,ivory:P.text,muted:P.muted,rule:P.line};
-const NAV=[['home','Home'],['journey','Journey'],['learn','Knowledge'],['evidence','Evidence'],['support','Services'],['more','More']];
+const NAV=[['home','Home'],['journey','Journey'],['learn','Learn'],['evidence','Evidence'],['support','Services'],['more','More']];
 const NAV_ICONS={home:'Home',journey:'Journey',learn:'Knowledge',evidence:'Knowledge',support:'Humanity',more:'More'};
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
 // Locally bundled artwork. Each card uses a real native button and works offline.
@@ -58,7 +58,7 @@ function HomeContent({onNavigate,onValuePress}){
         <Text accessibilityRole="header" style={[s.heroTitle,heading]}>Knowledge{'\n'}Creates Choice</Text>
         <Text style={[s.subtitle,body]}>Culture, evidence and emotional safety to support stronger individuals, families and communities.</Text>
         <Pressable testID="home-explore-situation" accessibilityRole="button" accessibilityLabel="Explore the system with a new assessment" onPress={()=>navigate('assessment')} style={({pressed})=>[s.exploreButton,pressed&&s.pressed]}>
-          <Text style={[s.exploreLabel,body]}>EXPLORE THE SYSTEM</Text><GoldenTreeIcon name="Arrow" size={21} color="#180F09"/>
+          <View><Text style={[s.exploreLabel,body]}>EXPLORE THE SYSTEM</Text><Text style={{fontSize:10,color:"#392311",textAlign:"center",marginTop:1}}>Explore a situation</Text></View><GoldenTreeIcon name="Arrow" size={21} color="#180F09"/>
         </Pressable>
       </View>
     </View>
