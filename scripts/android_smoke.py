@@ -237,7 +237,7 @@ try:
     capture("home")
     # Verify the value label remains on one physical line on Android.
     value = find("Understanding", scroll=True, exact=True)
-    coordinates = list(map(int, re.findall(r"\\d+", value.get("bounds", ""))))
+    coordinates = list(map(int, re.findall(r"\d+", value.get("bounds", ""))))
     if len(coordinates) != 4 or coordinates[3] - coordinates[1] > 85:
         raise AssertionError("Understanding value label wraps or has invalid layout bounds: " + str(coordinates))
     capture("home-aligned-values")
