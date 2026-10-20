@@ -18,7 +18,7 @@ const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody
 const RIDERS=require('../assets/graphics/primary-riders-v1.webp');
 const FEATURES=[
  {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:require('../assets/graphics/presentation-growth-v2.webp')},
- {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and support tools.',id:'home-safe-curiosity',image:require('../assets/graphics/primary-riders-v1.webp')},
+ {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and practical safety tools.',id:'home-safe-curiosity',image:require('../assets/graphics/primary-riders-v1.webp')},
  {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:require('../assets/graphics/knowledge-justice-v1.webp')},
  {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:require('../assets/graphics/presentation-path-v2.webp')}
 ];
@@ -75,9 +75,9 @@ function HomeContent({onNavigate,onValuePress}){
         </View>
       </Pressable>)}
     </View>
-    <Pressable testID="home-more" accessibilityRole="button" accessibilityLabel="More learning tools and settings" onPress={()=>navigate('more')}
+    <Pressable testID="home-more" accessibilityRole="button" accessibilityLabel="More tools and settings" onPress={()=>navigate('more')}
       style={({pressed})=>[s.moreLink,pressed&&s.pressed]}>
-      <Text style={[s.moreLabel,body]}>More learning tools, laws and cultural knowledge</Text><GoldenTreeIcon name="Arrow" size={20} color={P.gold}/>
+      <Text style={[s.moreLabel,body]}>More tools, laws and cultural knowledge</Text><GoldenTreeIcon name="Arrow" size={20} color={P.gold}/>
     </Pressable>
     <View style={s.extras}>
       <Pressable testID="home-start-journey" accessibilityRole="button" accessibilityLabel="Start my journey"
