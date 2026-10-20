@@ -23,7 +23,8 @@ function load(name){
 const Home=load('GoldenTreeHome').default;
 async function render(props={}){let r;await Renderer.act(async()=>{r=Renderer.create(React.createElement(Home,{onNavigate:()=>{},onValuePress:()=>{},...props}));});return r;}
 test('approved artwork and all eight values render as separate native controls',async()=>{
- const r=await render();assert.equal(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,'Moonlit golden tree beside water; illustrative artwork');
+ const r=await render();assert.match(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,/Aboriginal riders on horseback/);
+ for(const id of ['home-open-knowledge','home-safe-curiosity','home-evidence-truth','home-find-support','home-support-now'])assert.ok(r.root.findByProps({testID:id}),id);
  for(const name of ['Knowledge','Understanding','Love','Kindness','Patience','Growth','Humanity','Life'])assert.equal(r.root.findByProps({testID:'home-value-'+name.toLowerCase()}).props.accessibilityLabel,'Explore '+name);
  assert.equal(r.root.findByProps({testID:'home-nav-home'}).props.accessibilityState.selected,true);
  await Renderer.act(async()=>r.unmount());
@@ -86,12 +87,20 @@ test('Android Back and backdrop dismiss; each opening resets sources; link error
  await Renderer.act(async()=>r.unmount());
 });
 
-test('forest redesign keeps the five showcased cards connected to real app routes',async()=>{
+test('cinematic riders theme keeps interactive routes connected',async()=>{
  const routes=[];const r=await render({onNavigate:route=>routes.push(route)});
  for(const id of ['home-explore-situation','home-safe-curiosity','home-evidence-truth','home-find-support','home-more'])
    await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
  assert.deepEqual(routes,['assessment','safeCuriosity','evidence','support','more']);
  assert.ok(r.root.findByProps({testID:'golden-tree-home-artwork'}));
  assert.ok(r.root.findByProps({testID:'home-start-journey'}));
+ await Renderer.act(async()=>r.unmount());
+});
+
+test('photographic Knowledge card and support-now action navigate to the real tools',async()=>{
+ const routes=[];const r=await render({onNavigate:route=>routes.push(route)});
+ for(const id of ['home-open-knowledge','home-support-now'])await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
+ assert.deepEqual(routes,['learn','support']);
+ assert.ok(r.root.findByProps({testID:'home-nav-evidence'}));
  await Renderer.act(async()=>r.unmount());
 });
