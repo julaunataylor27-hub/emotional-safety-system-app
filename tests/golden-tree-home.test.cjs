@@ -104,3 +104,19 @@ test('photographic Knowledge card and support-now action navigate to the real to
  assert.ok(r.root.findByProps({testID:'home-nav-evidence'}));
  await Renderer.act(async()=>r.unmount());
 });
+
+
+test('shared bottom navigation has six working and readable tabs',async()=>{
+ const routes=[];
+ const r=await render({onNavigate:route=>routes.push(route)});
+ const expected=['home','journey','learn','evidence','support','more'];
+ const tabs=expected.map(route=>r.root.findByProps({testID:'home-nav-'+route}));
+ assert.equal(r.root.findByProps({testID:'home-nav-container'}).props.testID,'home-nav-container');
+ assert.deepEqual(tabs.map(tab=>tab.props.accessibilityLabel),['Home','Journey','Learn','Evidence','Support','More']);
+ for(const tab of tabs)assert.equal(tab.props.accessibilityRole,'tab');
+ assert.equal(tabs[0].props.accessibilityState.selected,true);
+ assert.equal(tabs[3].props.accessibilityState.selected,false);
+ await Renderer.act(async()=>tabs[3].props.onPress());
+ assert.deepEqual(routes,['evidence']);
+ await Renderer.act(async()=>r.unmount());
+});
