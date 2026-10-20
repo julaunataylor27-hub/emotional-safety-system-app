@@ -8,11 +8,10 @@ import {SafeAreaProvider, useSafeAreaInsets, initialWindowMetrics} from 'react-n
 import GoldenTreeIcon from './GoldenTreeIcons';
 import NightForestScene from './NightForestScene';
 import ValueMeaningSheet from './ValueMeaningSheet';
+import UnifiedAppNavigation from './UnifiedAppNavigation';
 const {VALUE_MEANINGS}=require('./valueMeanings.cjs');
 
 const COLORS={background:P.bg,gold:P.gold,ivory:P.text,muted:P.muted,rule:P.line};
-const NAV=[['home','Home'],['journey','Journey'],['learn','Learn'],['evidence','Evidence'],['support','Services'],['more','More']];
-const NAV_ICONS={home:'Home',journey:'Journey',learn:'Knowledge',evidence:'Knowledge',support:'Humanity',more:'More'};
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
 // Locally bundled artwork. Each card uses a real native button and works offline.
 const RIDERS=require('../assets/graphics/primary-riders-v1.webp');
@@ -47,7 +46,7 @@ function HomeContent({onNavigate,onValuePress}){
       <View style={s.heroText} pointerEvents="box-none">
         <View style={s.topRow}>
           <View style={s.brandCluster}>
-            <View style={s.brandEmblem}><GoldenTreeIcon name="Globe" size={30} color={P.gold}/></View>
+            <View style={s.brandEmblem}><Image source={require("../assets/graphics/golden-tree-emblem-v1.png")} style={{width:45,height:45}} resizeMode="contain" accessible={false}/></View>
             <View style={s.brandCopy}>
               <Text style={[s.brandName,heading]}>EMOTIONAL{'\n'}SAFETY SYSTEM</Text>
               <Text style={[s.brandTag,body]}>KNOWLEDGE · CULTURE{'\n'}PEOPLE · CHOICE</Text>
@@ -112,13 +111,7 @@ function HomeContent({onNavigate,onValuePress}){
     </View>
    </ScrollView>
    <View style={[s.nav,{paddingBottom:Math.max(8,insets.bottom)}]}>
-    <View style={s.navContent}>{NAV.map(([route,label])=><Pressable key={route} testID={'home-nav-'+route} accessibilityRole="tab"
-      accessibilityLabel={label} accessibilityState={{selected:route==='home'}} onPress={()=>navigate(route)}
-      style={({pressed})=>[s.navItem,pressed&&s.pressed]}>
-     <GoldenTreeIcon name={NAV_ICONS[route]} size={25} color={route==='home'?P.gold:P.muted} filled={route==='home'}/>
-     <Text style={[s.navLabel,body,{color:route==='home'?P.gold:P.muted}]}>{route==='evidence'?'Evidence':t(route)}</Text>
-     {route==='home'&&<View style={s.activeTab}/>}
-    </Pressable>)}</View>
+    <UnifiedAppNavigation active="home" onNavigate={navigate} testIDPrefix="home-nav" includeSafeArea={false}/>
     <Pressable testID="home-support-now" accessibilityRole="button" accessibilityLabel="I need support now" onPress={()=>navigate('support')} style={({pressed})=>[s.supportNow,pressed&&s.pressed]}>
       <Text style={[s.supportNowText,body]}>⚠  I NEED SUPPORT NOW</Text>
     </Pressable>
@@ -208,7 +201,7 @@ Object.assign(s,{
  sectionSub:{color:'#CFBDA8',fontSize:14,lineHeight:22,textAlign:'center',marginTop:7,marginBottom:18},
  valueCircle:{width:62,height:62,borderRadius:32,borderWidth:1.2,borderColor:'#DAB076',backgroundColor:'#18222C',alignItems:'center',justifyContent:'center'},
  valueLabel:{color:'#FFF1DE',fontSize:13,lineHeight:19,marginTop:6,textAlign:'center',alignSelf:'stretch',width:'100%',flexShrink:1},
- nav:{backgroundColor:'#05090F',borderTopColor:'#876844',borderTopWidth:1,paddingTop:6,paddingHorizontal:7},
+ nav:{backgroundColor:'#193D32',borderTopColor:'#A4865D',borderTopWidth:1,paddingTop:0,paddingHorizontal:0},
  navContent:{width:'100%',maxWidth:640,alignSelf:'center',flexDirection:'row'},
  navItem:{flex:1,minHeight:49,alignItems:'center',justifyContent:'center',gap:3,paddingBottom:3},
  navLabel:{fontSize:10,lineHeight:15,textAlign:'center',flexShrink:1,width:'100%'},
