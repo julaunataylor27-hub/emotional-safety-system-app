@@ -1,7 +1,7 @@
 import {AppText as Text,useAppPreferences} from './AppPreferences';
 import {P} from './PresentationTheme';
 import React, {useState} from 'react';
-import {View, ScrollView, Pressable, StyleSheet, Platform, useWindowDimensions} from 'react-native';
+import {View, ScrollView, Pressable, Image, StyleSheet, Platform, useWindowDimensions} from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 import {useFonts} from 'expo-font';
 import {SafeAreaProvider, useSafeAreaInsets, initialWindowMetrics} from 'react-native-safe-area-context';
@@ -11,14 +11,15 @@ import ValueMeaningSheet from './ValueMeaningSheet';
 const {VALUE_MEANINGS}=require('./valueMeanings.cjs');
 
 const COLORS={background:P.bg,gold:P.gold,ivory:P.text,muted:P.muted,rule:P.line};
-const NAV=[['home','Home'],['journey','Journey'],['learn','Learn'],['support','Support'],['more','More']];
+const NAV=[['home','Home'],['journey','Journey'],['learn','Knowledge'],['evidence','Evidence'],['support','Services'],['more','More']];
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
+// Locally bundled artwork. Each card uses a real native button and works offline.
+const RIDERS=require('../assets/graphics/primary-riders-v1.webp');
 const FEATURES=[
- {route:'assessment',icon:'Compass',name:'Start Assessment',description:'Explore a situation · Understand needs. Find the right path.',id:'home-explore-situation'},
- {route:'safeCuriosity',icon:'Understanding',name:'Safe Curiosity Lab',description:'Explore questions safely.',id:'home-safe-curiosity'},
- {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Separate information, feelings and uncertainty.',id:'home-evidence-truth'},
- {route:'support',icon:'Humanity',name:'Support Resources',description:'Find help and guidance.',id:'home-find-support'},
- {route:'more',icon:'More',name:'More',description:'Settings, guides and more.',id:'home-more'},
+ {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:require('../assets/graphics/presentation-growth-v2.webp')},
+ {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and support tools.',id:'home-safe-curiosity',image:require('../assets/graphics/primary-riders-v1.webp')},
+ {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:require('../assets/graphics/knowledge-justice-v1.webp')},
+ {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:require('../assets/graphics/presentation-path-v2.webp')}
 ];
 function HomeContent({onNavigate,onValuePress}){
  const [selectedValue,setSelectedValue]=useState(null);
@@ -37,32 +38,46 @@ function HomeContent({onNavigate,onValuePress}){
    style={[s.screen,{paddingTop:insets.top,paddingLeft:insets.left,paddingRight:insets.right}]}>
    <StatusBar style="light"/>
    <ScrollView testID="golden-tree-home-scroll" style={s.scroll} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
-    <View style={[s.hero,{height:Math.max(298,contentWidth*0.78)}]}>
-      <NightForestScene testID="golden-tree-home-artwork" height={Math.max(298,contentWidth*.78)}
-        accessibilityLabel="Moonlit golden tree beside water; illustrative artwork"/>
+
+    <View style={[s.hero,{height:Math.max(490,contentWidth*1.35)}]}>
+      <Image testID="golden-tree-home-artwork" accessibilityLabel="Symbolic Aboriginal riders on horseback in a cinematic Australian night landscape" source={RIDERS} resizeMode="cover" style={s.heroPhoto}/>
+      <View pointerEvents="none" style={s.heroWash}/>
       <View style={s.heroText} pointerEvents="box-none">
         <View style={s.topRow}>
-         <View style={s.brandEmblem}><GoldenTreeIcon name="Growth" size={30} color={P.gold}/></View>
-         <Pressable testID="home-open-menu" accessibilityRole="button" accessibilityLabel="Open menu" accessibilityHint="Open the app menu and tools"
-           onPress={()=>navigate('more')} style={s.profile}><GoldenTreeIcon name="Menu" size={24} color={P.gold}/></Pressable>
+          <View style={s.brandCluster}>
+            <View style={s.brandEmblem}><GoldenTreeIcon name="Globe" size={30} color={P.gold}/></View>
+            <View style={s.brandCopy}>
+              <Text style={[s.brandName,heading]}>EMOTIONAL{'\n'}SAFETY SYSTEM</Text>
+              <Text style={[s.brandTag,body]}>KNOWLEDGE · CULTURE · PEOPLE · CHOICE</Text>
+            </View>
+          </View>
+          <Pressable testID="home-open-menu" accessibilityRole="button" accessibilityLabel="Open menu" onPress={()=>navigate('more')} style={s.profile}><GoldenTreeIcon name="Humanity" size={25} color={P.gold}/></Pressable>
         </View>
-        <Text accessibilityRole="header" style={[s.heroTitle,heading]}>Emotional{'\n'}Safety System</Text>
-        <Text style={[s.subtitle,body]}>Protect curiosity. Build understanding.</Text>
-        <View style={s.quoteSpacer}/>
-        <Text style={[s.heroQuote,heading]}>Brighter questions{'\n'}build safer tomorrows.</Text>
+        <View style={{flex:1}}/>
+        <Text accessibilityRole="header" style={[s.heroTitle,heading]}>Knowledge{'\n'}Creates Choice</Text>
+        <Text style={[s.subtitle,body]}>Culture, evidence and emotional safety to support stronger individuals, families and communities.</Text>
+        <Pressable testID="home-explore-situation" accessibilityRole="button" accessibilityLabel="Explore the system with a new assessment" onPress={()=>navigate('assessment')} style={({pressed})=>[s.exploreButton,pressed&&s.pressed]}>
+          <Text style={[s.exploreLabel,body]}>EXPLORE THE SYSTEM</Text><GoldenTreeIcon name="Arrow" size={21} color="#180F09"/>
+        </Pressable>
       </View>
     </View>
     <View style={s.featureStack}>
-      {FEATURES.map((item,index)=><Pressable key={item.route} testID={item.id}
-        accessibilityRole="button" accessibilityLabel={item.name}
-        onPress={()=>navigate(item.route)}
-        style={({pressed})=>[s.featureCard,index%2===1&&s.alternate,pressed&&s.pressed]}>
-        <View style={s.featureIcon}><GoldenTreeIcon name={item.icon} size={29} color={P.gold}/></View>
-        <View style={s.featureCopy}><Text style={[s.featureTitle,heading]}>{item.name}</Text>
-         <Text style={[s.featureSub,body]}>{item.description}</Text></View>
-        <GoldenTreeIcon name="Chevron" size={19} color={P.gold}/>
+      {FEATURES.map(item=><Pressable key={item.route} testID={item.id} accessibilityRole="button" accessibilityLabel={item.name} onPress={()=>navigate(item.route)}
+        style={({pressed})=>[s.featureCard,pressed&&s.pressed]}>
+        <Image accessible={false} source={item.image} resizeMode="cover" style={s.featurePhoto}/>
+        <View pointerEvents="none" style={s.featureWash}/>
+        <View style={s.featureContent}>
+          <View style={s.featureIcon}><GoldenTreeIcon name={item.icon} size={25} color={P.gold}/></View>
+          <Text style={[s.featureTitle,heading]}>{item.name}</Text>
+          <Text style={[s.featureSub,body]}>{item.description}</Text>
+          <View style={s.featureArrow}><GoldenTreeIcon name="Arrow" size={17} color={P.text}/></View>
+        </View>
       </Pressable>)}
     </View>
+    <Pressable testID="home-more" accessibilityRole="button" accessibilityLabel="More learning tools and settings" onPress={()=>navigate('more')}
+      style={({pressed})=>[s.moreLink,pressed&&s.pressed]}>
+      <Text style={[s.moreLabel,body]}>More learning tools, laws and cultural knowledge</Text><GoldenTreeIcon name="Arrow" size={20} color={P.gold}/>
+    </Pressable>
     <View style={s.extras}>
       <Pressable testID="home-start-journey" accessibilityRole="button" accessibilityLabel="Start my journey"
         onPress={()=>navigate('journey')} style={({pressed})=>[s.primary,pressed&&s.pressed]}>
@@ -102,6 +117,9 @@ function HomeContent({onNavigate,onValuePress}){
      <Text style={[s.navLabel,body,{color:route==='home'?P.gold:P.muted}]}>{t(route)}</Text>
      {route==='home'&&<View style={s.activeTab}/>}
     </Pressable>)}</View>
+    <Pressable testID="home-support-now" accessibilityRole="button" accessibilityLabel="I need support now" onPress={()=>navigate('support')} style={({pressed})=>[s.supportNow,pressed&&s.pressed]}>
+      <Text style={[s.supportNowText,body]}>⚠  I NEED SUPPORT NOW</Text>
+    </Pressable>
    </View>
   </View>
   {selectedValue&&<ValueMeaningSheet key={selectedValue.name} value={selectedValue} heading={heading} body={body} bottomInset={insets.bottom}
@@ -150,4 +168,48 @@ const s=StyleSheet.create({
  navLabel:{fontSize:12,lineHeight:18,textAlign:'center'},
  activeTab:{position:'absolute',bottom:0,width:28,height:2,backgroundColor:P.gold,borderRadius:2},
  pressed:{opacity:.75}
+});
+
+/* Moonlit Riders cinematic design: native photographs, accessible text, working routes. */
+Object.assign(s,{
+ screen:{flex:1,backgroundColor:'#060A10'},
+ content:{width:'100%',maxWidth:640,alignSelf:'center',paddingBottom:28,backgroundColor:'#060A10'},
+ hero:{width:'100%',overflow:'hidden',backgroundColor:'#091A29',borderBottomColor:'#C99858',borderBottomWidth:1},
+ heroPhoto:{position:'absolute',left:0,top:0,width:'100%',height:'100%'},
+ heroWash:{position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'rgba(2,8,12,0.29)'},
+ heroText:{position:'absolute',top:0,left:0,right:0,bottom:0,padding:17,paddingBottom:24},
+ topRow:{flexDirection:'row',alignItems:'flex-start',justifyContent:'space-between',gap:7},
+ brandCluster:{flex:1,flexDirection:'row',alignItems:'center',gap:10},
+ brandEmblem:{width:50,height:50,borderRadius:25,borderWidth:2,borderColor:'#E6A850',backgroundColor:'rgba(4,14,20,0.8)',alignItems:'center',justifyContent:'center'},
+ brandCopy:{flex:1},brandName:{fontSize:19,lineHeight:22,letterSpacing:1.2,color:'#FFF5E8',textShadowColor:'#000',textShadowRadius:9},
+ brandTag:{fontSize:8.5,lineHeight:14,letterSpacing:.9,color:'#FFE3BB',textShadowColor:'#000',textShadowRadius:8},
+ profile:{width:42,height:42,borderRadius:23,borderColor:'#D1A263',borderWidth:1,backgroundColor:'rgba(5,13,18,.7)',alignItems:'center',justifyContent:'center'},
+ heroTitle:{fontSize:39,lineHeight:43,color:'#FFF6E7',textShadowColor:'#000',textShadowRadius:11},
+ subtitle:{fontSize:15,lineHeight:23,color:'#FFF4E7',marginTop:10,marginBottom:19,textShadowColor:'#000',textShadowRadius:7,maxWidth:330},
+ exploreButton:{minHeight:49,backgroundColor:'#DFA95F',borderRadius:12,flexDirection:'row',gap:8,alignItems:'center',alignSelf:'flex-start',paddingHorizontal:17},
+ exploreLabel:{fontWeight:'800',fontSize:13,letterSpacing:1.2,color:'#221207'},
+ featureStack:{paddingHorizontal:11,marginTop:13,flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',gap:9},
+ featureCard:{width:'48.6%',height:206,overflow:'hidden',borderRadius:16,borderColor:'#C99B5B',borderWidth:1.2,backgroundColor:'#132330',justifyContent:'flex-end'},
+ featurePhoto:{position:'absolute',left:0,top:0,width:'100%',height:'100%'},
+ featureWash:{position:'absolute',top:0,left:0,right:0,bottom:0,backgroundColor:'rgba(0,0,0,0.22)'},
+ featureContent:{padding:11,paddingBottom:15,minHeight:135,backgroundColor:'rgba(0,0,0,0.65)',justifyContent:'flex-end'},
+ featureIcon:{width:42,height:42,borderRadius:22,borderWidth:1,borderColor:'#E8B66F',backgroundColor:'rgba(0,0,0,.6)',alignItems:'center',justifyContent:'center',marginBottom:8},
+ featureTitle:{fontSize:16.5,lineHeight:22,color:'#FFF8EE'},
+ featureSub:{fontSize:12,lineHeight:17,color:'#F1E6DA',marginTop:5,paddingRight:6},
+ featureArrow:{position:'absolute',right:6,bottom:9},
+ moreLink:{minHeight:51,marginHorizontal:15,paddingHorizontal:7,borderBottomColor:'#5D4730',borderBottomWidth:1,flexDirection:'row',alignItems:'center',gap:7},
+ moreLabel:{color:'#DEBA81',flex:1,fontSize:13},
+ extras:{paddingHorizontal:16,marginTop:17},
+ primary:{minHeight:55,borderRadius:14,backgroundColor:'#E0AC67',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:12,padding:12},
+ sectionHeading:{fontSize:24,lineHeight:32,color:'#E5B471',textAlign:'center',marginTop:25},
+ sectionSub:{color:'#CFBDA8',fontSize:14,lineHeight:22,textAlign:'center',marginTop:7,marginBottom:18},
+ valueCircle:{width:62,height:62,borderRadius:32,borderWidth:1.2,borderColor:'#DAB076',backgroundColor:'#18222C',alignItems:'center',justifyContent:'center'},
+ valueLabel:{color:'#FFF1DE',fontSize:13,lineHeight:19,marginTop:6,textAlign:'center'},
+ nav:{backgroundColor:'#05090F',borderTopColor:'#876844',borderTopWidth:1,paddingTop:6,paddingHorizontal:7},
+ navContent:{width:'100%',maxWidth:640,alignSelf:'center',flexDirection:'row'},
+ navItem:{flex:1,minHeight:49,alignItems:'center',justifyContent:'center',gap:3,paddingBottom:3},
+ navLabel:{fontSize:10,lineHeight:15,textAlign:'center'},
+ supportNow:{minHeight:45,backgroundColor:'#7D2518',marginHorizontal:10,marginTop:6,marginBottom:2,borderWidth:1.3,borderColor:'#C65836',borderRadius:24,alignItems:'center',justifyContent:'center'},
+ supportNowText:{fontSize:13,letterSpacing:1,fontWeight:'800',color:'#FFF5ED'},
+ pressed:{opacity:.76}
 });
