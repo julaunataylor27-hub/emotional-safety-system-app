@@ -8,6 +8,12 @@ on:
 permissions:
   contents: read
 
+# When several edits arrive close together, build only the newest revision.
+# This leaves all checks enabled for the current revision.
+concurrency:
+  group: build-android-apk-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
@@ -163,11 +169,18 @@ jobs:
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
+      # Restore Gradle wrapper/dependencies, transformed libraries and reusable task outputs.
+      # Run after Expo prebuild because it generates the Android/Gradle project.
+      - name: Restore reusable Gradle build cache
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: android
+
       - name: Build standalone release APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
+          ./gradlew assembleRelease --no-daemon --build-cache
 
       - name: Verify bundled JavaScript and rename APK
         id: release
