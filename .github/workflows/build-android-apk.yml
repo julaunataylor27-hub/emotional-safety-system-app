@@ -181,7 +181,10 @@ jobs:
         run: |
           chmod +x gradlew
           # Parallelize independent native modules, but cap workers to reduce memory-pressure risk.
-          ./gradlew assembleRelease --no-daemon --build-cache --parallel --max-workers=2
+          # Compile both ARM phone ABIs and x86_64 for the Android 16 emulator.
+          # Skip legacy 32-bit x86 emulators to save one costly native C++ build.
+          # Keep all validation and release smoke-test checks unchanged.
+          ./gradlew assembleRelease --no-daemon --build-cache --parallel --max-workers=2 -PreactNativeArchitectures=armeabi-v7a,arm64-v8a,x86_64
 
       - name: Verify bundled JavaScript and rename APK
         id: release
