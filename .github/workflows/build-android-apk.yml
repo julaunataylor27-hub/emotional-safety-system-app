@@ -151,6 +151,9 @@ jobs:
       - name: Connect offline Safe Curiosity Lab demo
         run: python scripts/patch_safe_curiosity.py
 
+      - name: Connect ancient Australian animals and evidence learning
+        run: python scripts/patch_ancient_animals.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 
