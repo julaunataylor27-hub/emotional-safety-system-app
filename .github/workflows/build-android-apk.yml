@@ -180,7 +180,8 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon --build-cache
+          # Parallelize independent native modules, but cap workers to reduce memory-pressure risk.
+          ./gradlew assembleRelease --no-daemon --build-cache --parallel --max-workers=2
 
       - name: Verify bundled JavaScript and rename APK
         id: release
