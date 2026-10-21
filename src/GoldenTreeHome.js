@@ -14,13 +14,13 @@ const COLORS={background:P.bg,gold:P.gold,ivory:P.text,muted:P.muted,rule:P.line
 const NAV=[['home','Home'],['journey','Journey'],['learn','Learn'],['evidence','Evidence'],['support','Services'],['more','More']];
 const NAV_ICONS={home:'Home',journey:'Journey',learn:'Knowledge',evidence:'Knowledge',support:'Humanity',more:'More'};
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
-// Locally bundled artwork. Each card uses a real native button and works offline.
+// Four distinct user-approved scenic image crops (21 October 2026). All cards retain native text, accessibility and routes; artwork is bundled for offline use.
 const RIDERS=require('../assets/graphics/primary-riders-v1.webp');
 const FEATURES=[
- {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:require('../assets/graphics/presentation-growth-v2.webp')},
- {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and practical safety tools.',id:'home-safe-curiosity',image:require('../assets/graphics/primary-riders-v1.webp')},
- {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:require('../assets/graphics/knowledge-justice-v1.webp')},
- {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:require('../assets/graphics/presentation-path-v2.webp')}
+ {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:require('../assets/graphics/home-cards/knowledge-growth-v1.webp')},
+ {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and practical safety tools.',id:'home-safe-curiosity',image:require('../assets/graphics/home-cards/emotional-sunset-v1.webp')},
+ {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:require('../assets/graphics/home-cards/evidence-records-v1.webp')},
+ {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:require('../assets/graphics/home-cards/support-community-v1.webp')}
 ];
 function HomeContent({onNavigate,onValuePress}){
  const [selectedValue,setSelectedValue]=useState(null);

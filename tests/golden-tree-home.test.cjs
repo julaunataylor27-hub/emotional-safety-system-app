@@ -104,3 +104,14 @@ test('photographic Knowledge card and support-now action navigate to the real to
  assert.ok(r.root.findByProps({testID:'home-nav-evidence'}));
  await Renderer.act(async()=>r.unmount());
 });
+
+
+test('21 October visual refresh bundles four different real home-card images',async()=>{
+ const source=fs.readFileSync(path.resolve(__dirname,'../src/GoldenTreeHome.js'),'utf8');
+ const names=['knowledge-growth-v1.webp','emotional-sunset-v1.webp','evidence-records-v1.webp','support-community-v1.webp'];
+ for(const name of names){
+  assert.equal(source.split("home-cards/"+name).length-1,1,name+' should be used exactly once');
+  assert.ok(fs.existsSync(path.resolve(__dirname,'../assets/graphics/home-cards',name)),name+' must be bundled');
+ }
+ assert.equal(new Set(names).size,4);
+});
