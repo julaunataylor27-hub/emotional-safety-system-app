@@ -11,9 +11,19 @@ OUT = Path("android-smoke")
 OUT.mkdir(exist_ok=True)
 BODY = (0, 0, 1080, 1920)
 SCROLL_NODES = set()
+# Reuse a recent, unchanged UI snapshot for consecutive assertions. All user inputs
+# invalidate it; expiry ensures asynchronously updated screens are rechecked.
+UI_CACHE = None
+UI_CACHE_AT = 0.0
+UI_CACHE_TTL = 0.75
+SCREEN_DUMPS = 0
+SCREEN_CACHE_HITS = 0
 
 
 def adb(*args, check=True, timeout=30):
+    global UI_CACHE
+    if args and (args[0] == 'install' or (len(args) >= 2 and args[0] == 'shell' and args[1] in ('input', 'am'))):
+        UI_CACHE = None
     result = subprocess.run(["adb", *args], capture_output=True, timeout=timeout)
     if check and result.returncode:
         raise RuntimeError(result.stdout.decode(errors="replace") + result.stderr.decode(errors="replace"))
@@ -21,7 +31,11 @@ def adb(*args, check=True, timeout=30):
 
 
 def screen():
-    global BODY, SCROLL_NODES
+    global BODY, SCROLL_NODES, UI_CACHE, UI_CACHE_AT, SCREEN_DUMPS, SCREEN_CACHE_HITS
+    if UI_CACHE is not None and time.monotonic() - UI_CACHE_AT < UI_CACHE_TTL:
+        SCREEN_CACHE_HITS += 1
+        return UI_CACHE
+    SCREEN_DUMPS += 1
     adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False, timeout=20)
     xml = adb("shell", "cat", "/sdcard/window.xml", check=False)
     (OUT / "latest.xml").write_text(xml)
@@ -43,6 +57,8 @@ def screen():
                 if len(values) == 4:
                     BODY = (BODY[0], BODY[1], BODY[2], min(BODY[3], values[1]))
                     break
+        UI_CACHE = root
+        UI_CACHE_AT = time.monotonic()
         return root
     except ET.ParseError:
         return ET.Element("empty")
@@ -523,6 +539,7 @@ finally:
     logs = adb("logcat", "-d", "-v", "threadtime", check=False)
     (OUT / "startup.log").write_text(logs)
     capture("final")
+    print(f"QA UI snapshots: {SCREEN_DUMPS} fresh dumps, {SCREEN_CACHE_HITS} safe cached reads.", flush=True)
     print("\n".join(line for line in logs.splitlines() if any(word in line for word in ("ReactNativeJS", "AndroidRuntime", "RNSkia", "JavascriptException")))[-16000:])
 if "JavascriptException" in logs or "E ReactNativeJS:" in logs:
     raise SystemExit("Release APK logged a JavaScript failure.")
