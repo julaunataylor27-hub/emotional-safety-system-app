@@ -3,6 +3,8 @@ name: Build Android APK
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -21,6 +23,7 @@ jobs:
     env:
       CI: 1
       NODE_ENV: production
+      PYTHONUNBUFFERED: '1'
 
     steps:
       - name: Checkout repository
@@ -196,6 +199,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Test release startup and reflection graphics on Android 16
+        id: smoke
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 36
@@ -216,7 +220,8 @@ jobs:
           retention-days: 7
 
       - name: Upload standalone APK artifact
-        if: ${{ !cancelled() && steps.release.outcome == 'success' }}
+        # The download is released only after the complete Android smoke test passes.
+        if: ${{ success() && steps.release.outcome == 'success' && steps.smoke.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: Emotional-Safety-System-Standalone-APK
