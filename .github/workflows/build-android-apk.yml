@@ -166,6 +166,9 @@ jobs:
       - name: Validate routed legal-question interface
         run: python scripts/validate_patched_app.py
 
+      - name: Check Android 16 smoke-test script syntax
+        run: python3 -m py_compile scripts/android_smoke.py
+
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
@@ -207,7 +210,7 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: python3 scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections --cultural-inquiry --knowledge-trail --learning-together --explore-connections --support-directory --law-rights-kinship --independence-commitment --night-forest
+          script: python3 -u scripts/android_smoke.py Emotional-Safety-System-Standalone.apk --life-journey --living-connections --cultural-inquiry --knowledge-trail --learning-together --explore-connections --support-directory --law-rights-kinship --independence-commitment --night-forest
 
       - name: Save installed-app test evidence
         if: always()
