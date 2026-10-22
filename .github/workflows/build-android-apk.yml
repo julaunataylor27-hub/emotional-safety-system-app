@@ -11,7 +11,9 @@ permissions:
 # When several edits arrive close together, build only the newest revision.
 # This leaves all checks enabled for the current revision.
 concurrency:
-  group: build-android-apk-${{ github.ref }}
+  # Keep the previous in-flight APK run available as a speed baseline.
+  # Future pushes to this revision still cancel outdated builds.
+  group: build-android-apk-smoke-v2-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
