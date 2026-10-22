@@ -162,6 +162,9 @@ jobs:
       - name: Connect ancient Australian animals and evidence learning
         run: python scripts/patch_ancient_animals.py
 
+      - name: Connect six-clue adventure across app screens
+        run: python scripts/patch_connection_adventure.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 

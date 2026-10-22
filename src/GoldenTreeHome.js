@@ -63,6 +63,19 @@ function HomeContent({onNavigate,onValuePress}){
         </Pressable>
       </View>
     </View>
+    <Pressable testID="home-connection-adventure" accessibilityRole="button"
+      accessibilityLabel="Follow the Connection Trail adventure"
+      onPress={()=>navigate('connectionTrail')}
+      style={({pressed})=>[s.adventureLink,pressed&&s.pressed]}>
+      <Image source={require('../assets/graphics/presentation-path-v2.webp')} accessible={false} resizeMode="cover" style={s.adventureArt}/>
+      <View pointerEvents="none" style={s.adventureShade}/>
+      <View style={s.adventureCopy}>
+        <Text style={s.adventureKicker}>YOUR NEXT ADVENTURE · 6 OPEN CLUES</Text>
+        <Text style={[s.adventureHeading,heading]}>Follow the Connection Trail</Text>
+        <Text style={[s.adventureSub,body]}>Start with a question. Follow evidence, ideas and values. Discover your next connection.</Text>
+        <View style={s.adventureArrow}><GoldenTreeIcon name="Compass" size={23} color={P.gold}/><Text style={s.adventureAction}>EXPLORE THE TRAIL  →</Text></View>
+      </View>
+    </Pressable>
     <View style={s.featureStack}>
       {FEATURES.map(item=><Pressable key={item.route} testID={item.id} accessibilityRole="button" accessibilityLabel={item.name} onPress={()=>navigate(item.route)}
         style={({pressed})=>[s.featureCard,singleColumnCards&&s.featureCardWide,pressed&&s.pressed]}>
@@ -190,6 +203,15 @@ Object.assign(s,{
  subtitle:{fontSize:15,lineHeight:23,color:'#FFF4E7',marginTop:10,marginBottom:19,textShadowColor:'#000',textShadowRadius:7,maxWidth:330},
  exploreButton:{minHeight:49,backgroundColor:'#DFA95F',borderRadius:12,flexDirection:'row',gap:8,alignItems:'center',alignSelf:'flex-start',paddingHorizontal:17},
  exploreLabel:{fontWeight:'800',fontSize:13,letterSpacing:1.2,color:'#221207'},
+ adventureLink:{minHeight:215,marginHorizontal:12,marginTop:14,overflow:'hidden',borderRadius:20,borderWidth:1.2,borderColor:P.gold,backgroundColor:P.panel,justifyContent:'flex-end'},
+ adventureArt:{position:'absolute',top:0,bottom:0,left:0,right:0,width:'100%',height:'100%'},
+ adventureShade:{...StyleSheet.absoluteFillObject,backgroundColor:'rgba(0,18,16,0.58)'},
+ adventureCopy:{padding:17,gap:7},
+ adventureKicker:{color:P.gold,fontSize:11,fontWeight:'800',letterSpacing:1},
+ adventureHeading:{color:P.text,fontSize:27,lineHeight:35},
+ adventureSub:{color:'#FAE6C7',fontSize:14,lineHeight:22},
+ adventureArrow:{flexDirection:'row',alignItems:'center',gap:9,marginTop:5},
+ adventureAction:{color:P.gold,fontSize:12,fontWeight:'800',letterSpacing:0.7},
  featureStack:{paddingHorizontal:11,marginTop:13,flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',gap:9},
  featureCard:{width:'48.6%',minHeight:224,overflow:'hidden',borderRadius:16,borderColor:'#C99B5B',borderWidth:1.2,backgroundColor:'#132330',justifyContent:'flex-end'},
  featureCardWide:{width:'100%',minHeight:204},
