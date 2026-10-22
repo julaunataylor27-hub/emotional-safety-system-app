@@ -17,6 +17,7 @@ SCREEN_ROOT = None
 SCREEN_XML = ""
 SCREEN_DIRTY = True
 SCREEN_AT = 0.0
+PERF = {"hierarchy_reads": 0, "hierarchy_seconds": 0.0, "top_resets": 0}
 
 
 def adb(*args, check=True, timeout=30):
@@ -32,8 +33,19 @@ def adb(*args, check=True, timeout=30):
 
 def screen():
     global BODY, SCROLL_NODES, SCREEN_ROOT, SCREEN_XML, SCREEN_DIRTY, SCREEN_AT
-    adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False, timeout=20)
-    xml = adb("shell", "cat", "/sdcard/window.xml", check=False)
+    # One Android shell round-trip instead of a separate dump and cat each time.
+    # Fall back to the original two calls if this runner rejects shell operators.
+    began = time.monotonic()
+    xml = adb(
+        "shell",
+        "uiautomator dump /sdcard/window.xml >/dev/null 2>&1 && cat /sdcard/window.xml",
+        check=False, timeout=30,
+    )
+    if not xml.lstrip().startswith("<?xml"):
+        adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False, timeout=20)
+        xml = adb("shell", "cat", "/sdcard/window.xml", check=False)
+    PERF["hierarchy_reads"] += 1
+    PERF["hierarchy_seconds"] += time.monotonic() - began
     (OUT / "latest.xml").write_text(xml)
     try:
         root = ET.fromstring(xml)
@@ -113,9 +125,26 @@ def swipe_body(up):
 
 
 def top():
+    global SCREEN_DIRTY
     screen()
-    for _ in range(6):
-        swipe_body(up=False)
+    # Preserve all six existing "go to top" swipes; batch them into one
+    # ADB transport instead of launching six separate desktop-side processes.
+    # This does NOT shorten the scroll or skip any screenshot/assertion.
+    left, upper, right, lower = BODY
+    x = max(left + 1, right - 30)
+    high = upper + int((lower - upper) * .25)
+    low = upper + int((lower - upper) * .8)
+    commands = "; ".join(
+        "input swipe {} {} {} {} 250".format(x, high, x, low)
+        for _ in range(6)
+    )
+    try:
+        adb("shell", commands, timeout=30)
+    except (RuntimeError, subprocess.TimeoutExpired):
+        for _ in range(6):
+            swipe_body(up=False)
+    SCREEN_DIRTY = True
+    PERF["top_resets"] += 1
 
 
 def tap(label, scroll=False, navigate=False, exact=False):
@@ -548,6 +577,9 @@ try:
     find("What matters to you here", scroll=True)
     print("PASS: native Diamond artwork opens and its focus changes.")
 finally:
+    print("PERF: {} Android hierarchy reads ({:.1f}s total), {} complete top resets".format(
+        PERF["hierarchy_reads"], PERF["hierarchy_seconds"], PERF["top_resets"]
+    ), flush=True)
     logs = adb("logcat", "-d", "-v", "threadtime", check=False)
     (OUT / "startup.log").write_text(logs)
     capture("final")
