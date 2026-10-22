@@ -11,17 +11,27 @@ OUT = Path("android-smoke")
 OUT.mkdir(exist_ok=True)
 BODY = (0, 0, 1080, 1920)
 SCROLL_NODES = set()
+# UI hierarchy snapshots can be reused until an input changes the screen.
+# This avoids repeat multi-second uiautomator requests during adjacent assertions.
+SCREEN_ROOT = None
+SCREEN_XML = ""
+SCREEN_DIRTY = True
+SCREEN_AT = 0.0
 
 
 def adb(*args, check=True, timeout=30):
+    global SCREEN_DIRTY
     result = subprocess.run(["adb", *args], capture_output=True, timeout=timeout)
+    # Direct adb input calls in test cases must also invalidate the snapshot.
+    if args[:2] == ("shell", "input"):
+        SCREEN_DIRTY = True
     if check and result.returncode:
         raise RuntimeError(result.stdout.decode(errors="replace") + result.stderr.decode(errors="replace"))
     return result.stdout.decode(errors="replace")
 
 
 def screen():
-    global BODY, SCROLL_NODES
+    global BODY, SCROLL_NODES, SCREEN_ROOT, SCREEN_XML, SCREEN_DIRTY, SCREEN_AT
     adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False, timeout=20)
     xml = adb("shell", "cat", "/sdcard/window.xml", check=False)
     (OUT / "latest.xml").write_text(xml)
@@ -43,8 +53,13 @@ def screen():
                 if len(values) == 4:
                     BODY = (BODY[0], BODY[1], BODY[2], min(BODY[3], values[1]))
                     break
+        SCREEN_ROOT = root
+        SCREEN_XML = xml
+        SCREEN_DIRTY = False
+        SCREEN_AT = time.monotonic()
         return root
     except ET.ParseError:
+        SCREEN_DIRTY = True
         return ET.Element("empty")
 
 
@@ -63,13 +78,20 @@ def bounds(node):
 def find(label, scroll=False, by_class=False, exact=False, clickable=False):
     normalised_label = label.strip().casefold().replace("’", "'")
     for attempt in range(15 if scroll else 10):
-        root = screen()
-        for node in root.iter("node"):
-            values = [node.get("class", "")] if by_class else [node.get("text", ""), node.get("content-desc", "")]
-            normalised_values = [value.strip().casefold().replace("’", "'") for value in values]
-            matches = any(value == normalised_label if exact else normalised_label in value for value in normalised_values)
-            if matches and bounds(node) and (not clickable or node.get("clickable") == "true"):
-                return node
+        # Check a recent unchanged hierarchy first; on a miss ALWAYS read the
+        # emulator again before reporting failure or taking a scrolling action.
+        cached = (
+            attempt == 0 and SCREEN_ROOT is not None and not SCREEN_DIRTY
+            and time.monotonic() - SCREEN_AT < 0.8
+        )
+        for source in ((0, 1) if cached else (1,)):
+            root = SCREEN_ROOT if source == 0 else screen()
+            for node in root.iter("node"):
+                values = [node.get("class", "")] if by_class else [node.get("text", ""), node.get("content-desc", "")]
+                normalised_values = [value.strip().casefold().replace("’", "'") for value in values]
+                matches = any(value == normalised_label if exact else normalised_label in value for value in normalised_values)
+                if matches and bounds(node) and (not clickable or node.get("clickable") == "true"):
+                    return node
         logs = adb("logcat", "-d", "-v", "brief")
         if "JavascriptException" in logs or "E ReactNativeJS:" in logs:
             raise AssertionError("JavaScript failed while waiting for " + label)
@@ -100,16 +122,22 @@ def tap(label, scroll=False, navigate=False, exact=False):
     node = find(label, scroll=scroll, exact=exact, clickable=True)
     x, y = bounds(node)
     adb("shell", "input", "tap", str(x), str(y))
-    time.sleep(1)
+    # Assertions poll for actual readiness; a shorter fixed delay avoids
+    # waiting a full second after every one of the 100+ UI taps.
+    time.sleep(0.5)
     if navigate:
         top()
 
 
 def capture(name):
+    # Keep every evidence screenshot and its XML; don't dump the same
+    # unchanged screen twice in a row just to write the evidence file.
+    if SCREEN_DIRTY or SCREEN_ROOT is None or time.monotonic() - SCREEN_AT >= 0.8:
+        screen()
+    hierarchy = SCREEN_XML
     image = subprocess.run(["adb", "exec-out", "screencap", "-p"], capture_output=True, timeout=20, check=True)
     (OUT / (name + ".png")).write_bytes(image.stdout)
-    adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False)
-    (OUT / (name + ".xml")).write_text(adb("shell", "cat", "/sdcard/window.xml", check=False))
+    (OUT / (name + ".xml")).write_text(hierarchy)
 
 
 
