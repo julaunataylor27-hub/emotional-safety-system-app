@@ -23,7 +23,7 @@ function load(name){
 const Home=load('GoldenTreeHome').default;
 async function render(props={}){let r;await Renderer.act(async()=>{r=Renderer.create(React.createElement(Home,{onNavigate:()=>{},onValuePress:()=>{},...props}));});return r;}
 test('approved artwork and all eight values render as separate native controls',async()=>{
- const r=await render();assert.match(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,/Aboriginal riders on horseback/);
+ const r=await render();assert.match(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,/Australian river landscape under stars/);
  for(const id of ['home-open-knowledge','home-safe-curiosity','home-evidence-truth','home-find-support','home-support-now'])assert.ok(r.root.findByProps({testID:id}),id);
  for(const name of ['Knowledge','Understanding','Love','Kindness','Patience','Growth','Humanity','Life'])assert.equal(r.root.findByProps({testID:'home-value-'+name.toLowerCase()}).props.accessibilityLabel,'Explore '+name);
  assert.equal(r.root.findByProps({testID:'home-nav-home'}).props.accessibilityState.selected,true);
@@ -106,12 +106,18 @@ test('photographic Knowledge card and support-now action navigate to the real to
 });
 
 
-test('21 October visual refresh bundles four different real home-card images',async()=>{
- const source=fs.readFileSync(path.resolve(__dirname,'../src/GoldenTreeHome.js'),'utf8');
- const names=['knowledge-growth-v1.webp','emotional-sunset-v1.webp','evidence-records-v1.webp','support-community-v1.webp'];
+test('Australian Humanity art stays offline and all eight individual assets are bundled',async()=>{
+ const base=path.resolve(__dirname,'../assets/graphics/australian-humanity');
+ const names=['home-hero.webp','knowledge-card.webp','emotional-safety-card.webp','evidence-truth-card.webp',
+ 'support-services-card.webp','culture-humanity-bg.webp','my-journey-bg.webp','two-flames-bg.webp'];
  for(const name of names){
-  assert.equal(source.split("home-cards/"+name).length-1,1,name+' should be used exactly once');
-  assert.ok(fs.existsSync(path.resolve(__dirname,'../assets/graphics/home-cards',name)),name+' must be bundled');
+  const file=path.join(base,name);
+  assert.ok(fs.existsSync(file),name+' is bundled');
+  assert.ok(fs.statSync(file).size>10000,name+' must contain actual artwork');
  }
- assert.equal(new Set(names).size,4);
+ const home=fs.readFileSync(path.resolve(__dirname,'../src/GoldenTreeHome.js'),'utf8');
+ for(const name of names.slice(0,6))assert.ok(home.includes(name),name+' is linked from Home');
+ assert.match(fs.readFileSync(path.resolve(__dirname,'../src/TwoFlamesScreen.js'),'utf8'),/two-flames-bg\\.webp/);
+ assert.match(fs.readFileSync(path.resolve(__dirname,'../src/LifeJourneyScreen.js'),'utf8'),/my-journey-bg\\.webp/);
+ assert.match(fs.readFileSync(path.resolve(__dirname,'../src/CulturalConnectionsScreen.js'),'utf8'),/culture-humanity-bg\\.webp/);
 });
