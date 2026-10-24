@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import EvidenceTruthScreen from './src/EvidenceTruthScreen';
+import TwoFlamesScreen from './src/TwoFlamesScreen';
 
 const C = {
   bg:'#06131B', panel:'#0E2533', panel2:'#143244', line:'#294B5E',
@@ -147,6 +148,7 @@ function MenuRow({icon,title,subtitle,onPress,accent=C.cream}){
 
 export default function App(){
   const [screen,setScreen]=useState('home');
+  const [twoFlamesFrom,setTwoFlamesFrom]=useState('learn');
   const [age,setAge]=useState('16+');
   const [relationship,setRelationship]=useState('Partner / peer');
   const [feeling,setFeeling]=useState('Confused');
@@ -173,6 +175,7 @@ export default function App(){
   },[screen]);
 
   const go=s=>setScreen(s);
+  const openTwoFlames=from=>{setTwoFlamesFrom(from);setScreen('twoFlames');};
   const startAnalysis=()=>go('analysis');
   const addJournal=()=>{
     const text=journalText.trim() || (result ? `Safety reflection: ${result.level}` : 'New reflection');
@@ -199,6 +202,10 @@ export default function App(){
     <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
 
       {screen==='evidence'&&<EvidenceTruthScreen onBack={()=>go('home')} onSupport={()=>go('support')}/>}
+      {screen==='twoFlames'&&<>
+        <BackTitle title="Two Flames" onBack={()=>go(twoFlamesFrom)}/>
+        <TwoFlamesScreen onSupport={()=>go('support')}/>
+      </>}
 
       {screen==='home'&&<>
         <View style={styles.hero}>
@@ -213,6 +220,7 @@ export default function App(){
         <View style={{height:10}} />
         <MenuRow icon="✦" title="Evidence & Truth Test Lab" subtitle="Try four cases and explore truth, safety, and choice" onPress={()=>go('evidence')} accent={C.gold}/>
         <MenuRow icon="▤" title="Learning Centre" subtitle="Simple guides, examples and safety knowledge" onPress={()=>go('learn')} />
+        <MenuRow icon="✦" title="Two Flames — Healing Without Control" subtitle="Share light while keeping freedom, choice and boundaries" onPress={()=>openTwoFlames('home')} accent={C.gold}/>
         <MenuRow icon="♥" title="Support Resources" subtitle="Trusted Australian and WA pathways" onPress={()=>go('support')} accent={C.green}/>
         <MenuRow icon="✎" title="My Journal" subtitle="Optional private reflection during this session" onPress={()=>go('journal')} accent={C.blue}/>
         <MenuRow icon="i" title="About the System" subtitle="Purpose, six signals, evidence and connected flow" onPress={()=>go('about')} accent={C.gold}/>
@@ -294,6 +302,7 @@ export default function App(){
       {screen==='learn'&&<>
         <BackTitle title="Learning Centre" onBack={()=>go('home')} />
         <TextInput editable={false} placeholder="Search topics..." placeholderTextColor="#6D8290" style={styles.searchBox}/>
+        <MenuRow icon="✦" title="Two Flames — Healing Without Control" subtitle="A gentle reflection on your spark and shared support" onPress={()=>openTwoFlames('learn')} accent={C.gold}/>
         {[
           ['✋','Understanding Choice & Consent','Free choice needs clarity, space and the ability to say no.'],
           ['🛡','Healthy Boundaries','Boundaries help people understand what is and is not okay.'],
@@ -356,6 +365,7 @@ export default function App(){
 
       {screen==='more'&&<>
         <BackTitle title="More" onBack={()=>go('home')} />
+        <MenuRow icon="✦" title="Two Flames" subtitle="Mutual encouragement without control" onPress={()=>openTwoFlames('more')} accent={C.gold}/>
         <MenuRow icon="✦" title="Evidence & Truth Test Lab" subtitle="Explore fictional cases and safe next steps" onPress={()=>go('evidence')} accent={C.gold}/>
         <MenuRow icon="✎" title="My Journal" subtitle="Reflect and track your thoughts" onPress={()=>go('journal')} accent={C.blue}/>
         <MenuRow icon="i" title="About the System" subtitle="Purpose, model and limitations" onPress={()=>go('about')} accent={C.gold}/>
