@@ -287,7 +287,7 @@ try:
         print(adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity", timeout=60))
     except (RuntimeError, subprocess.TimeoutExpired) as error:
         print("Launch command failed:", error)
-    find("Symbolic Aboriginal riders on horseback in a cinematic Australian night landscape")
+    find("Illustrated Australian river landscape under stars at dusk")
     # The tagline is intentionally rendered on two lines; assert both halves.
     find("KNOWLEDGE · CULTURE")
     find("PEOPLE · CHOICE")
