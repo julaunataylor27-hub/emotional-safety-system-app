@@ -65,6 +65,18 @@ function HomeContent({onNavigate,onValuePress}){
         </Pressable>
       </View>
     </View>
+    <Pressable testID="home-presentation-overview" accessibilityRole="button"
+      accessibilityLabel="Open Australian Humanity prototype overview"
+      onPress={()=>navigate('presentationWalkthrough')}
+      style={({pressed})=>[s.presentationTile,pressed&&s.pressed]}>
+      <View style={s.presentationMark}><GoldenTreeIcon name="Globe" size={25} color={P.gold}/></View>
+      <View style={s.presentationCopy}>
+        <Text style={[s.presentationEyebrow,body]}>PRESENTATION · COMPLETE SYSTEM OVERVIEW</Text>
+        <Text style={[s.presentationHeading,heading]}>Discover Australian Humanity</Text>
+        <Text style={[s.presentationDetails,body]}>Purpose · Process · Working demonstration · Future</Text>
+      </View>
+      <GoldenTreeIcon name="Arrow" size={22} color={P.gold}/>
+    </Pressable>
     <Pressable testID="home-connection-adventure" accessibilityRole="button"
       accessibilityLabel="Follow the Connection Trail adventure"
       onPress={()=>navigate('connectionTrail')}
@@ -194,6 +206,18 @@ const s=StyleSheet.create({
  navLabel:{fontSize:12,lineHeight:18,textAlign:'center'},
  activeTab:{position:'absolute',bottom:0,width:28,height:2,backgroundColor:P.gold,borderRadius:2},
  pressed:{opacity:.75}
+});
+
+// Presentation access stays visible below the hero and above other optional trails.
+Object.assign(s,{
+ presentationTile:{marginHorizontal:12,marginTop:14,minHeight:110,padding:15,backgroundColor:P.panel,
+  borderWidth:1.2,borderColor:P.gold,borderRadius:18,flexDirection:'row',alignItems:'center',gap:12},
+ presentationMark:{width:47,height:47,borderRadius:24,borderWidth:1,borderColor:P.gold,
+  backgroundColor:P.panel2,alignItems:'center',justifyContent:'center'},
+ presentationCopy:{flex:1,gap:4},
+ presentationEyebrow:{fontSize:11,lineHeight:18,color:P.gold,fontWeight:'800',letterSpacing:.6},
+ presentationHeading:{fontSize:19,lineHeight:26,color:P.text},
+ presentationDetails:{fontSize:12,lineHeight:18,color:P.muted}
 });
 
 /* Moonlit Riders cinematic design: native photographs, accessible text, working routes. */
