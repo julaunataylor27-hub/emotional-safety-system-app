@@ -1,7 +1,7 @@
 import {AppText as Text,AppInput as TextInput} from './AppPreferences';
 import {presentationStyles} from './PresentationTheme';
 import React, {useRef,useState} from 'react';
-import {View, Pressable, ScrollView, StyleSheet, Linking, Share, Alert} from 'react-native';
+import {View, Image, Pressable, ScrollView, StyleSheet, Linking, Share, Alert} from 'react-native';
 import M from './lifeJourney.cjs';
 import useLifeJourneyNotes from './useLifeJourneyNotes';
 import journeyPdfService from './journeyPdfService';
@@ -80,6 +80,7 @@ export default function LifeJourneyScreen({onBack,pdfService=journeyPdfService})
   return <View testID="life-journey-screen" style={s.root}>
     <Button label="Back to Home" onPress={onBack} id="life-journey-back"/>
     <View style={s.hero}>
+      <Image testID="life-journey-scenic-artwork" accessible={false} resizeMode="cover" source={require('../assets/graphics/australian-humanity/my-journey-bg.webp')} style={s.journeyArt}/>
       <Text style={s.eyebrow}>EMOTIONAL SAFETY SYSTEM · HISTORICAL REFLECTION</Text>
       <Text accessibilityRole="header" style={s.title}>Yagan · Life Journey</Text>
       <Text style={s.lead}>Country, kinship and responsibility.</Text>
@@ -188,6 +189,7 @@ export default function LifeJourneyScreen({onBack,pdfService=journeyPdfService})
 const s=StyleSheet.create({
   root:{width:'100%',maxWidth:680,alignSelf:'center'},
   hero:{backgroundColor:'#182A22',borderColor:C.gold,borderWidth:1,borderRadius:18,padding:19,marginVertical:12},
+  journeyArt:{width:'100%',height:185,borderRadius:12,marginBottom:15},
   eyebrow:{color:C.gold,fontSize:11,fontWeight:'700',lineHeight:17},title:{color:C.light,fontSize:29,lineHeight:36,fontWeight:'700',marginTop:12},
   lead:{color:C.gold,fontSize:17,lineHeight:25,marginTop:8,marginBottom:8},
   body:{color:C.light,fontSize:15,lineHeight:24},mini:{color:C.muted,fontSize:12,lineHeight:19,marginTop:7},
