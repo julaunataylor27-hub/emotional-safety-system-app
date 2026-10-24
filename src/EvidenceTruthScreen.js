@@ -33,7 +33,7 @@ export default function EvidenceTruthScreen({onBack,onSupport}) {
     <Pressable accessibilityRole="button" accessibilityLabel="Back to home"
       onPress={onBack} style={s.back}><Text style={s.backText}>‹  Back</Text></Pressable>
     <View style={s.hero} testID="evidence-night-forest-banner">
-      <NightForestScene height={218}/>
+      <NightForestScene height={218} scene="evidence"/>
       <View style={s.heroOverlay}>
        <GoldenTreeIcon name="Knowledge" size={39} color={P.gold}/>
        <Text style={s.heroTitle}>Evidence &amp; Truth</Text>
