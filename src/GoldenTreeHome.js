@@ -14,13 +14,14 @@ const COLORS={background:P.bg,gold:P.gold,ivory:P.text,muted:P.muted,rule:P.line
 const NAV=[['home','Home'],['journey','Journey'],['learn','Learn'],['evidence','Evidence'],['support','Services'],['more','More']];
 const NAV_ICONS={home:'Home',journey:'Journey',learn:'Knowledge',evidence:'Knowledge',support:'Humanity',more:'More'};
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
-// Four distinct user-approved scenic image crops (21 October 2026). All cards retain native text, accessibility and routes; artwork is bundled for offline use.
-const RIDERS=require('../assets/graphics/primary-riders-v1.webp');
+// User-approved realistic Australian Humanity scenery (24 October 2026). Keep labels and controls native.
+const HOME_SCENE=require('../assets/graphics/australian-humanity/home-hero.webp');
+const CULTURE_SCENE=require('../assets/graphics/australian-humanity/culture-humanity-bg.webp');
 const FEATURES=[
- {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:require('../assets/graphics/home-cards/knowledge-growth-v1.webp')},
- {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and practical safety tools.',id:'home-safe-curiosity',image:require('../assets/graphics/home-cards/emotional-sunset-v1.webp')},
- {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:require('../assets/graphics/home-cards/evidence-records-v1.webp')},
- {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:require('../assets/graphics/home-cards/support-community-v1.webp')}
+ {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:require('../assets/graphics/australian-humanity/knowledge-card.webp')},
+ {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and practical safety tools.',id:'home-safe-curiosity',image:require('../assets/graphics/australian-humanity/emotional-safety-card.webp')},
+ {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:require('../assets/graphics/australian-humanity/evidence-truth-card.webp')},
+ {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:require('../assets/graphics/australian-humanity/support-services-card.webp')}
 ];
 function HomeContent({onNavigate,onValuePress}){
  const [selectedValue,setSelectedValue]=useState(null);
@@ -42,7 +43,7 @@ function HomeContent({onNavigate,onValuePress}){
    <ScrollView testID="golden-tree-home-scroll" style={s.scroll} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
 
     <View style={[s.hero,{height:Math.max(490,contentWidth*1.35)*(largeText?1.25:1)}]}>
-      <Image testID="golden-tree-home-artwork" accessibilityLabel="Symbolic Aboriginal riders on horseback in a cinematic Australian night landscape" source={RIDERS} resizeMode="cover" style={s.heroPhoto}/>
+      <Image testID="golden-tree-home-artwork" accessibilityLabel="Illustrated Australian river landscape under stars at dusk" source={HOME_SCENE} resizeMode="cover" style={s.heroPhoto}/>
       <View pointerEvents="none" style={s.heroWash}/>
       <View style={s.heroText} pointerEvents="box-none">
         <View style={s.topRow}>
@@ -67,7 +68,7 @@ function HomeContent({onNavigate,onValuePress}){
       accessibilityLabel="Follow the Connection Trail adventure"
       onPress={()=>navigate('connectionTrail')}
       style={({pressed})=>[s.adventureLink,pressed&&s.pressed]}>
-      <Image source={require('../assets/graphics/presentation-path-v2.webp')} accessible={false} resizeMode="cover" style={s.adventureArt}/>
+      <Image source={CULTURE_SCENE} accessible={false} resizeMode="cover" style={s.adventureArt}/>
       <View pointerEvents="none" style={s.adventureShade}/>
       <View style={s.adventureCopy}>
         <Text style={s.adventureKicker}>YOUR NEXT ADVENTURE · 6 OPEN CLUES</Text>
