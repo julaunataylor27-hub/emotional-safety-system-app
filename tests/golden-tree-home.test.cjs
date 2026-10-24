@@ -118,7 +118,7 @@ test('Australian Humanity art stays offline and all eight individual assets are 
  const home=fs.readFileSync(path.resolve(__dirname,'../src/GoldenTreeHome.js'),'utf8');
  const theme=fs.readFileSync(path.resolve(__dirname,'../src/theme/AustralianHumanityTheme.js'),'utf8');
  for(const name of names)assert.ok(theme.includes(name),name+' is mapped in the shared scene registry');
- assert.match(home,/SCENES\\.(home|knowledge|emotionalSafety|evidence|support|culture)/);
+ assert.match(home,/SCENES\.(home|knowledge|emotionalSafety|evidence|support|culture)/);
  assert.match(fs.readFileSync(path.resolve(__dirname,'../src/TwoFlamesScreen.js'),'utf8'),/two-flames-bg\.webp/);
  assert.match(fs.readFileSync(path.resolve(__dirname,'../src/LifeJourneyScreen.js'),'utf8'),/my-journey-bg\.webp/);
  assert.match(fs.readFileSync(path.resolve(__dirname,'../src/CulturalConnectionsScreen.js'),'utf8'),/culture-humanity-bg\.webp/);
