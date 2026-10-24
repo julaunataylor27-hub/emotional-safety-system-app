@@ -62,7 +62,7 @@ export default function SafeCuriosityScreen({onBack, onScrollTop}) {
   return <View testID="safe-curiosity-screen" style={s.root}>
     <Button id="safe-curiosity-back" label={knowledgeView ? "Back to Safe Curiosity" : "Back to Learn"} onPress={()=>{if(knowledgeView){setKnowledgeView(false);onScrollTop?.();}else onBack();}}/>
     <View style={s.scenicHero} testID="safe-curiosity-night-banner">
-      <NightForestScene height={205}/>
+      <NightForestScene scene="emotionalSafety" height={205}/>
       <View style={s.heroOverlay}>
        <Text style={s.heroEmblem}>✦</Text>
        <Text accessibilityRole="header" style={s.heroHeading}>{knowledgeView ? "Explore the knowledge" : "Safe Curiosity Lab"}</Text>
