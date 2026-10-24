@@ -72,7 +72,7 @@ export default function SupportDirectoryScreen({filters,onChange,onBack,existing
     &&(!filters.query.trim()||/13yarn|aboriginal|crisis/i.test(filters.query.trim()));
   return <View testID="support-directory-screen" style={styles.screen}>
     <View style={styles.scenicHero} testID="support-night-forest-banner">
-      <NightForestScene height={192}/>
+      <NightForestScene height={192} scene="support"/>
       <View style={styles.heroOverlay} pointerEvents="none">
         <GoldenTreeIcon name="Humanity" size={38} color={P.gold}/>
         <Text accessibilityRole="header" style={styles.heroTitle}>Support Resources</Text>
