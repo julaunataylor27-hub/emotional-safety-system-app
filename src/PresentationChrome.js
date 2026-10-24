@@ -17,12 +17,11 @@ export function AppHeader({onNavigate}){
 }
 export function AppBottomNav({screen,onNavigate}){
  const {t}=useAppPreferences(),insets=useSafeAreaInsets();
- const active=['livingConnections','culturalInquiry','knowledgeTrail','learningTogether','exploreConnections','lawRightsKinship','independenceCommitment','safeCuriosity','ancientAnimals'].includes(screen)?'learn':['journey','foundation','values','identity','story','projects','sharing','legacy','tech','summary'].includes(screen)?'journey':screen;
+ const active=['livingConnections','culturalInquiry','knowledgeTrail','learningTogether','exploreConnections','lawRightsKinship','independenceCommitment','safeCuriosity','ancientAnimals','twoFlames','connectionTrail'].includes(screen)?'learn':['journey','foundation','values','identity','story','projects','sharing','legacy','tech','summary','lifeJourney'].includes(screen)?'journey':screen;
  return <View style={[s.nav,{paddingBottom:Math.max(10,insets.bottom)}]}>{[['home','Home'],['journey','Journey'],['learn','Learn'],['evidence','Evidence'],['support','Support'],['more','More']].map(([route,icon])=><Pressable key={route} testID={'app-nav-'+route} accessibilityRole="tab" accessibilityLabel={t(route)} accessibilityState={{selected:route===active}} onPress={()=>onNavigate(route)} style={s.navItem}>
    <GoldenTreeIcon name={icon} size={25} color={route===active?P.gold:P.muted} filled={route===active}/><Text style={[s.navLabel,{color:route===active?P.gold:P.muted}]}>{t(route)}</Text>{route===active&&<View style={s.active}/>}</Pressable>)}</View>;
 }
 export function ScenicBannerV2({title,subtitle,quote}){
- const growth=/root|legacy|grow|tomorrow/i.test(title);
  return <View style={s.banner}>
   <NightForestScene height={168} scene={sceneForTitle(title)} accessibilityLabel="Illustrated Australian Country landscape; decorative scene"/>
   <View style={s.bannerCopy}><Text accessibilityRole="header" style={s.bannerTitle}>{cleanLabel(title)}</Text>{!!subtitle&&<Text style={s.bannerBody}>{subtitle}</Text>}{!!quote&&<Text style={s.quote}>{quote}</Text>}</View>
