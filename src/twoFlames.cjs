@@ -50,7 +50,15 @@ const REFLECTIONS = Object.freeze([
   }
 ]);
 const LIMITS = 'A reflection for supportive adult connections, not a relationship test, promise, therapy or proof that a situation is safe. If you feel pressured, afraid or controlled, seek trusted support.';
+function matchesSearch(query) {
+  if (typeof query !== 'string') return false;
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return ['two flames', 'healing without control', 'spark', 'shared light', 'freedom',
+    'relationship', 'consent', 'kindness', 'choice', 'boundaries', 'affection']
+    .some(term => term.includes(q) || q.includes(term));
+}
 function findReflection(id) {
   return REFLECTIONS.find(item => item.id === id) || null;
 }
-module.exports = {TITLE, QUOTE, PRINCIPLES, REFLECTIONS, LIMITS, findReflection};
+module.exports = {TITLE, QUOTE, PRINCIPLES, REFLECTIONS, LIMITS, findReflection, matchesSearch};
