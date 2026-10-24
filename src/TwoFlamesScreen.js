@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable, StyleSheet} from 'react-native';
+import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
 const M = require('./twoFlames.cjs');
 
 // Matches the existing night-and-gold palette. No network calls or storage.
@@ -14,6 +14,7 @@ export default function TwoFlamesScreen({onSupport}) {
 
   return <View testID="two-flames-screen" style={s.root}>
     <View style={s.hero}>
+      <Image testID="two-flames-landscape" accessible={false} resizeMode="cover" source={require("../assets/graphics/australian-humanity/two-flames-bg.webp")} style={s.heroArt}/>
       <Text style={s.kicker}>EMOTIONAL SAFETY · SHARED LIGHT</Text>
       <View style={s.flames} accessible accessibilityLabel="Two separate flames with shared light between them">
         <View style={s.flameColumn}><View style={s.flameRing}><Text style={s.flame}>🔥</Text></View><Text style={s.flameCaption}>MY SPARK</Text></View>
@@ -61,6 +62,7 @@ export default function TwoFlamesScreen({onSupport}) {
 const s = StyleSheet.create({
   root:{paddingBottom:22},
   hero:{backgroundColor:C.panel,borderWidth:1,borderColor:C.line,borderRadius:22,padding:20,marginBottom:24,alignItems:'center'},
+  heroArt:{width:'100%',height:200,borderRadius:16,marginBottom:16},
   kicker:{fontSize:12,color:C.gold,fontWeight:'700',letterSpacing:1.0,textAlign:'center'},
   flames:{flexDirection:'row',alignItems:'center',justifyContent:'center',marginTop:24,marginBottom:16,width:'100%'},
   flameColumn:{alignItems:'center',flex:1},
