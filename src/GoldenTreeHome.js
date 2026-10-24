@@ -76,6 +76,15 @@ function HomeContent({onNavigate,onValuePress}){
         <View style={s.adventureArrow}><GoldenTreeIcon name="Compass" size={23} color={P.gold}/><Text style={s.adventureAction}>EXPLORE THE TRAIL  →</Text></View>
       </View>
     </Pressable>
+    <Pressable testID="home-two-flames" accessibilityRole="button"
+      accessibilityLabel="Two Flames: healing without control"
+      onPress={()=>navigate('twoFlames')} style={({pressed})=>[s.moreLink,pressed&&{opacity:0.78}]}>
+      <View style={{flex:1}}>
+        <Text style={[s.moreLabel,body]}>🔥  Two Flames — Healing Without Control</Text>
+        <Text style={[s.moreLabel,body,{fontSize:13,color:P.muted,marginTop:5}]}>Grow your spark. Share light. Keep your freedom.</Text>
+      </View>
+      <GoldenTreeIcon name="Arrow" size={20} color={P.gold}/>
+    </Pressable>
     <View style={s.featureStack}>
       {FEATURES.map(item=><Pressable key={item.route} testID={item.id} accessibilityRole="button" accessibilityLabel={item.name} onPress={()=>navigate(item.route)}
         style={({pressed})=>[s.featureCard,singleColumnCards&&s.featureCardWide,pressed&&s.pressed]}>
