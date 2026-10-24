@@ -117,7 +117,7 @@ test('Australian Humanity art stays offline and all eight individual assets are 
  }
  const home=fs.readFileSync(path.resolve(__dirname,'../src/GoldenTreeHome.js'),'utf8');
  for(const name of names.slice(0,6))assert.ok(home.includes(name),name+' is linked from Home');
- assert.match(fs.readFileSync(path.resolve(__dirname,'../src/TwoFlamesScreen.js'),'utf8'),/two-flames-bg\\.webp/);
- assert.match(fs.readFileSync(path.resolve(__dirname,'../src/LifeJourneyScreen.js'),'utf8'),/my-journey-bg\\.webp/);
- assert.match(fs.readFileSync(path.resolve(__dirname,'../src/CulturalConnectionsScreen.js'),'utf8'),/culture-humanity-bg\\.webp/);
+ assert.match(fs.readFileSync(path.resolve(__dirname,'../src/TwoFlamesScreen.js'),'utf8'),/two-flames-bg\.webp/);
+ assert.match(fs.readFileSync(path.resolve(__dirname,'../src/LifeJourneyScreen.js'),'utf8'),/my-journey-bg\.webp/);
+ assert.match(fs.readFileSync(path.resolve(__dirname,'../src/CulturalConnectionsScreen.js'),'utf8'),/culture-humanity-bg\.webp/);
 });
