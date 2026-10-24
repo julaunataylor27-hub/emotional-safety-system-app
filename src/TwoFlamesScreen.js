@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
+import {P} from './PresentationTheme';
 const M = require('./twoFlames.cjs');
 
-// Matches the existing night-and-gold palette. No network calls or storage.
-const C = {
-  bg:'#06131B', panel:'#0E2533', panel2:'#143244', line:'#294B5E',
-  text:'#FFF8ED', muted:'#A9BBC6', gold:'#F1B650', green:'#37C978'
-};
+// Same approved navy and gold tokens as the rest of Australian Humanity.
+const C = {bg:P.bg,panel:P.panel,panel2:P.panel2,line:P.line,
+  text:P.text,muted:P.muted,gold:P.gold,green:P.green};
 
 export default function TwoFlamesScreen({onSupport}) {
   const [selected, setSelected] = useState(null);
