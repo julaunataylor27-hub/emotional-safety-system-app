@@ -4,32 +4,32 @@ import {AppText as Text} from './AppPreferences';
 import {P} from './PresentationTheme';
 import GoldenTreeIcon from './GoldenTreeIcons';
 
-// Existing bundled art: six different scene images, no network or tracking.
+// Eight approved Australian Humanity landscape assets; no network or tracking.
 const TRAIL = [
   {id:'spark',number:'01',title:'Find the spark',question:'What has caught your attention?',
    description:'Start with a situation or a question. You do not have to know the answer yet.',
    route:'assessment',action:'Explore a situation',
-   image:require('../assets/graphics/primary-riders-v1.webp')},
+   image:require('../assets/graphics/australian-humanity/home-hero.webp')},
   {id:'clues',number:'02',title:'Follow the clues',question:'What did you actually notice?',
    description:'Separate what happened from feelings, assumptions and details still missing.',
    route:'evidence',action:'Open Evidence & Truth',
-   image:require('../assets/graphics/home-cards/evidence-records-v1.webp')},
+   image:require('../assets/graphics/australian-humanity/evidence-truth-card.webp')},
   {id:'sources',number:'03',title:'Trace the sources',question:'Where did this information come from?',
    description:'Follow records, dates and public sources. A question can remain unanswered.',
    route:'knowledgeTrail',action:'Open Knowledge Trail',
-   image:require('../assets/graphics/home-cards/knowledge-growth-v1.webp')},
+   image:require('../assets/graphics/australian-humanity/knowledge-card.webp')},
   {id:'paths',number:'04',title:'Discover other paths',question:'What else could explain this?',
    description:'Explore connected ideas and perspectives without deciding anyone’s intentions.',
    route:'exploreConnections',action:'Explore connections',
-   image:require('../assets/graphics/presentation-path-v2.webp')},
+   image:require('../assets/graphics/australian-humanity/culture-humanity-bg.webp')},
   {id:'meaning',number:'05',title:'Find your meaning',question:'What matters to you along the way?',
    description:'Reflect on values, boundaries, belonging and choices at your own pace.',
    route:'journey',action:'Open My Humanity Journey',
-   image:require('../assets/graphics/home-cards/emotional-sunset-v1.webp')},
+   image:require('../assets/graphics/australian-humanity/emotional-safety-card.webp')},
   {id:'next',number:'06',title:'Choose a connection',question:'What safe next step feels possible?',
    description:'Find support, learn more, or pause. You always decide whether to continue.',
    route:'support',action:'Find support and next steps',
-   image:require('../assets/graphics/home-cards/support-community-v1.webp')}
+   image:require('../assets/graphics/australian-humanity/support-services-card.webp')}
 ];
 
 const ACTIVE = {
@@ -64,7 +64,7 @@ export default function ConnectionAdventure({onNavigate}) {
   const stage=TRAIL[focused];
   return <View testID="connection-adventure-screen" style={s.root}>
     <View style={s.hero}>
-      <ImageBackground source={require('../assets/graphics/primary-riders-v1.webp')}
+      <ImageBackground source={require('../assets/graphics/australian-humanity/home-hero.webp')}
         imageStyle={s.heroArt} style={s.heroArtBox} accessible={false}>
         <View style={s.heroTint}/>
         <View style={s.heroContent}>
