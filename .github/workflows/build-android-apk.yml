@@ -164,6 +164,8 @@ jobs:
 
       - name: Connect six-clue adventure across app screens
         run: python scripts/patch_connection_adventure.py
+      - name: Add Two Flames emotional safety learning
+        run: python scripts/patch_two_flames.py
 
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
