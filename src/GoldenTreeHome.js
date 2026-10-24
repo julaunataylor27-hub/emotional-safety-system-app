@@ -1,5 +1,6 @@
 import {AppText as Text,useAppPreferences} from './AppPreferences';
 import {P} from './PresentationTheme';
+import {SCENES} from './theme/AustralianHumanityTheme';
 import React, {useState} from 'react';
 import {View, ScrollView, Pressable, Image, StyleSheet, Platform, useWindowDimensions} from 'react-native';
 import {StatusBar} from 'expo-status-bar';
@@ -15,13 +16,13 @@ const NAV=[['home','Home'],['journey','Journey'],['learn','Learn'],['evidence','
 const NAV_ICONS={home:'Home',journey:'Journey',learn:'Knowledge',evidence:'Knowledge',support:'Humanity',more:'More'};
 const FONTS={ESSHeading:require('../assets/fonts/Marcellus-Regular.ttf'),ESSBody:require('../assets/fonts/DM-Sans.ttf')};
 // User-approved realistic Australian Humanity scenery (24 October 2026). Keep labels and controls native.
-const HOME_SCENE=require('../assets/graphics/australian-humanity/home-hero.webp');
-const CULTURE_SCENE=require('../assets/graphics/australian-humanity/culture-humanity-bg.webp');
+const HOME_SCENE=SCENES.home;
+const CULTURE_SCENE=SCENES.culture;
 const FEATURES=[
- {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:require('../assets/graphics/australian-humanity/knowledge-card.webp')},
- {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and practical safety tools.',id:'home-safe-curiosity',image:require('../assets/graphics/australian-humanity/emotional-safety-card.webp')},
- {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:require('../assets/graphics/australian-humanity/evidence-truth-card.webp')},
- {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:require('../assets/graphics/australian-humanity/support-services-card.webp')}
+ {route:'learn',icon:'Knowledge',name:'Knowledge',description:'Culture, history, laws and real information.',id:'home-open-knowledge',image:SCENES.knowledge},
+ {route:'safeCuriosity',icon:'Love',name:'Emotional Safety',description:'Feelings, boundaries and practical safety tools.',id:'home-safe-curiosity',image:SCENES.emotionalSafety},
+ {route:'evidence',icon:'Knowledge',name:'Evidence & Truth',description:'Research, records and factual information.',id:'home-evidence-truth',image:SCENES.evidence},
+ {route:'support',icon:'Humanity',name:'Support & Services',description:'Find help, legal rights and community services.',id:'home-find-support',image:SCENES.support}
 ];
 function HomeContent({onNavigate,onValuePress}){
  const [selectedValue,setSelectedValue]=useState(null);
@@ -197,8 +198,8 @@ const s=StyleSheet.create({
 
 /* Moonlit Riders cinematic design: native photographs, accessible text, working routes. */
 Object.assign(s,{
- screen:{flex:1,backgroundColor:'#060A10'},
- content:{width:'100%',maxWidth:640,alignSelf:'center',paddingBottom:28,backgroundColor:'#060A10'},
+ screen:{flex:1,backgroundColor:P.bg},
+ content:{width:'100%',maxWidth:640,alignSelf:'center',paddingBottom:28,backgroundColor:P.bg},
  hero:{width:'100%',overflow:'hidden',backgroundColor:'#091A29',borderBottomColor:'#C99858',borderBottomWidth:1},
  heroPhoto:{position:'absolute',left:0,top:0,width:'100%',height:'100%'},
  heroWash:{position:'absolute',left:0,right:0,top:0,bottom:0,backgroundColor:'rgba(2,8,12,0.29)'},
@@ -240,7 +241,7 @@ Object.assign(s,{
  sectionSub:{color:'#CFBDA8',fontSize:14,lineHeight:22,textAlign:'center',marginTop:7,marginBottom:18},
  valueCircle:{width:62,height:62,borderRadius:32,borderWidth:1.2,borderColor:'#DAB076',backgroundColor:'#18222C',alignItems:'center',justifyContent:'center'},
  valueLabel:{color:'#FFF1DE',fontSize:13,lineHeight:19,marginTop:6,textAlign:'center',alignSelf:'stretch',width:'100%',flexShrink:1},
- nav:{backgroundColor:'#05090F',borderTopColor:'#876844',borderTopWidth:1,paddingTop:6,paddingHorizontal:7},
+ nav:{backgroundColor:P.bg,borderTopColor:P.line,borderTopWidth:1,paddingTop:6,paddingHorizontal:7},
  navContent:{width:'100%',maxWidth:640,alignSelf:'center',flexDirection:'row'},
  navItem:{flex:1,minHeight:49,alignItems:'center',justifyContent:'center',gap:3,paddingBottom:3},
  navLabel:{fontSize:10,lineHeight:15,textAlign:'center',flexShrink:1,width:'100%'},
