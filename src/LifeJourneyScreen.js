@@ -1,12 +1,12 @@
 import {AppText as Text,AppInput as TextInput} from './AppPreferences';
-import {presentationStyles} from './PresentationTheme';
+import {presentationStyles,P} from './PresentationTheme';
 import React, {useRef,useState} from 'react';
 import {View, Image, Pressable, ScrollView, StyleSheet, Linking, Share, Alert} from 'react-native';
 import M from './lifeJourney.cjs';
 import useLifeJourneyNotes from './useLifeJourneyNotes';
 import journeyPdfService from './journeyPdfService';
 
-const C={bg:'#071815',panel:'#102923',border:'#7E7048',gold:'#F4D17C',light:'#FFF6DD',muted:'#D1D8CC'};
+const C={bg:P.bg,panel:P.panel,border:P.line,gold:P.gold,light:P.text,muted:P.muted};
 const TYPE_LABELS={family:'Family oral history',source:'Source lead',culture:'Cultural guidance',personal:'Personal interpretation'};
 function Button({label,onPress,selected=false,disabled=false,id}) {
   return <Pressable testID={id} accessibilityRole="button" accessibilityLabel={label}
