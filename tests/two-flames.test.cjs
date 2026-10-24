@@ -26,3 +26,12 @@ test('Consent, safety and ability to leave remain explicit', () => {
   assert.match(all, /end it/);
   assert.match(M.LIMITS, /seek trusted support/);
 });
+
+test('learning search finds public Two Flames topics without treating private stories as terms', () => {
+  for (const q of ['', 'flame', 'spark', 'healing', 'consent', 'choice', 'boundaries']) {
+    assert.equal(M.matchesSearch(q), true, q);
+  }
+  for (const q of ['ancient animals', 'my private message about work', null, {}]) {
+    assert.equal(M.matchesSearch(q), false);
+  }
+});
