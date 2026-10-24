@@ -1,0 +1,54 @@
+name: Publish Australian Humanity presentation APK
+
+# One-time, dedicated release handoff for the already verified Android 16 APK.
+# Triggered when this workflow is first committed to main; no extra APK compilation.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/publish-presentation-apk.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish-verified-apk:
+    if: github.repository == 'julaunataylor27-hub/emotional-safety-system-app'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download APK from successful Android 16 build
+        uses: actions/download-artifact@v4
+        with:
+          name: Emotional-Safety-System-Standalone-APK
+          run-id: 40090868394
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: release-files
+
+      - name: Verify the actual Android package before publishing
+        run: |
+          set -euo pipefail
+          APK=release-files/Emotional-Safety-System-Standalone.apk
+          test -s "$APK"
+          unzip -t "$APK" > /dev/null
+          du -h "$APK"
+          sha256sum "$APK"
+
+      - name: Publish stable direct-download release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TAG: australian-humanity-presentation-2026-10-24
+          VERIFIED_APP_SHA: 26d37d4baa5210aa1ee47fd9ca3bee0a45dd029c
+        run: |
+          set -euo pipefail
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" \
+              --target "$VERIFIED_APP_SHA" \
+              --title "Australian Humanity — Presentation Prototype" \
+              --notes "Standalone Android APK from GitHub Actions build 40090868394, commit $VERIFIED_APP_SHA. This exact release successfully completed the Android 16 installed-app smoke tests. Educational prototype only; not a diagnostic or emergency response system."
+          fi
+          gh release upload "$TAG" release-files/Emotional-Safety-System-Standalone.apk --clobber
+          gh release view "$TAG" --json url,assets
