@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react';
-import {View,Pressable,ScrollView,Modal,StyleSheet,Linking,BackHandler,useWindowDimensions} from 'react-native';
+import {View,Image,Pressable,ScrollView,Modal,StyleSheet,Linking,BackHandler,useWindowDimensions} from 'react-native';
 import {AppText as Text} from './AppPreferences';
 import {P} from './PresentationTheme';
 import GoldenTreeIcon from './GoldenTreeIcons';
@@ -59,6 +59,8 @@ export default function CulturalConnectionsScreen({onBack,onExplore}){
  return <View testID="cultural-connections-screen" style={s.root}>
   <Button id="connections-back" label="Back to Learn" onPress={onBack} style={s.back}/>
   <View style={s.hero}>
+   <Image testID="cultural-connections-scenic-artwork" accessible={false} resizeMode="cover"
+     source={require('../assets/graphics/australian-humanity/culture-humanity-bg.webp')} style={s.cultureArt}/>
    <GoldenTreeIcon name="Knowledge" size={38} color={P.gold}/>
    <Text accessibilityRole="header" style={s.title}>{M.META.title}</Text>
    <Text style={s.lead}>{M.META.purpose}</Text>
@@ -125,7 +127,7 @@ export default function CulturalConnectionsScreen({onBack,onExplore}){
 const s=StyleSheet.create({
  root:{width:'100%'},back:{alignSelf:'flex-start',marginBottom:18},
  overlay:{flex:1,backgroundColor:'rgba(0,12,9,0.8)',justifyContent:'center',padding:18},sheet:{width:'100%',maxWidth:680,alignSelf:'center',backgroundColor:P.bg,borderWidth:1,borderColor:P.line,borderRadius:20,padding:18,gap:9},choiceScroll:{flexShrink:1},
- hero:{gap:13,marginBottom:22},title:{fontFamily:'ESSHeading',fontSize:30,lineHeight:39,color:P.text},lead:{fontSize:17,lineHeight:27,color:P.gold},
+ hero:{gap:13,marginBottom:22},cultureArt:{width:'100%',height:175,borderRadius:16,marginBottom:5},title:{fontFamily:'ESSHeading',fontSize:30,lineHeight:39,color:P.text},lead:{fontSize:17,lineHeight:27,color:P.gold},
  draft:{padding:16,borderLeftWidth:2,borderLeftColor:P.gold,backgroundColor:P.panel2,gap:7,borderRadius:8},draftTitle:{fontSize:15,lineHeight:24,color:P.gold,fontWeight:'600'},
  body:{fontSize:16,lineHeight:26,color:P.text},small:{fontSize:13,lineHeight:22,color:P.muted},section:{fontSize:19,lineHeight:28,color:P.text,marginTop:12,marginBottom:12,fontWeight:'600'},
  button:{minHeight:50,paddingVertical:13,paddingHorizontal:16,borderRadius:14,borderWidth:1,borderColor:P.line,backgroundColor:P.panel,justifyContent:'center',marginVertical:5},buttonText:{fontSize:15,lineHeight:24,color:P.text},selected:{backgroundColor:P.gold,borderColor:P.gold},selectedText:{color:P.bg},pressed:{opacity:0.76},options:{gap:3,marginVertical:8},
