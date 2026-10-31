@@ -54,3 +54,5 @@ for filename,varname in TARGETS.items():
 print(f"Unified theme applied to {len(changed)} source screens")
 for item in changed:
     print(" -",item)
+
+# Trigger unified source conversion.
