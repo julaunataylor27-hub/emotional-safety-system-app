@@ -1,0 +1,222 @@
+name: Build Android APK Fast
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# When several edits arrive close together, build only the newest revision.
+# This leaves all checks enabled for the current revision.
+concurrency:
+  # Keep the previous in-flight APK run available as a speed baseline.
+  # Future pushes to this revision still cancel outdated builds.
+  group: build-android-apk-fast-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      CI: 1
+      NODE_ENV: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install dependencies
+        run: npm install --include=dev
+
+      - name: Enable interactive Learning and About screens
+        run: python scripts/patch_interactions.py
+
+      - name: Add Emotional Reality equation and capacity overrides
+        run: python scripts/patch_emotional_reality.py
+
+      - name: Add intent router and WA legal information checks
+        run: python scripts/patch_intent_legal.py
+
+      - name: Clean question-mode form
+        run: python scripts/patch_question_ui_cleanup.py
+
+      - name: Add structural safety, conflicts and Unknown signal states
+        run: python scripts/patch_structural_safety.py
+
+      - name: Add coercion detection and consent-safety layer
+        run: python scripts/patch_coercion.py
+
+      - name: Strengthen child-parent safeguarding and secrecy indicators
+        run: python scripts/patch_child_parent_safeguard.py
+
+      - name: Add WA sexual coercion legal references
+        run: python scripts/patch_coercion_legal.py
+
+      - name: Apply approved riders cultural-tech brand design
+        run: python scripts/patch_brand_redesign.py
+
+      - name: Put exact Australia code artwork on Home screen
+        run: python scripts/patch_exact_home_art.py
+
+      - name: Build interactive Humanity Philosophy journey
+        run: python scripts/patch_humanity_philosophy.py
+
+      - name: Apply premium Humanity Philosophy visual design
+        run: python scripts/patch_premium_humanity_design.py
+
+      - name: Build next-generation Humanity Philosophy experience
+        run: python scripts/patch_nextgen_humanity_app.py
+
+      - name: Repair next-generation source syntax
+        run: python scripts/patch_nextgen_syntax_fix.py
+
+      - name: Expand to full seven-stage Humanity experience
+        run: python scripts/patch_full_humanity_experience.py
+
+      - name: Apply cinematic image compatibility and polish
+        run: python scripts/patch_full_humanity_fix.py
+
+      - name: Verify approved graphics v1
+        run: python scripts/validate_approved_graphics.py
+
+      - name: Connect approved standalone graphics v1
+        run: python scripts/patch_approved_graphics_v1.py
+
+      - name: Guard Results screen against missing result fields
+        run: python scripts/patch_results_crash_guard.py
+
+      - name: Connect summary and device-local journey memory
+        run: python scripts/patch_journey_memory.py
+
+      - name: Connect personal PDF documents and save controls
+        run: python scripts/patch_journey_pdf.py
+
+      - name: Connect Journal tabs and journey progress
+        run: python scripts/patch_journal_progress.py
+
+      - name: Connect explanation Signals, Emotion and Context tabs
+        run: python scripts/patch_explanation_tabs.py
+
+      - name: Connect structural fact review and Diamond Effect planner
+        run: python scripts/patch_diamond_effect.py
+
+      - name: Connect multiple per-person observed responses
+        run: python scripts/patch_observed_responses.py
+
+      - name: Connect interactive WA and National support tabs
+        run: python scripts/patch_support_tabs.py
+
+      - name: Reconnect Evidence and Truth Test Lab after redesigned Home
+        run: python scripts/patch_evidence_truth_lab.py
+
+      - name: Apply approved golden-tree Home after legacy graphics
+        run: python scripts/patch_golden_tree_home.py
+
+      - name: Connect native Yagan Life Journey
+        run: python scripts/patch_life_journey.py
+
+      - name: Apply presentation design and language preferences
+        run: python scripts/patch_presentation_polish.py
+
+      - name: Connect Living connections educational draft and source links
+        run: python scripts/patch_living_connections.py
+
+      - name: Connect cultural comparisons and guided curiosity
+        run: python scripts/patch_cultural_inquiry.py
+
+      - name: Connect Knowledge Trail learning prototype
+        run: python scripts/patch_knowledge_trail.py
+
+      - name: Connect Learning together practice
+        run: python scripts/patch_learning_together.py
+
+      - name: Connect Explore connections learning prototype
+        run: python scripts/patch_explore_connections.py
+
+      - name: Connect national and state support directory
+        run: python scripts/patch_support_directory.py
+
+      - name: Connect Law, Rights and Kinship public learning
+        run: python scripts/patch_law_rights_kinship.py
+
+      - name: Connect Independence and commitment reflection
+        run: python scripts/patch_independence_commitment.py
+
+      - name: Connect offline Safe Curiosity Lab demo
+        run: python scripts/patch_safe_curiosity.py
+
+      - name: Connect ancient Australian animals and evidence learning
+        run: python scripts/patch_ancient_animals.py
+
+      - name: Connect six-clue adventure across app screens
+        run: python scripts/patch_connection_adventure.py
+      - name: Add Two Flames emotional safety learning
+        run: python scripts/patch_two_flames.py
+      - name: Add presentation-ready Australian Humanity walkthrough
+        run: python scripts/patch_presentation_walkthrough.py
+
+      - name: Reconnect ESS Core prototype
+        run: python scripts/patch_ess_core.py
+
+      - name: Test memory, PDFs, Life Journey and existing app features
+        run: NODE_ENV=test npm test
+
+      - name: Validate routed legal-question interface
+        run: python scripts/validate_patched_app.py
+
+      - name: Check Android 16 smoke-test script syntax
+        run: python3 -m py_compile scripts/android_smoke.py
+
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --clean
+
+      # Restore Gradle wrapper/dependencies, transformed libraries and reusable task outputs.
+      # Run after Expo prebuild because it generates the Android/Gradle project.
+      - name: Restore reusable Gradle build cache
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: android
+
+      - name: Build standalone release APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          # Parallelize independent native modules, but cap workers to reduce memory-pressure risk.
+          # Compile both ARM phone ABIs and x86_64 for the Android 16 emulator.
+          # Skip legacy 32-bit x86 emulators to save one costly native C++ build.
+          # Keep all validation and release smoke-test checks unchanged.
+          ./gradlew assembleRelease --no-daemon --build-cache --parallel --max-workers=2 -PreactNativeArchitectures=armeabi-v7a,arm64-v8a,x86_64
+
+      - name: Verify bundled JavaScript and rename APK
+        id: release
+        run: |
+          test -f android/app/build/outputs/apk/release/app-release.apk
+          cp android/app/build/outputs/apk/release/app-release.apk Emotional-Safety-System-Standalone.apk
+
+      - name: Upload standalone APK artifact
+        if: ${{ !cancelled() && steps.release.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Emotional-Safety-System-Standalone-APK
+          path: Emotional-Safety-System-Standalone.apk
+          if-no-files-found: error
+          retention-days: 30
+
+
+      - name: Fast-build summary
+        run: |
+          echo "Standalone APK built, verified and uploaded before emulator smoke testing."
