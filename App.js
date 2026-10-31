@@ -200,6 +200,7 @@ export default function App(){
     <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
 
       {screen==='evidence'&&<EvidenceTruthScreen onBack={()=>go('home')} onSupport={()=>go('support')}/>}
+      {screen==='esscore'&&<EssCoreScreen onBack={()=>go('home')} onSupport={()=>go('support')}/>}
 
       {screen==='home'&&<>
         <View style={styles.hero}>
