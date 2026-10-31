@@ -1,3 +1,4 @@
+// FULL_NEW_THEME_V5
 import {AppText as Text,useAppPreferences} from './AppPreferences';
 import {P} from './PresentationTheme';
 import {SCENES} from './theme/AustralianHumanityTheme';
@@ -27,7 +28,7 @@ function HomeContent({onNavigate,onValuePress}){
  const insets=useSafeAreaInsets();
  const {width,fontScale}=useWindowDimensions();
  const compact=width<370||fontScale>1.2||preferences.readingSize==='large';
- const columns=fontScale>1.45?2:4;
+ const columns=(preferences.readingSize==='large'||fontScale>1.45)?2:4;
  const navigate=route=>onNavigate(route);
 
  return <>
@@ -69,7 +70,7 @@ function HomeContent({onNavigate,onValuePress}){
       <ToolRow id="home-open-knowledge" icon="Knowledge" title="Learning Trails" subtitle="Culture · Country · History · Science" onPress={()=>navigate('learn')}/>
       <ToolRow id="home-safe-curiosity" icon="Love" title="Emotional Safety" subtitle="Feelings · boundaries · choice · reflection" onPress={()=>navigate('safeCuriosity')} accent={P.red}/>
       <ToolRow id="home-find-support" icon="Lifebuoy" title="Safety & Support" subtitle="Services · legal information · help" onPress={()=>navigate('support')} accent={P.green}/>
-      <ToolRow id="home-start-journey" icon="Journey" title="My Journey" subtitle="Build your reflections across the seven stages" onPress={()=>navigate('journey')} accent={P.teal}/>
+      <ToolRow id="home-start-journey" icon="Journey" title="Start my journey" subtitle="Build your reflections across the seven stages" onPress={()=>navigate('journey')} accent={P.teal}/>
       <ToolRow id="home-connection-adventure" icon="Compass" title="Connection Trail" subtitle="Six optional clues for curiosity, sources, perspectives and values" onPress={()=>navigate('connectionTrail')} accent={P.gold}/>
       <ToolRow id="home-life-journey" icon="Life" title={t('lifeJourney')} subtitle="Explore records, context and personal learning" onPress={()=>navigate('lifeJourney')} accent={P.gold}/>
     </View>
