@@ -1,7 +1,7 @@
 import React from 'react';
 import {View,Image,Pressable,StyleSheet} from 'react-native';
 import {AppText as Text} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import GoldenTreeIcon from './GoldenTreeIcons';
 export default function PresentationOverview({onNavigate}){
  const action=(label,route,id)=><Pressable testID={id} accessibilityRole="button" accessibilityLabel={label} onPress={()=>onNavigate(route)} style={s.action}><Text style={s.actionText}>{label}</Text><GoldenTreeIcon name="Arrow" size={23} color={P.bg}/></Pressable>;
@@ -26,3 +26,7 @@ export default function PresentationOverview({onNavigate}){
  </View>;
 }
 const s=StyleSheet.create({eyebrow:{fontSize:12,lineHeight:20,letterSpacing:1.4,color:P.gold},title:{fontFamily:'ESSHeading',fontSize:36,lineHeight:43,color:P.text,marginTop:12},lead:{fontSize:17,lineHeight:27,color:P.muted,marginTop:16,marginBottom:20},art:{width:'100%',height:200,borderRadius:20},creator:{fontSize:13,lineHeight:21,color:P.muted,marginTop:10,marginBottom:24},card:{backgroundColor:P.panel,borderColor:P.line,borderWidth:1,borderRadius:20,padding:22,marginBottom:18},number:{fontSize:12,lineHeight:20,letterSpacing:0.7,color:P.gold,marginBottom:14},heading:{fontSize:23,lineHeight:31,color:P.text,marginBottom:12,fontWeight:'600'},body:{fontSize:16,lineHeight:26,color:P.muted},row:{flexDirection:'row',gap:16,marginVertical:12},rowCopy:{flex:1},smallHeading:{fontSize:17,lineHeight:25,color:P.text,fontWeight:'600',marginBottom:5},note:{fontSize:13,lineHeight:22,color:P.muted,marginTop:16},roadmap:{borderLeftWidth:2,borderLeftColor:P.gold,paddingLeft:16,marginVertical:13},action:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12,backgroundColor:P.gold,borderRadius:16,padding:17,minHeight:56,marginBottom:18},actionText:{fontSize:16,lineHeight:24,color:P.bg,fontWeight:'700',flex:1},invite:{borderTopWidth:1,borderTopColor:P.line,paddingTop:24,marginVertical:20},footer:{fontSize:13,lineHeight:22,color:P.muted,marginVertical:20,textAlign:'center'}});
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));
