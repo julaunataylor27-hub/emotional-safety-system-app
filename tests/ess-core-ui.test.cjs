@@ -18,8 +18,11 @@ test('visible ESS Core screen exposes the core categories', () => {
   assert.match(screen,/Evidence \/ reported information/);
   assert.match(screen,/Interpretation/);
   assert.match(screen,/Uncertainty/);
-  assert.match(screen,/Safety route/);
+  assert.match(screen,/Safety check/);
   assert.match(screen,/Choices remain yours/);
-  assert.match(screen,/Next pathway/);
+  assert.match(screen,/Your next step/);
   assert.match(screen,/processSituation/);
+  assert.match(screen,/How ESS reached this/);
+  assert.match(screen,/Research snapshot/);
+  assert.match(screen,/showTechnical/);
 });
