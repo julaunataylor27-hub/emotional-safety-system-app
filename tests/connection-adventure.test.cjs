@@ -29,7 +29,7 @@ test('Connection Trail stays intentional rather than appearing above every scree
   const home = read('src/GoldenTreeHome.js');
   const chrome = read('src/PresentationChrome.js');
   const patch = read('scripts/patch_connection_adventure.py');
-  assert.match(home, /testID="home-connection-adventure"/);
+  assert.match(home, /id="home-connection-adventure"/);
   assert.match(home, /navigate\('connectionTrail'\)/);
   assert.match(chrome, /\['support','Humanity'\]/);
   assert.ok(!patch.includes('ConnectionTrailCompass screen={screen}'));
