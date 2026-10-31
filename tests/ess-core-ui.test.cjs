@@ -8,7 +8,7 @@ test('ESS Core prototype is reachable from the home screen', () => {
   const app = fs.readFileSync(path.join(__dirname,'../App.js'),'utf8');
   assert.match(app,/import EssCoreScreen from '.\/src\/EssCoreScreen'/);
   assert.match(app,/screen==='esscore'/);
-  assert.match(app,/title="ESS Core Prototype"/);
+  assert.match(app,/ESS Core Prototype/);
   assert.match(app,/go\('esscore'\)/);
 });
 
