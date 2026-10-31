@@ -1,0 +1,32 @@
+name: Apply Full Unified Theme Refactor
+
+on:
+  push:
+    branches: [full-unified-theme-refactor-v4]
+    paths:
+      - scripts/apply_unified_theme_refactor.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: full-unified-theme-refactor-v4
+      - name: Apply master theme to all styled screens
+        run: python scripts/apply_unified_theme_refactor.py
+      - name: Commit refactored source
+        run: |
+          if git diff --quiet; then
+            echo "No source changes needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src
+          git commit -m "Refactor all screens onto unified master theme"
+          git push origin HEAD:full-unified-theme-refactor-v4
