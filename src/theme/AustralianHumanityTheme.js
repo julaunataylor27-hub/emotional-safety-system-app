@@ -2,16 +2,19 @@
 // Cultural imagery is illustrative; this does not claim to represent any nation's restricted knowledge.
 export const HUMANITY = Object.freeze({
   colours: Object.freeze({
-    bg:'#060E18',
-    panel:'#0B2633',
-    panel2:'#123643',
-    line:'#6D7465',
-    text:'#FFF6E8',
-    muted:'#D0D7D7',
-    gold:'#F1B650',
-    green:'#A9DBC1',
-    red:'#F4A69A',
-    amber:'#F1D28B'
+    bg:'#050A0F',
+    panel:'#0B1720',
+    panel2:'#132431',
+    line:'#2F414B',
+    text:'#F7F3E8',
+    muted:'#AEBBC0',
+    gold:'#DDAE45',
+    green:'#2AA79A',
+    red:'#C95A54',
+    amber:'#C98B35',
+    teal:'#188E8B',
+    glow:'#F4C65B',
+    ink:'#0A1015'
   }),
   spacing: Object.freeze({xs:4,sm:8,md:16,lg:20,xl:28}),
   corners: Object.freeze({small:12,card:18,hero:22,pill:30}),
