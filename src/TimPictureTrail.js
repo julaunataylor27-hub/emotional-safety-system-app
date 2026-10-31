@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Image, Pressable, StyleSheet, Linking, BackHandler} from 'react-native';
 import {AppText as Text} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const H = require('./timPictureTrail.json');
 
 const BUNDLED = {
@@ -127,3 +127,7 @@ const s = StyleSheet.create({
   links: {gap: 10}, divider: {borderTopWidth: 1, borderTopColor: P.line, paddingTop: 18, gap: 16},
   note: {borderLeftWidth: 2, borderLeftColor: P.gold, paddingLeft: 14, gap: 10}, url: {fontSize: 14, lineHeight: 23, color: P.gold},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

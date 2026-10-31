@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {View, Text, TextInput, Pressable, StyleSheet, Image} from 'react-native';
 import {processSituation} from './essCore.cjs';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import {SCENES} from './theme/AustralianHumanityTheme';
 
 const C = {
@@ -193,3 +193,7 @@ const s=StyleSheet.create({
   footer:{borderColor:C.line,borderWidth:1,borderRadius:12,padding:12,marginBottom:15},
   footerText:{color:C.muted,fontSize:11,lineHeight:17}
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

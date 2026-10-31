@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import {View,Pressable,StyleSheet,Linking,BackHandler} from 'react-native';
 import {AppText as Text,AppInput as TextInput} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import NightForestScene from './NightForestScene';
 import GoldenTreeIcon from './GoldenTreeIcons';
 const {DIRECTORY,REGIONS,CATEGORIES,EMERGENCY,filterServices}=require('./supportDirectory.cjs');
@@ -157,3 +157,7 @@ const styles=StyleSheet.create({
   results:{fontSize:23,lineHeight:32,color:P.text,fontWeight:'700',marginTop:8},notice:{padding:16,borderRadius:14,backgroundColor:P.panel2,gap:8},
   error:{padding:16,borderRadius:14,borderWidth:1,borderColor:P.red,backgroundColor:P.panel},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(styles,presentationStyles(styles));

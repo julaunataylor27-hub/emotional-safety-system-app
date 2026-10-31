@@ -1,5 +1,5 @@
 import {AppText as Text,useAppPreferences} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import {SCENES} from './theme/AustralianHumanityTheme';
 import React, {useState} from 'react';
 import {View, ScrollView, Pressable, Image, StyleSheet, Platform, useWindowDimensions} from 'react-native';
@@ -273,3 +273,7 @@ Object.assign(s,{
  supportNowText:{fontSize:13,letterSpacing:.5,fontWeight:'800',color:'#FFF5ED',textAlign:'center',paddingHorizontal:8},
  pressed:{opacity:.76}
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

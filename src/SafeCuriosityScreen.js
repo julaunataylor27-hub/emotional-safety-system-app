@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Pressable, StyleSheet, BackHandler, Linking} from 'react-native';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import NightForestScene from './NightForestScene';
 import GoldenTreeIcon from './GoldenTreeIcons';
 const Lab = require('./safeCuriosity.cjs');
@@ -202,3 +202,7 @@ const s = StyleSheet.create({
   source: {borderTopColor: P.line, borderTopWidth: 1, paddingTop: 11, marginTop: 9},
   feedback: {fontSize: 16, lineHeight: 25, color: P.gold, marginBottom: 8},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));
