@@ -70,7 +70,7 @@ function HomeContent({onNavigate,onValuePress}){
       <ToolRow id="home-open-knowledge" icon="Knowledge" title="Learning Trails" subtitle="Culture · Country · History · Science" onPress={()=>navigate('learn')}/>
       <ToolRow id="home-safe-curiosity" icon="Love" title="Emotional Safety" subtitle="Feelings · boundaries · choice · reflection" onPress={()=>navigate('safeCuriosity')} accent={P.red}/>
       <ToolRow id="home-find-support" icon="Lifebuoy" title="Safety & Support" subtitle="Services · legal information · help" onPress={()=>navigate('support')} accent={P.green}/>
-      <ToolRow id="home-start-journey" icon="Journey" title="Start my journey" subtitle="Build your reflections across the seven stages" onPress={()=>navigate('journey')} accent={P.teal}/>
+      <ToolRow id="home-start-journey" icon="Journey" title={t('start')} subtitle="Build your reflections across the seven stages" onPress={()=>navigate('journey')} accent={P.teal}/>
       <ToolRow id="home-connection-adventure" icon="Compass" title="Connection Trail" subtitle="Six optional clues for curiosity, sources, perspectives and values" onPress={()=>navigate('connectionTrail')} accent={P.gold}/>
       <ToolRow id="home-life-journey" icon="Life" title={t('lifeJourney')} subtitle="Explore records, context and personal learning" onPress={()=>navigate('lifeJourney')} accent={P.gold}/>
     </View>
