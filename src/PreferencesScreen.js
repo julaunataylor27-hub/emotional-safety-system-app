@@ -1,7 +1,7 @@
 import React,{useState,useRef,useEffect} from 'react';
 import {View,Pressable,StyleSheet} from 'react-native';
 import {AppText as Text,AppInput as TextInput,useAppPreferences} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import GoldenTreeIcon from './GoldenTreeIcons';
 const M=require('./appPreferences.cjs');
 function Option({label,selected,onPress,id}){return <Pressable testID={id} accessibilityRole="radio" accessibilityState={{checked:selected}} accessibilityLabel={label} onPress={onPress} style={[s.option,selected&&s.selected]}><Text style={[s.optionText,selected&&{color:P.bg}]}>{label}</Text>{selected&&<Text style={s.check}>✓</Text>}</Pressable>;}
@@ -31,3 +31,7 @@ export function InternationalSupportNotice({onPreferences}){
 const s=StyleSheet.create({
  title:{fontSize:31,lineHeight:39,color:P.text,fontWeight:'600',marginTop:12},lead:{fontSize:16,lineHeight:25,color:P.muted,marginTop:12,marginBottom:22},card:{backgroundColor:P.panel,borderColor:P.line,borderWidth:1,borderRadius:20,padding:20,marginBottom:16},heading:{fontSize:21,lineHeight:29,color:P.text,fontWeight:'600',marginBottom:10},body:{fontSize:15,lineHeight:24,color:P.muted},note:{fontSize:13,lineHeight:21,color:P.muted,marginTop:14,marginBottom:8},label:{fontSize:15,lineHeight:24,color:P.text,marginTop:18,marginBottom:8},options:{flexDirection:'row',flexWrap:'wrap',gap:9,marginTop:16},option:{flexDirection:'row',alignItems:'center',gap:9,minHeight:48,borderWidth:1,borderColor:P.line,borderRadius:13,padding:13,backgroundColor:P.bg,maxWidth:'100%'},selected:{backgroundColor:P.gold,borderColor:P.gold},optionText:{fontSize:15,lineHeight:23,color:P.text,flexShrink:1},check:{color:P.bg,fontSize:16},input:{fontSize:16,color:P.text,borderWidth:1,borderColor:P.line,borderRadius:12,padding:14,minHeight:52,backgroundColor:P.bg},save:{minHeight:54,borderRadius:16,backgroundColor:P.gold,padding:16,alignItems:'center',justifyContent:'center',marginVertical:10},saveText:{fontSize:16,lineHeight:24,color:P.bg,fontWeight:'700'},back:{alignSelf:'flex-start',flexDirection:'row',alignItems:'center',gap:8,minHeight:48,paddingHorizontal:12,borderWidth:1,borderColor:P.line,borderRadius:24},backText:{fontSize:15,lineHeight:23,color:P.gold},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));
