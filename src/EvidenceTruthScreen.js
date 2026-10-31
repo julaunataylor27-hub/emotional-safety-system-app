@@ -1,3 +1,4 @@
+// FULL_NEW_THEME_V5
 import {AppText as Text,AppInput as TextInput} from './AppPreferences';
 import {P} from './PresentationTheme';
 import {SCENES} from './theme/AustralianHumanityTheme';
