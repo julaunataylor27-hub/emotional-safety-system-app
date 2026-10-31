@@ -818,7 +818,7 @@ test('presentation overview explains current capabilities and opens the fictiona
  assert.ok(textOf(tree.root).includes('Healthy growth.'));
  assert.ok(textOf(tree.root).includes('does not use a live AI service'));
  assert.ok(textOf(tree.root).includes('Aspirations are not measured outcomes'));
- await pressId(tree,'presentation-example');assert.ok(textOf(tree.root).includes('Choose a fictional example'));
+ await pressId(tree,'presentation-example');assert.ok(textOf(tree.root).includes('Try a fictional example'));
  await act(async()=>tree.unmount());
 });
 test('language and reading preferences save locally, affect Home and restore after restart',async()=>{

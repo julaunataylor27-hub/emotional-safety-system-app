@@ -6,7 +6,7 @@ const path=require('node:path');
 
 const root=path.resolve(__dirname,'..');
 const src=path.join(root,'src');
-const ALLOWED_VISUAL_PRIMITIVES=new Set(['NightForestScene.js']);
+const ALLOWED_VISUAL_PRIMITIVES=new Set(['NightForestScene.js','GoldenTreeHome.js','EvidenceTruthScreen.js','PresentationChrome.js']);
 
 test('every styled product screen uses the unified master theme',()=>{
   const files=fs.readdirSync(src).filter(name=>name.endsWith('.js'));
@@ -27,7 +27,7 @@ test('all converted legacy screens carry the unified-theme source marker',()=>{
   const expected=[
     'AncientAnimalsScreen.js','AustralianHumanityOverview.js','ConnectionAdventure.js',
     'CulturalConnectionsScreen.js','CulturalInquiryScreen.js','EssCoreScreen.js',
-    'ExploreConnectionsScreen.js','GoldenTreeHome.js','IndependenceCommitmentScreen.js',
+    'ExploreConnectionsScreen.js','IndependenceCommitmentScreen.js',
     'KnowledgeTrailScreen.js','LawRightsKinshipScreen.js','LearningTogetherScreen.js',
     'SafeCuriosityScreen.js','SupportDirectoryScreen.js','TimPictureTrail.js','TwoFlamesScreen.js'
   ];
@@ -35,6 +35,13 @@ test('all converted legacy screens carry the unified-theme source marker',()=>{
     const body=fs.readFileSync(path.join(src,name),'utf8');
     assert.match(body,/UNIFIED_THEME_V4/,name);
     assert.match(body,/presentationStyles/,name);
+  }
+});
+
+test('new theme foundation files carry the v5 marker',()=>{
+  for(const name of ['GoldenTreeHome.js','EvidenceTruthScreen.js','PresentationChrome.js']){
+    const body=fs.readFileSync(path.join(src,name),'utf8');
+    assert.match(body,/FULL_NEW_THEME_V5/,name);
   }
 });
 

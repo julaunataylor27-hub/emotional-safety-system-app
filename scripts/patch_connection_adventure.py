@@ -19,11 +19,9 @@ def replace_once(before, after):
         raise SystemExit("Connection adventure anchor missing/ambiguous: "+before[:100])
     s=s.replace(before,after,1)
 
-s=marker+"\nimport ConnectionAdventure,{ConnectionTrailCompass} from './src/ConnectionAdventure';\n"+s
+s=marker+"\nimport ConnectionAdventure from './src/ConnectionAdventure';\n"+s
 
-# Compass follows the actual current screen. It is a shortcut, not a gate or score.
-anchor="      <TranslationNotice/>"
-replace_once(anchor,anchor+"\n      <ConnectionTrailCompass screen={screen} onNavigate={go}/>")
+# The trail is opened intentionally from navigation. It is no longer injected above every screen.
 
 # Quest lives in the same navigation stack and gets the same shared chrome.
 anchor="      {screen==='vision'&&<PresentationOverview onNavigate={go}/>} "

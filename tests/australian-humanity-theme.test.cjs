@@ -24,15 +24,17 @@ test('shared app chrome, Home and legacy banners use the same visual foundation'
   const scene=read('src/NightForestScene.js');
   assert.match(t,/export const P=HUMANITY\.colours/);
   assert.match(h,/SCENES\.home/);
-  assert.match(h,/image:SCENES\.knowledge/);
+  assert.match(h,/ESS CORE PROTOTYPE/);
+  assert.match(h,/title="Evidence & Truth"/);
   assert.match(h,/backgroundColor:P\.bg/);
   assert.match(chrome,/sceneForTitle\(title\)/);
-  assert.match(chrome,/backgroundColor:P\.bg/);
+  assert.match(chrome,/Australian Humanity/);
+  assert.match(chrome,/backgroundColor:'#03070B'/);
   assert.match(scene,/SCENES\[scene\]/);
   assert.ok(!scene.includes('<Svg '),'old tree renderer must not be the shared scenic background');
 });
 test('major learning and support screens have distinct scenes without changing their safety logic',()=>{
-  assert.match(read('src/EvidenceTruthScreen.js'),/scene="evidence"/);
+  assert.match(read('src/EvidenceTruthScreen.js'),/SCENES\.evidence/);
   assert.match(read('src/SupportDirectoryScreen.js'),/scene="support"/);
   assert.match(read('src/SafeCuriosityScreen.js'),/scene="emotionalSafety"/);
   const testSmoke=read('scripts/android_smoke.py');

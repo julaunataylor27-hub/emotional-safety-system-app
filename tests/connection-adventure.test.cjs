@@ -25,15 +25,14 @@ test('Connection Trail offers six optional non-judgmental clues and distinct bun
   assert.match(source, /Nothing here claims to prove what someone else feels or intends/i);
 });
 
-test('Shared compass, Home link and all six navigation tabs preserve existing destinations', () => {
+test('Connection Trail stays intentional rather than appearing above every screen', () => {
   const home = read('src/GoldenTreeHome.js');
   const chrome = read('src/PresentationChrome.js');
   const patch = read('scripts/patch_connection_adventure.py');
-  assert.match(home, /testID="home-connection-adventure"/);
+  assert.match(home, /id="home-connection-adventure"/);
   assert.match(home, /navigate\('connectionTrail'\)/);
-  assert.match(chrome, /\['evidence','Evidence'\]/);
-  assert.match(chrome, /\['support','Support'\]/);
-  assert.match(patch, /ConnectionTrailCompass screen=\{screen\}/);
+  assert.match(chrome, /\['support','Humanity'\]/);
+  assert.ok(!patch.includes('ConnectionTrailCompass screen={screen}'));
   assert.match(patch, /screen==='connectionTrail'/);
   assert.match(patch, /CONNECTION_ADVENTURE_V201/);
   assert.match(patch, /screen==='vision'/);

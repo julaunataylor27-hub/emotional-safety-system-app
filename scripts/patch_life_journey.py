@@ -21,7 +21,7 @@ if menu not in source:
 if source.count(route)!=1 or source.count(import_line)!=1:
     raise SystemExit('Life Journey: screen or import was duplicated')
 home=Path('src/GoldenTreeHome.js').read_text()
-if "'home-life-journey'" not in home or "'lifeJourney'" not in home:
-    raise SystemExit('Life Journey: golden-tree Home entry is missing')
+if "home-life-journey" not in home or "lifeJourney" not in home:
+    raise SystemExit('Life Journey: Home entry is missing')
 path.write_text(source)
 print('Yagan Life Journey connected to golden Home and More, with native notes and PDF controls.')
