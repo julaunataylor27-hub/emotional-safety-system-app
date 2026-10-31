@@ -207,6 +207,15 @@ jobs:
           test -f android/app/build/outputs/apk/release/app-release.apk
           cp android/app/build/outputs/apk/release/app-release.apk Emotional-Safety-System-Standalone.apk
 
+      - name: Upload standalone APK artifact
+        if: ${{ !cancelled() && steps.release.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Emotional-Safety-System-Standalone-APK
+          path: Emotional-Safety-System-Standalone.apk
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -233,11 +242,3 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Upload standalone APK artifact
-        if: ${{ !cancelled() && steps.release.outcome == 'success' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Emotional-Safety-System-Standalone-APK
-          path: Emotional-Safety-System-Standalone.apk
-          if-no-files-found: error
-          retention-days: 30
