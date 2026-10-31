@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import EvidenceTruthScreen from './src/EvidenceTruthScreen';
+import EssCoreScreen from './src/EssCoreScreen';
 
 const C = {
   bg:'#06131B', panel:'#0E2533', panel2:'#143244', line:'#294B5E',
@@ -211,6 +212,7 @@ export default function App(){
         <Ornament/>
         <PrimaryButton onPress={()=>go('assessment')}>＋  New Assessment</PrimaryButton>
         <View style={{height:10}} />
+        <MenuRow icon="⚙" title="ESS Core Prototype" subtitle="Watch ESS separate emotion, evidence, uncertainty, safety and choice" onPress={()=>go('esscore')} accent={C.cyan}/>
         <MenuRow icon="✦" title="Evidence & Truth Test Lab" subtitle="Try four cases and explore truth, safety, and choice" onPress={()=>go('evidence')} accent={C.gold}/>
         <MenuRow icon="▤" title="Learning Centre" subtitle="Simple guides, examples and safety knowledge" onPress={()=>go('learn')} />
         <MenuRow icon="♥" title="Support Resources" subtitle="Trusted Australian and WA pathways" onPress={()=>go('support')} accent={C.green}/>
