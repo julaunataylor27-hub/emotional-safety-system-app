@@ -1,3 +1,4 @@
+// FULL_NEW_THEME_V5
 import React from 'react';
 import {View,Pressable,StyleSheet} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
