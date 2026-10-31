@@ -27,7 +27,7 @@ test('ESS Core uses the shared cinematic scene and technical reveal',()=>{
 
 test('Home uses shared palette instead of separate gold and panel colours',()=>{
   const home=read('src/GoldenTreeHome.js');
-  assert.match(home,/borderBottomColor:P\.gold/);
+  assert.match(home,/borderColor:P\.gold/);
   assert.match(home,/backgroundColor:P\.panel/);
   assert.match(home,/backgroundColor:P\.gold/);
   assert.match(home,/backgroundColor:P\.red/);
