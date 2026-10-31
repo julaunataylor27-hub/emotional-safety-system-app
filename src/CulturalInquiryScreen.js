@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Pressable, StyleSheet, Linking, BackHandler, useWindowDimensions} from 'react-native';
 import {AppText as Text, useAppPreferences} from './AppPreferences';
 import GoldenTreeIcon from './GoldenTreeIcons';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const M = require('./culturalInquiry.cjs');
 
 function Button({id, label, onPress, selected, expanded, tab = false, children, style, textStyle}) {
@@ -252,3 +252,7 @@ const s = StyleSheet.create({
   questionNumber: {fontSize: 15, lineHeight: 24, color: P.gold}, questionCopy: {flex: 1, minWidth: 0, gap: 8}, questionTitle: {fontSize: 19, lineHeight: 29, color: P.text, fontWeight: '600'},
   footer: {gap: 14, marginTop: 28, paddingTop: 20, borderTopWidth: 1, borderTopColor: P.line},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

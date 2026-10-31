@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Pressable, StyleSheet, Linking, BackHandler} from 'react-native';
 import Svg, {Rect, Path, Circle, Ellipse, G, Line} from 'react-native-svg';
 import {AppText as Text} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const M=require('./ancientAnimals.cjs');
 
 // Purpose-made learning silhouettes: no museum photo or cultural artwork is copied.
@@ -187,3 +187,6 @@ const s=StyleSheet.create({
  url:{fontSize:13,lineHeight:22,color:P.gold},
  credit:{fontSize:13,lineHeight:21,color:P.muted},
 });
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

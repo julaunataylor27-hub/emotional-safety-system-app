@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Pressable, StyleSheet, BackHandler, Linking, Share, Alert} from 'react-native';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const M = require('./independenceCommitment.cjs');
 
 function Button({id, label, onPress, primary, selected, expanded}) {
@@ -185,3 +185,7 @@ const s = StyleSheet.create({
   input: {backgroundColor: P.bg, borderColor: P.line, borderWidth: 1, borderRadius: 14, minHeight: 125, padding: 15, fontSize: 17, lineHeight: 28, color: P.text},
   footer: {gap: 16, borderTopWidth: 1, borderTopColor: P.line, paddingTop: 20},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

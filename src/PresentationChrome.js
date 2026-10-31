@@ -4,7 +4,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AppText as Text,useAppPreferences} from './AppPreferences';
 import GoldenTreeIcon from './GoldenTreeIcons';
 import NightForestScene from './NightForestScene';
-import {P,cleanLabel} from './PresentationTheme';
+import {P,cleanLabel,presentationStyles} from './PresentationTheme';
 import {sceneForTitle} from './theme/AustralianHumanityTheme';
 
 export function AppHeader({onNavigate}){
@@ -38,3 +38,7 @@ const s=StyleSheet.create({
  nav:{flexDirection:'row',backgroundColor:P.bg,borderTopWidth:1,borderTopColor:P.line,paddingTop:10,paddingHorizontal:7},navItem:{flex:1,minHeight:58,alignItems:'center',justifyContent:'center',gap:5,paddingBottom:6},navLabel:{fontSize:10.5,lineHeight:17,textAlign:'center'},active:{width:22,height:2,backgroundColor:P.gold,borderRadius:2,position:'absolute',bottom:0},
  banner:{backgroundColor:P.panel,borderWidth:1,borderColor:P.line,borderRadius:22,overflow:'hidden',marginBottom:20},bannerImage:{width:'100%',height:154},bannerCopy:{padding:20,paddingTop:8},bannerTitle:{fontSize:26,lineHeight:36,color:P.text,fontFamily:'ESSHeading'},bannerBody:{fontSize:16,lineHeight:25,color:P.muted,marginTop:10},quote:{fontSize:14,lineHeight:23,color:P.gold,marginTop:14},notice:{backgroundColor:P.panel2,padding:14,borderRadius:12,marginBottom:16,borderLeftWidth:2,borderLeftColor:P.gold},noticeText:{fontSize:13,lineHeight:21,color:P.muted},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

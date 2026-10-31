@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Pressable, StyleSheet, BackHandler, Share, Alert} from 'react-native';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const M = require('./learningTogether.cjs');
 
 function Button({id, label, onPress, primary, selected}) {
@@ -134,3 +134,7 @@ const s = StyleSheet.create({
   input: {backgroundColor: P.bg, borderWidth: 1, borderColor: P.line, borderRadius: 14, minHeight: 108, padding: 14, color: P.text, fontSize: 17, lineHeight: 28},
   credit: {fontSize: 13, lineHeight: 22, color: P.gold},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

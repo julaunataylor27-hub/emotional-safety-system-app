@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Pressable, StyleSheet, BackHandler, Linking} from 'react-native';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const M = require('./lawRightsKinship.cjs');
 
 function Button({id, label, onPress, selected, expanded, primary}) {
@@ -129,3 +129,7 @@ const s = StyleSheet.create({
   source: {backgroundColor: P.panel2, borderRadius: 18, padding: 18, gap: 12}, notice: {fontSize: 14, lineHeight: 24, color: P.gold},
   url: {fontSize: 14, lineHeight: 23, color: P.gold, flexShrink: 1}, footer: {gap: 15, borderTopWidth: 1, borderTopColor: P.line, paddingTop: 20},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, Pressable, ImageBackground, StyleSheet} from 'react-native';
 import {AppText as Text} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import GoldenTreeIcon from './GoldenTreeIcons';
 
 // Eight approved Australian Humanity landscape assets; no network or tracking.
@@ -193,3 +193,7 @@ const s=StyleSheet.create({
   compassArrow:{fontSize:29,color:P.gold},
   pressed:{opacity:0.77}
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

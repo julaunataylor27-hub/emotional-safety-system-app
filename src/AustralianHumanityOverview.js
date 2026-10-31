@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import {View,Text,Image,Pressable,StyleSheet} from 'react-native';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import {SCENES} from './theme/AustralianHumanityTheme';
 
 const PAGES=[
@@ -82,3 +82,7 @@ const s=StyleSheet.create({
  primary:{flex:1,minHeight:54,backgroundColor:P.gold,borderRadius:13,alignItems:'center',justifyContent:'center'},
  primaryText:{fontSize:16,fontWeight:'800',color:P.bg},note:{fontSize:13,lineHeight:21,textAlign:'center',color:P.muted,marginTop:18}
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

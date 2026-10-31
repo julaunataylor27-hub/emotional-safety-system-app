@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const M = require('./twoFlames.cjs');
 
 // Same approved navy and gold tokens as the rest of Australian Humanity.
@@ -93,3 +93,7 @@ const s = StyleSheet.create({
   supportText:{fontSize:15,fontWeight:'800',color:C.bg},
   pressed:{opacity:0.78}
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

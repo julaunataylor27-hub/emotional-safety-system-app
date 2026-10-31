@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import {View,Image,Pressable,ScrollView,Modal,StyleSheet,Linking,BackHandler,useWindowDimensions} from 'react-native';
 import {AppText as Text} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import GoldenTreeIcon from './GoldenTreeIcons';
 const M=require('./culturalConnections.cjs');
 
@@ -136,3 +136,7 @@ const s=StyleSheet.create({
  card:{padding:19,backgroundColor:P.panel,borderRadius:18,borderWidth:1,borderColor:P.line,marginBottom:18,gap:9},evidence:{fontSize:13,lineHeight:22,color:P.gold},heading:{fontSize:20,lineHeight:29,color:P.text,fontWeight:'600'},
  source:{marginVertical:5},sourceButton:{minHeight:54,paddingVertical:12,flexDirection:'row',alignItems:'center',gap:12,borderBottomWidth:1,borderBottomColor:P.line},sourceCopy:{flex:1,gap:4},sourceLabel:{fontSize:13,lineHeight:21,color:P.muted},sourceTitle:{fontSize:15,lineHeight:24,color:P.gold,textDecorationLine:'underline'},url:{fontSize:13,lineHeight:22,color:P.gold},linkError:{gap:8,paddingVertical:12},footer:{marginTop:19,marginBottom:16,gap:10},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

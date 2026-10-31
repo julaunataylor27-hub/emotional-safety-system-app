@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Pressable, StyleSheet, BackHandler, Linking, Share, Alert} from 'react-native';
 import Svg, {Path, Circle} from 'react-native-svg';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 const M = require('./exploreConnections.cjs');
 
 function Button({id, label, onPress, primary, selected, children}) {
@@ -168,3 +168,7 @@ const s = StyleSheet.create({
   field: {gap: 10}, input: {backgroundColor: P.bg, borderWidth: 1, borderColor: P.line, borderRadius: 14, minHeight: 120, padding: 14, color: P.text, fontSize: 17, lineHeight: 28},
   notice: {fontSize: 15, lineHeight: 24, color: P.gold},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));

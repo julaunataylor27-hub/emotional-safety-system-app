@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Image, Pressable, StyleSheet, Linking, BackHandler, Share, Alert} from 'react-native';
 import {AppText as Text, AppInput as TextInput} from './AppPreferences';
-import {P} from './PresentationTheme';
+import {P,presentationStyles} from './PresentationTheme';
 import TimPictureTrail from './TimPictureTrail';
 const M = require('./knowledgeTrail.cjs');
 
@@ -190,3 +190,7 @@ const s = StyleSheet.create({
   urlInput: {minHeight: 54}, note: {borderLeftWidth: 2, borderLeftColor: P.gold, paddingLeft: 15, gap: 9},
   actions: {gap: 10}, mode: {fontSize: 15, lineHeight: 24, color: P.green}, notice: {fontSize: 15, lineHeight: 24, color: P.gold},
 });
+
+
+// UNIFIED_THEME_V4
+Object.assign(s,presentationStyles(s));
