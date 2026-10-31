@@ -23,6 +23,7 @@ function BulletList({items,empty='None identified'}) {
 export default function EssCoreScreen({onBack,onSupport}) {
   const [text,setText] = useState("He hasn't replied for 6 hours. I feel rejected and I think he doesn't care.");
   const [feeling,setFeeling] = useState('Not specified');
+  const [showTechnical,setShowTechnical] = useState(false);
   const result = useMemo(()=>processSituation({text,feeling}),[text,feeling]);
 
   const safetyColor = result.safety.urgent ? C.red :
@@ -83,12 +84,12 @@ export default function EssCoreScreen({onBack,onSupport}) {
       <BulletList items={result.uncertainty.unknowns}/>
     </Section>
 
-    <Section title="6 · Safety route">
+    <Section title="6 · Safety check">
       <View style={s.statusRow}>
         <View style={[s.dot,{backgroundColor:safetyColor}]}/>
         <View style={{flex:1}}>
           <Text style={[s.statusTitle,{color:safetyColor}]}>{result.safety.title}</Text>
-          <Text style={s.muted}>{result.safety.tier} · {result.safety.classification}</Text>
+          <Text style={s.muted}>ESS checks whether reflection, boundaries, support or urgent safety should come next.</Text>
         </View>
       </View>
       <BulletList items={result.safety.risks}/>
@@ -102,12 +103,37 @@ export default function EssCoreScreen({onBack,onSupport}) {
       <Text style={s.choiceNote}>User remains in control: {result.choice.user_remains_in_control ? 'YES' : 'NO'}</Text>
     </Section>
 
-    <Section title="8 · Next pathway">
+    <Section title="8 · Your next step">
       <View style={s.pathway}>
         <Text style={s.pathwayText}>{result.next_pathway.replaceAll('_',' → ')}</Text>
       </View>
-      <Text style={s.muted}>{result.transparency.method}</Text>
+      <Text style={s.muted}>This is a suggested pathway, not a decision made for you.</Text>
     </Section>
+
+    <Pressable accessibilityRole="button" accessibilityState={{expanded:showTechnical}}
+      onPress={()=>setShowTechnical(v=>!v)} style={s.explainButton}>
+      <Text style={s.explainButtonText}>{showTechnical ? 'Hide technical details' : 'How ESS reached this'}</Text>
+    </Pressable>
+
+    {showTechnical && <View style={s.technical}>
+      <Text style={s.technicalTitle}>Rigorous layer</Text>
+      <Text style={s.technicalLine}>Architecture: {result.decision_record.architecture_version}</Text>
+      <Text style={s.technicalLine}>Core version: {result.decision_record.core_version}</Text>
+      <Text style={s.technicalLine}>Classification: {result.decision_record.classification}</Text>
+      <Text style={s.technicalLine}>Pathway: {result.decision_record.pathway}</Text>
+      <Text style={s.technicalLine}>Rules: {result.decision_record.rule_ids.join(', ')}</Text>
+      <Text style={s.technicalLine}>Verification status: {result.evidence.verification_status}</Text>
+      <Text style={s.technicalLine}>Unknowns tracked: {result.decision_record.uncertainty_count}</Text>
+      <Text style={s.technicalLine}>User control preserved: {result.decision_record.user_control_preserved ? 'yes' : 'no'}</Text>
+
+      <Text style={s.technicalTitle}>Research snapshot</Text>
+      <Text style={s.technicalLine}>Emotion labels: {result.research_snapshot.emotion_count}</Text>
+      <Text style={s.technicalLine}>Reported information: {result.research_snapshot.reported_information_count}</Text>
+      <Text style={s.technicalLine}>Interpretations: {result.research_snapshot.interpretation_count}</Text>
+      <Text style={s.technicalLine}>Uncertainty items: {result.research_snapshot.uncertainty_count}</Text>
+      <Text style={s.technicalLine}>Choices shown: {result.research_snapshot.choice_count}</Text>
+      <Text style={s.technicalNote}>These research fields are generated in memory only. This screen does not automatically upload or store your writing.</Text>
+    </View>}
 
     <Pressable accessibilityRole="button" onPress={onSupport} style={s.support}>
       <Text style={s.supportText}>Open support resources  →</Text>
@@ -146,6 +172,12 @@ const s=StyleSheet.create({
   choiceNote:{color:C.green,fontSize:12,fontWeight:'900',marginTop:10},
   pathway:{backgroundColor:'#102E40',borderColor:C.blue,borderWidth:1,borderRadius:12,padding:12,marginBottom:8},
   pathwayText:{color:C.text,fontSize:14,fontWeight:'900',textAlign:'center'},
+  explainButton:{borderColor:C.blue,borderWidth:1,borderRadius:13,padding:14,alignItems:'center',marginBottom:13,minHeight:48,justifyContent:'center',backgroundColor:'#0B2636'},
+  explainButtonText:{color:C.text,fontSize:14,fontWeight:'900'},
+  technical:{backgroundColor:'#071A24',borderColor:C.blue,borderWidth:1,borderRadius:15,padding:15,marginBottom:13},
+  technicalTitle:{color:C.gold,fontSize:15,fontWeight:'900',marginBottom:7,marginTop:4},
+  technicalLine:{color:C.text,fontSize:12,lineHeight:19},
+  technicalNote:{color:C.muted,fontSize:11,lineHeight:17,marginTop:9},
   support:{backgroundColor:C.gold,borderRadius:13,padding:14,alignItems:'center',marginBottom:13,minHeight:48,justifyContent:'center'},
   supportText:{color:'#192018',fontSize:14,fontWeight:'900'},
   footer:{borderColor:C.line,borderWidth:1,borderRadius:12,padding:12,marginBottom:15},

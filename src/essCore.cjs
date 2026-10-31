@@ -12,6 +12,7 @@
 'use strict';
 
 const { assessEvidence } = require('./evidenceTruthEngine.cjs');
+const { CORE_VERSION, buildDecisionRecord, buildResearchSnapshot } = require('./essArchitecture.cjs');
 
 const EMOTION_PATTERNS = Object.freeze([
   ['anxious', /\b(anxious|anxiety|nervous|worried|worry|uneasy|panicked|panic)\b/i],
@@ -122,8 +123,8 @@ function processSituation(input = {}) {
   const statements = separateStatements(text);
   const emotions = detectEmotions(text, selectedFeeling);
 
-  return {
-    version: 'ess-core-v1',
+  const output = {
+    version: CORE_VERSION,
     input: {
       reported_text: text,
       independently_verified: false
@@ -166,6 +167,10 @@ function processSituation(input = {}) {
       ]
     }
   };
+
+  output.decision_record = buildDecisionRecord(output);
+  output.research_snapshot = buildResearchSnapshot(output);
+  return output;
 }
 
 module.exports = { processSituation, detectEmotions, separateStatements, pathwayFor };
