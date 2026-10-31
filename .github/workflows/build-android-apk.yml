@@ -169,6 +169,9 @@ jobs:
       - name: Add presentation-ready Australian Humanity walkthrough
         run: python scripts/patch_presentation_walkthrough.py
 
+      - name: Reconnect ESS Core prototype
+        run: python scripts/patch_ess_core.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 
