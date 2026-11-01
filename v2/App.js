@@ -25,6 +25,49 @@ const TABS=[
  ['more','More','•••']
 ];
 
+const LEARN_TRAILS=[
+ {
+  id:'culture-country',title:'Culture & Country',subtitle:'Connection, belonging and stronger futures',icon:'⌁',image:ART.more,
+  helps:'Understand how identity, place, relationships and cultural context can shape how people experience safety and belonging.',
+  ideas:['Context matters before conclusions.','Different communities can hold different knowledge systems and responsibilities.','Respectful learning means checking whose knowledge is being shared and how.'],
+  unknown:'Some cultural knowledge is local, community-held or not appropriate to generalise.',
+  sourceStatus:'Use community-approved and authoritative sources before publishing cultural claims.',
+  related:'History & Truth'
+ },
+ {
+  id:'history-truth',title:'History & Truth',subtitle:'Context, perspectives and evidence',icon:'≋',image:ART.evidence,
+  helps:'Understand the difference between a claim, a source, an interpretation and something that remains uncertain.',
+  ideas:['A reported account is not automatically independently verified.','Sources can disagree or have different perspectives.','Uncertainty should stay visible until stronger evidence is available.'],
+  unknown:'A missing source does not prove a claim false, and one source does not always settle a contested question.',
+  sourceStatus:'Attach primary or authoritative sources to specific historical claims before publication.',
+  related:'Everyday Tools'
+ },
+ {
+  id:'emotional-wellbeing',title:'Emotional Wellbeing',subtitle:'Feelings, relationships and mental health',icon:'◇',image:ART.emotional,
+  helps:'Understand feelings as useful information without treating them as proof of another person’s intent.',
+  ideas:['Feelings are real even when the cause is uncertain.','A pause can create room for choice.','Boundaries and support can be considered without diagnosing another person.'],
+  unknown:'ESS cannot know another person’s intent from one person’s account alone.',
+  sourceStatus:'Health and wellbeing material should use current, reputable clinical or public-health sources.',
+  related:'Everyday Tools'
+ },
+ {
+  id:'rights-systems',title:'Rights & Systems',subtitle:'Law, services and what to expect',icon:'§',image:ART.support,
+  helps:'Understand where rights, services, responsibilities and formal systems may matter.',
+  ideas:['Legal information and personal interpretation are different things.','Jurisdiction matters.','A service pathway should explain limits and what a person can expect next.'],
+  unknown:'Laws, service eligibility and procedures can change over time.',
+  sourceStatus:'Verify current law and service information from official Australian or state sources before publication.',
+  related:'Everyday Tools'
+ },
+ {
+  id:'everyday-tools',title:'Everyday Tools',subtitle:'Practical guidance for real life',icon:'✦',image:ART.home,
+  helps:'Turn understanding into small practical actions while preserving choice.',
+  ideas:['Separate what happened from what you think it means.','Name what is still unknown.','Compare options before committing to one.','You can leave a decision open.'],
+  unknown:'No tool works for every situation; context and safety still matter.',
+  sourceStatus:'Keep tools transparent, testable and clearly separated from professional advice.',
+  related:'Emotional Wellbeing'
+ }
+];
+
 function Shell({screen,onTab,children}){
  return <SafeAreaView style={s.safe}>
   <StatusBar style="light"/>
@@ -137,21 +180,38 @@ function JournalEntryCard({item,accent}){
  </View>
 }
 
-function Learn(){
+function Learn({initialTrail,onConsumeInitialTrail}){
  const [query,setQuery]=useState('');
- const topics=[
-  ['Culture & Country','Connection, belonging and stronger futures','⌁',ART.more],
-  ['History & Truth','Context, perspectives and evidence','≋',ART.evidence],
-  ['Emotional Wellbeing','Feelings, relationships and mental health','◇',ART.emotional],
-  ['Rights & Systems','Law, services and what to expect','§',ART.support],
-  ['Everyday Tools','Practical guidance for real life','✦',ART.home]
- ];
- const filtered=topics.filter(x=>(x[0]+' '+x[1]).toLowerCase().includes(query.toLowerCase()));
+ const [selectedTrail,setSelectedTrail]=useState(null);
+ React.useEffect(()=>{
+  if(initialTrail){
+   const match=LEARN_TRAILS.find(x=>x.title===initialTrail||x.id===initialTrail);
+   if(match)setSelectedTrail(match);
+   onConsumeInitialTrail?.();
+  }
+ },[initialTrail]);
+ const filtered=LEARN_TRAILS.filter(x=>(x.title+' '+x.subtitle+' '+x.helps).toLowerCase().includes(query.toLowerCase()));
+ if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)setSelectedTrail(next);}}/>;
  return <>
   <CinematicHero image={ART.learn} kicker="KNOWLEDGE TRAILS" title="Learn" body="Explore culture, history, wellbeing, rights and practical tools at your own pace." height={270}/>
   <TextInput value={query} onChangeText={setQuery} placeholder="⌕  Search learning topics…" placeholderTextColor={T.muted} style={s.search}/>
+  <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Find context or knowledge that helps you understand something better — without forcing a conclusion.</Text></View>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>EXPLORE</Text><Text style={s.sectionHeading}>Learning paths</Text></View>
-  <View style={s.stack}>{filtered.map(([title,subtitle,icon,image])=><FeatureCard key={title} title={title} subtitle={subtitle} icon={icon} accent={T.sand} image={image}/>)}</View>
+  <View style={s.stack}>{filtered.map(trail=><Pressable key={trail.id} onPress={()=>setSelectedTrail(trail)} style={({pressed})=>[s.learnTrailCard,pressed&&s.pressed]}>
+   <ImageBackground source={trail.image} resizeMode="cover" style={s.learnTrailImage} imageStyle={s.learnTrailImageRadius}><View style={s.cardShade}/><View style={s.learnTrailContent}><Text style={s.learnTrailIcon}>{trail.icon}</Text><View style={s.rowCopy}><Text style={s.learnTrailTitle}>{trail.title}</Text><Text style={s.learnTrailSub}>{trail.subtitle}</Text><Text style={s.learnTrailHelp}>{trail.helps}</Text></View><Text style={s.featureArrow}>›</Text></View></ImageBackground>
+  </Pressable>)}</View>
+ </>;
+}
+
+function LearnTrail({trail,onBack,onRelated}){
+ return <>
+  <View style={s.coreHeader}><Pressable onPress={onBack} style={s.back}><Text style={s.backText}>‹</Text></Pressable><View style={s.rowCopy}><Text style={s.sectionEyebrow}>LEARN TRAIL</Text><Text style={s.coreTitle}>{trail.title}</Text></View></View>
+  <ImageBackground source={trail.image} resizeMode="cover" style={s.learnDetailHero} imageStyle={s.heroImage}><View style={s.heroVignette}/><View style={s.learnDetailCopy}><Text style={s.kicker}>WHAT THIS HELPS YOU UNDERSTAND</Text><Text style={s.learnDetailTitle}>{trail.helps}</Text></View></ImageBackground>
+  <View style={s.learnSection}><Text style={s.fieldLabel}>KEY IDEAS</Text>{trail.ideas.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}</View>
+  <View style={s.learnSection}><Text style={s.fieldLabel}>WHAT IS STILL UNCERTAIN?</Text><Text style={s.learnBody}>{trail.unknown}</Text></View>
+  <View style={s.learnSection}><Text style={s.fieldLabel}>SOURCE STATUS</Text><View style={s.sourceBadge}><Text style={s.sourceBadgeText}>SOURCE DISCIPLINE ON</Text></View><Text style={s.learnBody}>{trail.sourceStatus}</Text></View>
+  <Pressable onPress={()=>onRelated(trail.related)} style={s.crossLinkButton}><View><Text style={s.crossLinkEyebrow}>RELATED TRAIL</Text><Text style={s.crossLinkTitle}>{trail.related}</Text><Text style={s.crossLinkSub}>Keep following the knowledge path if it helps.</Text></View><Text style={s.crossLinkArrow}>→</Text></Pressable>
+  <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Learn for context · not forced conclusions</Text><View style={s.signatureLine}/></View>
  </>;
 }
 
@@ -222,7 +282,7 @@ function Core({onBack,onSaveJournal,onNavigate}){
   if(stage.id==='feeling') return <FeelingStage detected={result.emotion.reported_or_detected} selected={confirmedFeelings} onToggle={x=>setConfirmedFeelings(v=>v.includes(x)?v.filter(y=>y!==x):[...v,x])} other={otherFeeling} onOther={setOtherFeeling}/>;
   if(stage.id==='known') return <KnownStage items={result.evidence.reported_observations}/>;
   if(stage.id==='interpretation') return <InterpretationStage items={result.interpretation.possible_interpretations} checks={interpretationChecks} onCheck={(item,value)=>setInterpretationChecks(v=>({...v,[item]:value}))}/>;
-  if(stage.id==='uncertainty') return <UncertaintyStage items={result.uncertainty.unknowns} checks={unknownChecks} onCheck={(item,value)=>setUnknownChecks(v=>({...v,[item]:value}))} onLearn={()=>onNavigate?.('learn')} recommendation={result.recommendations?.find(x=>x.destination==='learn')}/>;
+  if(stage.id==='uncertainty') return <UncertaintyStage items={result.uncertainty.unknowns} checks={unknownChecks} onCheck={(item,value)=>setUnknownChecks(v=>({...v,[item]:value}))} onLearn={()=>{const rec=result.recommendations?.find(x=>x.destination==='learn');onNavigate?.('learn',rec?.trail)}} recommendation={result.recommendations?.find(x=>x.destination==='learn')}/>;
   if(stage.id==='context') return <ContextStage result={result} onSupport={()=>onNavigate?.('support')} recommendation={result.recommendations?.find(x=>x.destination==='support')}/>;
   if(stage.id==='choice') return <ChoiceCompare options={result.choice.options} value={choicePreview} onChange={setChoicePreview}/>;
   return <FinishStage result={result} selectedNext={selectedNext} setSelectedNext={setSelectedNext} saved={savedToJournal} onSave={()=>{onSaveJournal?.({when:'Just now',text,change:selectedNext||'Decision left open.',tag:'Choice',icon:'◇'});setSavedToJournal(true);}} onNavigate={onNavigate} recommendations={result.recommendations||[]}/>;
@@ -346,18 +406,19 @@ function Result({title,items}){return <View style={s.resultCard}><Text style={s.
 function AppRoot(){
  const [screen,setScreen]=useState('home');
  const [coreOpen,setCoreOpen]=useState(false);
+ const [pendingLearnTrail,setPendingLearnTrail]=useState(null);
  const [journalEntries,setJournalEntries]=useState([
   {when:'Today',text:'Feeling clearer about my next step.',change:'I know what I want to ask for.',tag:'Choice',icon:'◒'},
   {when:'3 days ago',text:'Setting boundaries felt hard but good.',change:'I noticed I can pause before answering.',tag:'Boundary',icon:'◉'},
   {when:'1 week ago',text:'Noticing patterns and what I need.',change:'Some things are still uncertain.',tag:'Uncertainty',icon:'▤'}
  ]);
- const go=id=>{setCoreOpen(false);setScreen(id);};
+ const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);setScreen(id);};
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go}>
   {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
-   screen==='learn'?<Learn/>:
+   screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)}/>:
    screen==='support'?<Support/>:
    <More openCore={()=>setCoreOpen(true)}/>}
  </Shell>;
@@ -390,7 +451,7 @@ const s=StyleSheet.create({
  featureImage:{minHeight:86,padding:12,flexDirection:'row',alignItems:'center',gap:11,justifyContent:'center'},featureImageRadius:{borderRadius:15},cardShade:{...StyleSheet.absoluteFillObject,backgroundColor:'rgba(8,5,3,.56)'},
  featureIcon:{width:42,height:42,borderRadius:21,borderWidth:1,backgroundColor:'rgba(8,6,4,.58)',alignItems:'center',justifyContent:'center',margin:12},featureImageRadius:{borderRadius:15},
  featureIconText:{fontSize:16,fontWeight:'800'},featureCopy:{flex:1,minWidth:0},featureTitle:{color:T.text,fontFamily:SERIF,fontSize:15,fontWeight:'700'},featureSub:{color:'#D4C6B5',fontSize:10.5,lineHeight:15,marginTop:2},featureArrow:{color:T.sand,fontSize:22,marginRight:12},
- search:{minHeight:48,borderRadius:14,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',color:T.text,paddingHorizontal:13,fontSize:14,marginBottom:12},
+ search:{minHeight:48,borderRadius:14,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',color:T.text,paddingHorizontal:13,fontSize:14,marginBottom:12},learnPurpose:{borderRadius:16,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#111811',padding:12,marginBottom:12},learnPurposeText:{color:'#DCE7DA',fontSize:12,lineHeight:18},learnTrailCard:{minHeight:116,borderRadius:17,borderWidth:1,borderColor:'#3A3025',overflow:'hidden',backgroundColor:'#15120D'},learnTrailImage:{minHeight:116,justifyContent:'center'},learnTrailImageRadius:{borderRadius:16},learnTrailContent:{minHeight:116,padding:12,flexDirection:'row',alignItems:'center',gap:10},learnTrailIcon:{color:T.sand,fontSize:21,width:28,textAlign:'center'},learnTrailTitle:{color:T.text,fontFamily:SERIF,fontSize:16,fontWeight:'700'},learnTrailSub:{color:'#D6C8B7',fontSize:10.5,lineHeight:15,marginTop:2},learnTrailHelp:{color:T.muted,fontSize:9.5,lineHeight:14,marginTop:5},learnDetailHero:{minHeight:250,borderRadius:22,overflow:'hidden',borderWidth:1,borderColor:'#3A3025',justifyContent:'flex-end',marginBottom:10},learnDetailCopy:{padding:17},learnDetailTitle:{color:T.text,fontFamily:SERIF,fontSize:21,lineHeight:27,fontWeight:'700',marginTop:5},learnSection:{borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:9},learnBody:{color:T.text,fontSize:12.5,lineHeight:19},sourceBadge:{alignSelf:'flex-start',paddingHorizontal:8,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A',marginBottom:8},sourceBadgeText:{color:'#DDE8DC',fontSize:7.5,fontWeight:'900',letterSpacing:1},
  supportCard:{minHeight:80,borderRadius:17,borderWidth:1,padding:12,flexDirection:'row',alignItems:'center',gap:11},supportDanger:{backgroundColor:'#6E2D24',borderColor:'#A65040'},supportOchre:{backgroundColor:'#4A321B',borderColor:'#805C32'},supportGreen:{backgroundColor:'#20372A',borderColor:'#4E6F58'},supportNeutral:{backgroundColor:'#15120D',borderColor:'#3A3025'},
  supportIcon:{width:44,height:44,borderRadius:22,borderWidth:1,borderColor:'rgba(255,247,236,.55)',alignItems:'center',justifyContent:'center',backgroundColor:'rgba(0,0,0,.12)'},supportIconText:{color:'#FFF7EC',fontSize:17,fontWeight:'900'},rowCopy:{flex:1,minWidth:0},supportTitle:{color:'#FFF7EC',fontFamily:SERIF,fontSize:15,fontWeight:'700'},supportSub:{color:'#E0D1C0',fontSize:10.5,lineHeight:15,marginTop:2},supportArrow:{color:'#F4E2CD',fontSize:22},
  coreHeader:{flexDirection:'row',alignItems:'center',gap:10,marginTop:4,marginBottom:10},back:{width:42,height:42,borderRadius:21,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',alignItems:'center',justifyContent:'center'},backText:{color:T.sand,fontSize:29,lineHeight:31},coreTitle:{color:T.text,fontFamily:SERIF,fontSize:25,fontWeight:'700',marginTop:2},coreLead:{color:T.muted,fontSize:12.5,lineHeight:19,marginBottom:10},progressTrack:{height:4,borderRadius:999,backgroundColor:'#2A241C',overflow:'hidden',marginBottom:12},progressFill:{height:4,borderRadius:999,backgroundColor:T.sand},
