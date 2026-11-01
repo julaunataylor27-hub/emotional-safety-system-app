@@ -25,8 +25,19 @@ learn="""      {screen==='learn'&&<>
         <Text style={styles.mockupLead}>Choose a trail. Each one opens a focused learning path without changing your personal writing.</Text>
         <TextInput accessibilityLabel="Search learning topics" value={learningQuery} onChangeText={setLearningQuery}
           placeholder="Search learning topics…" placeholderTextColor={P.muted} style={styles.searchBox}/>
-        {!!learningQuery.trim()&&!LEARNING_TOPICS.some(([,title,sub])=>(title+' '+sub).toLowerCase().includes(learningQuery.trim().toLowerCase()))&&
-          <Text style={styles.body}>No matching topics. Try another word.</Text>}
+        {!!learningQuery.trim()
+          &&!LEARNING_TOPICS.some(([,title,sub])=>(title+' '+sub).toLowerCase().includes(learningQuery.trim().toLowerCase()))
+          &&!matchesCulturalSearch(learningQuery)
+          &&!matchesInquirySearch(learningQuery)
+          &&!matchesTrailSearch(learningQuery)
+          &&!matchesTogetherSearch(learningQuery)
+          &&!matchesExploreSearch(learningQuery)
+          &&!matchesLawSearch(learningQuery)
+          &&!matchesBalanceSearch(learningQuery)
+          &&!matchesCuriositySearch(learningQuery)
+          &&!matchesAncientAnimalsSearch(learningQuery)
+          &&!matchesTwoFlamesSearch(learningQuery)
+          &&<Text style={styles.body}>No matching topics. Try another word.</Text>}
         <View style={styles.mockupList}>
           {matchesTwoFlamesSearch(learningQuery)&&<MenuRow title="Two Flames — Healing Without Control" subtitle="Two sparks, shared light, mutual choice and room to heal" onPress={()=>go('twoFlames')} accent={P.gold}/>}
           {matchesAncientAnimalsSearch(learningQuery)&&<MenuRow title="Ancient Australian Animals & Evidence" subtitle="Six prehistoric creatures, fossil images and the Yamuti account" onPress={()=>go('ancientAnimals')} accent={P.gold}/>}
