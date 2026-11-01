@@ -12,7 +12,7 @@ test('v2 is a clean five-tab app shell',()=>{
  assert.ok(!app.includes('home-support-now'));
  assert.ok(!app.includes("['evidence','Evidence']"));
  assert.match(app,/You’re in the right place\./);
- assert.match(app,/HOME_HERO/);
+ assert.match(app,/home-hero\.webp/);
  assert.match(app,/Understand what’s happening\. Keep your choices\./);
 });
 
