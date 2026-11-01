@@ -101,7 +101,7 @@ test('actual summary button opens a preview, shares it, survives failure and res
   await press(tree, 'Stage 1');
   await write(tree, 'My family deserve kindness and free choice.');
   assert.equal(JSON.parse(disk.get(MEMORY_KEY)).answers.foundationMessage, 'My family deserve kindness and free choice.');
-  await press(tree, 'Journey');
+  await press(tree, '‹');
   await press(tree, 'Stage 7');
   await write(tree, 'Safe and proud.');
   await press(tree, 'CREATE & SHARE MY SUMMARY');
@@ -134,7 +134,7 @@ test('actual summary button opens a preview, shares it, survives failure and res
   await press(tree, 'Start my journey'); await press(tree, 'Stage 1');
   assert.equal(tree.root.findAllByType('TextInput')[0].props.value, 'My family deserve kindness and free choice.');
   await write(tree, 'My updated reflection belongs in the next PDF.');
-  await press(tree, 'Journey'); await press(tree, 'Stage 7'); await press(tree, 'CREATE & SHARE MY SUMMARY');
+  await press(tree, '‹'); await press(tree, 'Stage 7'); await press(tree, 'CREATE & SHARE MY SUMMARY');
   await press(tree, 'SAVE PDF TO MY FILES');
   assert.equal(pdfPrints.length,2,'Edited answers must create a fresh PDF');
   assert.ok(pdfPrints[1].html.includes('My updated reflection belongs in the next PDF.'));
