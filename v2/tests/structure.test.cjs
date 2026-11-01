@@ -76,3 +76,16 @@ test('v2 uses a guided eight-stage ESS Core',()=>{
  assert.match(app,/What feels like the next step\?/);
  assert.match(app,/I’m not ready to choose yet\./);
 });
+
+
+test('Core saves reflections into Journal and supports reviewed interpretation and uncertainty',()=>{
+ const app=read('App.js');
+ assert.match(app,/That fits/);
+ assert.match(app,/Not what I meant/);
+ assert.match(app,/Keep open/);
+ assert.match(app,/I know this now/);
+ assert.match(app,/Save this reflection to Journal/);
+ assert.match(app,/journalEntries/);
+ assert.match(app,/onSaveJournal/);
+ assert.match(app,/COMPARE YOUR OPTIONS/);
+});
