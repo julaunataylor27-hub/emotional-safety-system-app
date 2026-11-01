@@ -28,6 +28,16 @@ learn="""      {screen==='learn'&&<>
         {!!learningQuery.trim()&&!LEARNING_TOPICS.some(([,title,sub])=>(title+' '+sub).toLowerCase().includes(learningQuery.trim().toLowerCase()))&&
           <Text style={styles.body}>No matching topics. Try another word.</Text>}
         <View style={styles.mockupList}>
+          {matchesTwoFlamesSearch(learningQuery)&&<MenuRow title="Two Flames — Healing Without Control" subtitle="Two sparks, shared light, mutual choice and room to heal" onPress={()=>go('twoFlames')} accent={P.gold}/>}
+          {matchesAncientAnimalsSearch(learningQuery)&&<MenuRow title="Ancient Australian Animals & Evidence" subtitle="Six prehistoric creatures, fossil images and the Yamuti account" onPress={()=>go('ancientAnimals')} accent={P.gold}/>}
+          {matchesCuriositySearch(learningQuery)&&<MenuRow title="Safe Curiosity Lab" subtitle="Try private, age-appropriate learning and safety examples · Prototype" onPress={()=>go('safeCuriosity')} accent={P.gold}/>}
+          {matchesBalanceSearch(learningQuery)&&<MenuRow title="Independence & commitment" subtitle="Make room for yourself, choose a commitment and plan a check-in" onPress={()=>go('independenceCommitment')} accent={P.gold}/>}
+          {matchesLawSearch(learningQuery)&&<MenuRow title="Law, Rights & Kinship" subtitle="Australian and WA law, cultural responsibilities and Parliament" onPress={()=>go('lawRightsKinship')} accent={P.gold}/>}
+          {matchesExploreSearch(learningQuery)&&<MenuRow title="Explore connections" subtitle="Link a question with experiences, sources, unknowns and choices" onPress={()=>go('exploreConnections')} accent={P.gold}/>}
+          {matchesTogetherSearch(learningQuery)&&<MenuRow title="Learning together" subtitle="Try encouragement, pace, timing, knowledge, conversation and peace" onPress={()=>go('learningTogether')} accent={P.gold}/>}
+          {matchesTrailSearch(learningQuery)&&<MenuRow title="Knowledge Trail" subtitle="Follow a question with Tim Berners-Lee, or explore your own" onPress={()=>go('knowledgeTrail')} accent={P.gold}/>}
+          {matchesInquirySearch(learningQuery)&&<MenuRow title="Compare & stay curious" subtitle="Explore cultural accounts, their sources and unanswered questions" onPress={()=>go('culturalInquiry')} accent={P.gold}/>}
+          {matchesCulturalSearch(learningQuery)&&<MenuRow title="Living connections" subtitle="An educational cultural research draft, with original sources" onPress={()=>go('livingConnections')} accent={P.gold}/>}
           {LEARNING_TOPICS.filter(([,title,sub])=>(title+' '+sub).toLowerCase().includes(learningQuery.trim().toLowerCase())).map(([icon,title,sub])=>
             <MenuRow key={title} icon={icon} title={title} subtitle={sub} onPress={()=>{}} accent={P.gold}/>)}
         </View>
