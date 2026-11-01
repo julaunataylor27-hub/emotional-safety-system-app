@@ -112,3 +112,16 @@ test('v2 UI shows explainable destination recommendations and versions',()=>{
  assert.match(app,/Core version:/);
  assert.match(app,/Architecture version:/);
 });
+
+
+test('Learn uses guided evidence-aware trails and Core can target a trail',()=>{
+ const app=read('App.js');
+ assert.match(app,/WHAT IS THIS HELPING ME DO\?/);
+ assert.match(app,/WHAT THIS HELPS YOU UNDERSTAND/);
+ assert.match(app,/WHAT IS STILL UNCERTAIN\?/);
+ assert.match(app,/SOURCE STATUS/);
+ assert.match(app,/SOURCE DISCIPLINE ON/);
+ assert.match(app,/RELATED TRAIL/);
+ assert.match(app,/pendingLearnTrail/);
+ assert.match(app,/initialTrail/);
+});
