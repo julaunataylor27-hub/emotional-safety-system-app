@@ -86,6 +86,30 @@ function pathwayFor(kind) {
   }
 }
 
+function recommendationsFor(kind, unknowns = []) {
+  const recs = [];
+  if (unknowns.length) {
+    recs.push({
+      destination: 'learn',
+      trail: 'History & Truth',
+      reason: 'There are still unanswered questions. Learning can add context without forcing a conclusion.'
+    });
+  }
+  if (kind === 'pressure' || kind === 'coercion' || kind === 'danger') {
+    recs.push({
+      destination: 'support',
+      trail: 'Support options',
+      reason: 'The wording suggests a boundary, pressure or safety context where support options may be useful.'
+    });
+  }
+  recs.push({
+    destination: 'journal',
+    trail: 'Reflection history',
+    reason: 'Saving the reflection can help you notice what changes over time.'
+  });
+  return recs;
+}
+
 function choicesFor(kind) {
   switch (kind) {
     case 'danger':
@@ -133,6 +157,7 @@ function processSituation(input = {}) {
   const evidence = assessEvidence({ text, feeling: selectedFeeling });
   const statements = separateStatements(text);
   const emotions = detectEmotions(text, selectedFeeling);
+  const unknowns = buildUnknowns(text, evidence);
 
   const output = {
     version: CORE_VERSION,
@@ -154,7 +179,7 @@ function processSituation(input = {}) {
       note: 'Interpretations are kept separate from observed or reported events.'
     },
     uncertainty: {
-      unknowns: buildUnknowns(text, evidence)
+      unknowns
     },
     safety: {
       classification: evidence.kind,
@@ -168,6 +193,7 @@ function processSituation(input = {}) {
       user_remains_in_control: true
     },
     backbone: CORE_BACKBONE,
+    recommendations: recommendationsFor(evidence.kind, unknowns),
     next_pathway: pathwayFor(evidence.kind),
     transparency: {
       method: 'Deterministic local rules using the existing ESS Evidence & Truth Engine. No remote AI is used in this prototype.',
@@ -185,4 +211,4 @@ function processSituation(input = {}) {
   return output;
 }
 
-module.exports = { processSituation, detectEmotions, separateStatements, pathwayFor, CORE_BACKBONE };
+module.exports = { processSituation, detectEmotions, separateStatements, pathwayFor, recommendationsFor, CORE_BACKBONE };
