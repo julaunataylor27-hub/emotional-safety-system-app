@@ -64,3 +64,15 @@ test('2027 frame is the locked visual source of truth',()=>{
  assert.match(guide,/retired navy \/ gold \/ teal identity must not return/);
  assert.match(guide,/avoids sci-fi \/ orbit \/ dashboard motifs/);
 });
+
+
+test('v2 uses a guided eight-stage ESS Core',()=>{
+ const app=read('App.js');
+ assert.match(app,/STEP \{step\+1\} OF 8/);
+ assert.match(app,/What do we actually know\?/);
+ assert.match(app,/What might be interpretation\?/);
+ assert.match(app,/What is still uncertain\?/);
+ assert.match(app,/What choices are still yours\?/);
+ assert.match(app,/What feels like the next step\?/);
+ assert.match(app,/I’m not ready to choose yet\./);
+});
