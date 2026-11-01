@@ -1,9 +1,10 @@
 import React,{useMemo,useState} from 'react';
-import {SafeAreaView,ScrollView,View,Text,TextInput,Pressable,StyleSheet,ImageBackground} from 'react-native';
+import {SafeAreaView,ScrollView,View,Text,TextInput,Pressable,StyleSheet,ImageBackground,Linking,Alert} from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {T} from './src/theme';
 import {processSituation} from './src/core/essCore.cjs';
+import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
 
 // ADVERT_DESIGN_LOCKED: the approved 2027 advertising frame is the visual source of truth.
 // The app must feel cinematic and premium on the surface while ESS Core remains rigorous underneath.
@@ -230,7 +231,7 @@ function LearnTrail({trail,onBack,onRelated}){
  </>;
 }
 
-function Support({initialMode,onConsumeInitialMode}){
+function Support({initialMode,onConsumeInitialMode,onNavigate}){
  const MODES={
   calm:{
    id:'calm',label:'CALM SUPPORT',title:'You can slow this down.',body:'Use support for information, perspective or a human conversation — even when nothing urgent is happening.',
@@ -270,8 +271,11 @@ function Support({initialMode,onConsumeInitialMode}){
   }
  };
  const [mode,setMode]=useState('calm');
+ const [selectedAction,setSelectedAction]=useState(null);
+ const selectedGuide=getSupportAction(selectedAction);
+ const openExternal=url=>Linking.openURL(url).catch(()=>Alert.alert('Could not open this option','You can use the displayed number or website directly.'));
  React.useEffect(()=>{
-  if(initialMode&&MODES[initialMode])setMode(initialMode);
+  if(initialMode&&MODES[initialMode]){setMode(initialMode);setSelectedAction(null);}
   onConsumeInitialMode?.();
  },[initialMode]);
  const current=MODES[mode];
@@ -279,7 +283,7 @@ function Support({initialMode,onConsumeInitialMode}){
   <CinematicHero image={ART.support} kicker="SUPPORT" title="You don’t have to figure it out alone." body="Find trusted services, clear information and practical next steps — at your pace." height={300}/>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Understand your options, reach human help if you want it, and keep control of what happens next.</Text></View>
   <View style={s.supportModeTabs}>
-   {Object.values(MODES).map(x=><Pressable key={x.id} accessibilityRole="button" accessibilityState={{selected:mode===x.id}} accessibilityLabel={`${x.id} support mode`} onPress={()=>setMode(x.id)} style={[s.supportModeTab,mode===x.id&&s.supportModeTabOn]}><Text style={[s.supportModeTabText,mode===x.id&&s.supportModeTabTextOn]}>{x.id==='calm'?'Calm':x.id==='boundary'?'Boundary':x.id==='coercion'?'Coercion':'Urgent'}</Text></Pressable>)}
+   {Object.values(MODES).map(x=><Pressable key={x.id} accessibilityRole="button" accessibilityState={{selected:mode===x.id}} accessibilityLabel={`${x.id} support mode`} onPress={()=>{setMode(x.id);setSelectedAction(null);}} style={[s.supportModeTab,mode===x.id&&s.supportModeTabOn]}><Text style={[s.supportModeTabText,mode===x.id&&s.supportModeTabTextOn]}>{x.id==='calm'?'Calm':x.id==='boundary'?'Boundary':x.id==='coercion'?'Coercion':'Urgent'}</Text></Pressable>)}
   </View>
   <View style={[s.supportModePanel,current.tone==='danger'?s.supportDanger:current.tone==='ochre'?s.supportOchre:current.tone==='green'?s.supportGreen:s.supportNeutral]}>
    <Text style={s.fieldLabel}>{current.label}</Text>
@@ -288,15 +292,36 @@ function Support({initialMode,onConsumeInitialMode}){
   </View>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>CHOOSE WHAT FITS</Text><Text style={s.sectionHeading}>Support options</Text></View>
   <View style={s.stack}>
-   {current.actions.map(([title,subtitle,icon],i)=><SupportCard key={title} title={title} subtitle={subtitle} icon={icon} tone={current.tone}/>)}
+   {current.actions.map(([title,subtitle,icon])=><SupportCard key={title} title={title} subtitle={subtitle} icon={icon} tone={current.tone} selected={selectedAction===title} onPress={()=>setSelectedAction(title)}/>)}
   </View>
+  {selectedGuide&&<View style={s.learnSection}>
+   <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>YOUR NEXT STEP · OPTIONAL</Text><Text style={s.supportModeTitle}>{selectedAction}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close support step" onPress={()=>setSelectedAction(null)} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
+   {selectedGuide.steps.map((item,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{item}</Text></View>)}
+   {selectedGuide.destination==='learn'&&<Pressable accessibilityRole="button" accessibilityLabel="Open learning trails" onPress={()=>onNavigate?.('learn')} style={s.secondary}><Text style={s.secondaryText}>Open Learn</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
+   {!!selectedGuide.services?.length&&<>
+    <Text style={[s.fieldLabel,{marginTop:12}]}>VERIFIED AUSTRALIAN SUPPORT OPTIONS</Text>
+    {selectedGuide.services.map(id=>{
+     const item=SERVICES[id];
+     return <View key={id} style={s.resultCard}>
+      <Text style={s.supportTitle}>{item.name}</Text>
+      <Text style={s.supportSub}>{item.description}</Text>
+      <Text style={[s.supportSub,{marginTop:7}]}>Phone: {item.phone}</Text>
+      <View style={{flexDirection:'row',gap:8,flexWrap:'wrap',marginTop:10}}>
+       <Pressable accessibilityRole="button" accessibilityLabel={`Open phone dialler for ${item.name}`} onPress={()=>openExternal('tel:'+item.phone.replace(/\s/g,''))} style={s.reviewButton}><Text style={s.reviewButtonText}>Open dialler</Text></Pressable>
+       <Pressable accessibilityRole="link" accessibilityLabel={`Open official website for ${item.name}`} onPress={()=>openExternal(item.website)} style={s.reviewButton}><Text style={s.reviewButtonText}>Official website</Text></Pressable>
+      </View>
+     </View>;
+    })}
+    <Text style={s.stageNote}>These links open outside ESS only when you choose them. The app does not place calls, refer you or send your reflection automatically.</Text>
+   </>}
+  </View>}
   <View style={s.supportReminder}><Text style={s.supportReminderTitle}>You can stop here.</Text><Text style={s.supportReminderText}>Support is available, not compulsory. You can return Home, Learn more first, or leave the decision open.</Text></View>
  </>;
 }
 
-function SupportCard({title,subtitle,icon,tone}){
+function SupportCard({title,subtitle,icon,tone,selected,onPress}){
  const style=tone==='danger'?s.supportDanger:tone==='ochre'?s.supportOchre:tone==='green'?s.supportGreen:s.supportNeutral;
- return <Pressable style={({pressed})=>[s.supportCard,style,pressed&&s.pressed]}>
+ return <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityState={{selected}} onPress={onPress} style={({pressed})=>[s.supportCard,style,selected&&{borderColor:T.sand},pressed&&s.pressed]}>
   <View style={s.supportIcon}><Text style={s.supportIconText}>{icon}</Text></View>
   <View style={s.rowCopy}><Text style={s.supportTitle}>{title}</Text><Text style={s.supportSub}>{subtitle}</Text></View>
   <Text style={s.supportArrow}>›</Text>
@@ -486,7 +511,7 @@ function AppRoot(){
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
    screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)}/>:
-   screen==='support'?<Support initialMode={pendingSupportMode} onConsumeInitialMode={()=>setPendingSupportMode(null)}/>:
+   screen==='support'?<Support initialMode={pendingSupportMode} onConsumeInitialMode={()=>setPendingSupportMode(null)} onNavigate={go}/>:
    <More openCore={()=>setCoreOpen(true)}/>}
  </Shell>;
 }
