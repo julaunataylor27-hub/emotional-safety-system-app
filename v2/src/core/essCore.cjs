@@ -116,6 +116,17 @@ function choicesFor(kind) {
   }
 }
 
+const CORE_BACKBONE = Object.freeze([
+  {id:'situation',number:1,title:"What's happening?",purpose:'Capture the person’s own words without interpretation.'},
+  {id:'feeling',number:2,title:'What are you feeling?',purpose:'Surface self-reported feelings or language cues without treating them as proof.'},
+  {id:'known',number:3,title:'What do we actually know?',purpose:'Keep reported observations separate from assumptions and verification.'},
+  {id:'interpretation',number:4,title:'What might be interpretation?',purpose:'Name possible interpretations without presenting them as fact.'},
+  {id:'uncertainty',number:5,title:'What is still uncertain?',purpose:'Preserve unknowns instead of filling gaps.'},
+  {id:'safety',number:6,title:'Is there pressure, a boundary issue or danger?',purpose:'Route safety context without overriding the person’s agency.'},
+  {id:'choice',number:7,title:'What choices are still yours?',purpose:'Keep multiple options visible and preserve choice.'},
+  {id:'next',number:8,title:'What feels like the next step?',purpose:'Let the person choose what to do next.'}
+]);
+
 function processSituation(input = {}) {
   const text = String(input.text || '').trim().slice(0, 2500);
   const selectedFeeling = String(input.feeling || 'Not specified');
@@ -156,6 +167,7 @@ function processSituation(input = {}) {
       options: choicesFor(evidence.kind),
       user_remains_in_control: true
     },
+    backbone: CORE_BACKBONE,
     next_pathway: pathwayFor(evidence.kind),
     transparency: {
       method: 'Deterministic local rules using the existing ESS Evidence & Truth Engine. No remote AI is used in this prototype.',
@@ -173,4 +185,4 @@ function processSituation(input = {}) {
   return output;
 }
 
-module.exports = { processSituation, detectEmotions, separateStatements, pathwayFor };
+module.exports = { processSituation, detectEmotions, separateStatements, pathwayFor, CORE_BACKBONE };
