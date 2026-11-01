@@ -89,3 +89,17 @@ test('Core saves reflections into Journal and supports reviewed interpretation a
  assert.match(app,/onSaveJournal/);
  assert.match(app,/COMPARE YOUR OPTIONS/);
 });
+
+
+test('Core routes into the rest of ESS without removing user choice',()=>{
+ const app=read('App.js');
+ assert.match(app,/Explore a learning trail/);
+ assert.match(app,/View support options/);
+ assert.match(app,/Where would you like to go next\?/);
+ assert.match(app,/Review what you saved/);
+ assert.match(app,/Explore more context/);
+ assert.match(app,/See support options/);
+ assert.match(app,/Return to the start/);
+ assert.match(app,/Leave it for now/);
+ assert.match(app,/onNavigate=\{go\}/);
+});
