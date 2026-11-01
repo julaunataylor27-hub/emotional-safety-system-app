@@ -1,0 +1,45 @@
+name: Build ESS v2 Clean APK
+
+on:
+  push:
+    branches: [ess-v2-clean-rebuild]
+    paths:
+      - 'v2/**'
+      - '.github/workflows/build-ess-v2-clean.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install v2 dependencies
+        run: npm install
+      - name: Test v2 core and clean structure
+        run: npm test
+      - name: Generate clean Android project
+        run: npx expo prebuild --platform android --clean
+      - name: Build v2 release APK
+        run: cd android && ./gradlew assembleRelease --no-daemon
+      - name: Copy v2 APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk ESS-v2-Clean-Rebuild.apk
+      - name: Upload v2 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ESS-v2-Clean-Rebuild-APK
+          path: v2/ESS-v2-Clean-Rebuild.apk
+          if-no-files-found: error
+          retention-days: 30
