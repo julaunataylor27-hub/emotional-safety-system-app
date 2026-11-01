@@ -11,7 +11,7 @@ test('v2 is a clean five-tab app shell',()=>{
  for(const label of ['Home','Journal','Learn','Support','More']) assert.match(app,new RegExp("'"+label+"'"));
  assert.ok(!app.includes('home-support-now'));
  assert.ok(!app.includes("['evidence','Evidence']"));
- assert.match(app,/EMOTIONAL SAFETY SYSTEM · V2/);
+ assert.match(app,/You’re in the right place\./);
  assert.match(app,/HOME_HERO/);
  assert.match(app,/Understand what’s happening\. Keep your choices\./);
 });
@@ -35,7 +35,7 @@ test('v2 explicitly rejects v1 layout migration',()=>{
 test('v2 premium visual system stays restrained and non-sci-fi',()=>{
  const app=read('App.js');
  assert.match(app,/ImageBackground/);
- assert.match(app,/Evidence & Truth/);
+ assert.match(app,/History & Truth/);
  assert.match(app,/How ESS reached this/);
  assert.ok(!app.includes('signal-orbit'));
  assert.ok(!app.includes('orbit-ring'));
