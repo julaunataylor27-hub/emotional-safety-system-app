@@ -125,3 +125,15 @@ test('Learn uses guided evidence-aware trails and Core can target a trail',()=>{
  assert.match(app,/pendingLearnTrail/);
  assert.match(app,/initialTrail/);
 });
+
+
+test('Support uses context-aware pathways and preserves choice',()=>{
+ const app=read('App.js');
+ assert.match(app,/CALM SUPPORT/);
+ assert.match(app,/BOUNDARY \/ PRESSURE/);
+ assert.match(app,/STRONGER SUPPORT/);
+ assert.match(app,/URGENT SAFETY/);
+ assert.match(app,/Support is available, not compulsory/);
+ assert.match(app,/pendingSupportMode/);
+ assert.match(app,/initialMode/);
+});
