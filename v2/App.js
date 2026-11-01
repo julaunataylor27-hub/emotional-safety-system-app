@@ -95,15 +95,10 @@ function Home({openCore,setScreen}){
  </>;
 }
 
-function Journal(){
+function Journal({entries,setEntries}){
  const [entry,setEntry]=useState('');
  const [change,setChange]=useState('');
  const [tag,setTag]=useState('Reflection');
- const [entries,setEntries]=useState([
-  {when:'Today',text:'Feeling clearer about my next step.',change:'I know what I want to ask for.',tag:'Choice',icon:'◒'},
-  {when:'3 days ago',text:'Setting boundaries felt hard but good.',change:'I noticed I can pause before answering.',tag:'Boundary',icon:'◉'},
-  {when:'1 week ago',text:'Noticing patterns and what I need.',change:'Some things are still uncertain.',tag:'Uncertainty',icon:'▤'}
- ]);
  const tags=['Reflection','Boundary','Uncertainty','Choice'];
  const save=()=>{
   const v=entry.trim();
@@ -197,13 +192,17 @@ function More({openCore}){
  </>;
 }
 
-function Core({onBack}){
+function Core({onBack,onSaveJournal}){
  const [text,setText]=useState("He hasn't replied for 6 hours. I feel rejected and I think he doesn't care.");
  const [step,setStep]=useState(0);
  const [selectedNext,setSelectedNext]=useState('');
  const [confirmedFeelings,setConfirmedFeelings]=useState([]);
  const [otherFeeling,setOtherFeeling]=useState('');
  const [showTechnical,setShowTechnical]=useState(false);
+ const [interpretationChecks,setInterpretationChecks]=useState({});
+ const [unknownChecks,setUnknownChecks]=useState({});
+ const [choicePreview,setChoicePreview]=useState('');
+ const [savedToJournal,setSavedToJournal]=useState(false);
  const result=useMemo(()=>processSituation({text,feeling:'Not specified'}),[text]);
 
  const stages=[
@@ -222,11 +221,11 @@ function Core({onBack}){
   if(stage.id==='situation') return <View style={s.corePanel}><Text style={s.fieldLabel}>IN YOUR OWN WORDS</Text><TextInput multiline value={text} onChangeText={setText} maxLength={2500} style={s.coreInput} placeholder="Write what happened…" placeholderTextColor={T.muted}/><Text style={s.coreHint}>Start with your experience. You do not need to prove anything here.</Text></View>;
   if(stage.id==='feeling') return <FeelingStage detected={result.emotion.reported_or_detected} selected={confirmedFeelings} onToggle={x=>setConfirmedFeelings(v=>v.includes(x)?v.filter(y=>y!==x):[...v,x])} other={otherFeeling} onOther={setOtherFeeling}/>;
   if(stage.id==='known') return <KnownStage items={result.evidence.reported_observations}/>;
-  if(stage.id==='interpretation') return <CoreList label="POSSIBLE INTERPRETATION" items={result.interpretation.possible_interpretations} empty="No obvious interpretation language identified." note="Interpretations can matter without being treated as fact." />;
-  if(stage.id==='uncertainty') return <CoreList label="UNKNOWNS" items={result.uncertainty.unknowns} empty="No additional unknowns identified." note="ESS keeps uncertainty visible instead of filling gaps." />;
-  if(stage.id==='context') return <View style={s.corePanel}><Text style={s.fieldLabel}>CONTEXT CHECK</Text><Text style={s.contextTitle}>{result.safety.title}</Text><Text style={s.stageNote}>This is a routing signal based on the words provided. It is not verification, diagnosis or a legal finding.</Text>{result.safety.risks?.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}</View>;
-  if(stage.id==='choice') return <View style={s.corePanel}><Text style={s.fieldLabel}>OPTIONS REMAIN YOURS</Text>{result.choice.options.map((x,i)=><View key={i} style={s.choiceCard}><Text style={s.choiceNumber}>{i+1}</Text><Text style={s.choiceText}>{x}</Text></View>)}<Text style={s.stageNote}>ESS can surface options. It does not choose for you.</Text></View>;
-  return <View style={s.corePanel}><Text style={s.fieldLabel}>YOU DECIDE</Text><Text style={s.nextLead}>Choose one if it fits, or leave the decision open for now.</Text>{result.choice.options.map((x,i)=><Pressable key={i} onPress={()=>setSelectedNext(x)} style={[s.nextOption,selectedNext===x&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext===x&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext===x&&s.nextOptionTextOn]}>{x}</Text></Pressable>)}<Pressable onPress={()=>setSelectedNext('Not ready yet')} style={[s.nextOption,selectedNext==='Not ready yet'&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext==='Not ready yet'&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext==='Not ready yet'&&s.nextOptionTextOn]}>I’m not ready to choose yet.</Text></Pressable><Text style={s.stageNote}>Suggested pathway: {result.next_pathway.replaceAll('_',' → ')}. You can still choose differently.</Text></View>;
+  if(stage.id==='interpretation') return <InterpretationStage items={result.interpretation.possible_interpretations} checks={interpretationChecks} onCheck={(item,value)=>setInterpretationChecks(v=>({...v,[item]:value}))}/>;
+  if(stage.id==='uncertainty') return <UncertaintyStage items={result.uncertainty.unknowns} checks={unknownChecks} onCheck={(item,value)=>setUnknownChecks(v=>({...v,[item]:value}))}/>;
+  if(stage.id==='context') return <ContextStage result={result}/>;
+  if(stage.id==='choice') return <ChoiceCompare options={result.choice.options} value={choicePreview} onChange={setChoicePreview}/>;
+  return <FinishStage result={result} selectedNext={selectedNext} setSelectedNext={setSelectedNext} saved={savedToJournal} onSave={()=>{onSaveJournal?.({when:'Just now',text,change:selectedNext||'Decision left open.',tag:'Choice',icon:'◇'});setSavedToJournal(true);}}/>;
  };
 
  const goBack=()=>step===0?onBack():setStep(v=>v-1);
@@ -265,6 +264,59 @@ function KnownStage({items}){
  </View>;
 }
 
+
+function InterpretationStage({items,checks,onCheck}){
+ return <View style={s.corePanel}>
+  <Text style={s.fieldLabel}>POSSIBLE INTERPRETATION</Text>
+  <Text style={s.nextLead}>ESS is separating possible meaning from what was directly reported. You decide whether each one reflects what you meant.</Text>
+  {items?.length?items.map((x,i)=><View key={i} style={s.reviewCard}><Text style={s.reviewText}>{x}</Text><View style={s.reviewActions}><Pressable onPress={()=>onCheck(x,'fits')} style={[s.reviewButton,checks[x]==='fits'&&s.reviewButtonOn]}><Text style={[s.reviewButtonText,checks[x]==='fits'&&s.reviewButtonTextOn]}>That fits</Text></Pressable><Pressable onPress={()=>onCheck(x,'no')} style={[s.reviewButton,checks[x]==='no'&&s.reviewButtonNo]}><Text style={[s.reviewButtonText,checks[x]==='no'&&s.reviewButtonTextNo]}>Not what I meant</Text></Pressable></View></View>):<Text style={s.muted}>No obvious interpretation language identified.</Text>}
+  <Text style={s.stageNote}>Neither answer changes what you experienced. This step only keeps meaning separate from observation.</Text>
+ </View>;
+}
+
+function UncertaintyStage({items,checks,onCheck}){
+ return <View style={s.corePanel}>
+  <Text style={s.fieldLabel}>WHAT IS STILL OPEN?</Text>
+  <Text style={s.nextLead}>Not knowing is allowed. You can deliberately leave a question open instead of forcing an answer.</Text>
+  {items?.length?items.map((x,i)=><View key={i} style={s.reviewCard}><Text style={s.reviewText}>{x}</Text><View style={s.reviewActions}><Pressable onPress={()=>onCheck(x,'open')} style={[s.reviewButton,checks[x]==='open'&&s.reviewButtonOn]}><Text style={[s.reviewButtonText,checks[x]==='open'&&s.reviewButtonTextOn]}>Keep open</Text></Pressable><Pressable onPress={()=>onCheck(x,'known')} style={[s.reviewButton,checks[x]==='known'&&s.reviewButtonKnown]}><Text style={[s.reviewButtonText,checks[x]==='known'&&s.reviewButtonTextKnown]}>I know this now</Text></Pressable></View></View>):<Text style={s.muted}>No additional unknowns identified.</Text>}
+  <Text style={s.stageNote}>ESS does not need every gap filled before you can make a choice.</Text>
+ </View>;
+}
+
+function ContextStage({result}){
+ const kind=result.safety.classification;
+ const label=result.safety.urgent?'Needs immediate attention':kind==='pressure'||kind==='coercion'?'Worth slowing down':'No urgent signal identified';
+ const tone=result.safety.urgent?s.contextUrgent:kind==='pressure'||kind==='coercion'?s.contextWatch:s.contextCalm;
+ return <View style={[s.corePanel,tone]}>
+  <Text style={s.fieldLabel}>CONTEXT CHECK</Text>
+  <View style={s.contextBadge}><Text style={s.contextBadgeText}>{label.toUpperCase()}</Text></View>
+  <Text style={s.contextTitle}>{result.safety.title}</Text>
+  {result.safety.risks?.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
+  <Text style={s.stageNote}>This is a routing signal from the words provided. It is not verification, diagnosis or a legal finding.</Text>
+ </View>;
+}
+
+function ChoiceCompare({options,value,onChange}){
+ return <View style={s.corePanel}>
+  <Text style={s.fieldLabel}>COMPARE YOUR OPTIONS</Text>
+  <Text style={s.nextLead}>Tap an option to hold it in focus. You are not committing to it yet.</Text>
+  {options.map((x,i)=><Pressable key={i} onPress={()=>onChange(x)} style={[s.choiceCard,value===x&&s.choiceCardOn]}><Text style={[s.choiceNumber,value===x&&s.choiceNumberOn]}>{i+1}</Text><View style={s.choiceCopy}><Text style={[s.choiceText,value===x&&s.choiceTextOn]}>{x}</Text><Text style={s.choiceHint}>{value===x?'In focus — you can still change your mind.':'Tap to compare this option.'}</Text></View></Pressable>)}
+  <Text style={s.stageNote}>ESS can surface options. It does not rank them or choose for you.</Text>
+ </View>;
+}
+
+function FinishStage({result,selectedNext,setSelectedNext,saved,onSave}){
+ return <View style={s.corePanel}>
+  <Text style={s.fieldLabel}>YOU DECIDE</Text>
+  <Text style={s.nextLead}>Choose one if it fits, or leave the decision open for now.</Text>
+  {result.choice.options.map((x,i)=><Pressable key={i} onPress={()=>setSelectedNext(x)} style={[s.nextOption,selectedNext===x&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext===x&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext===x&&s.nextOptionTextOn]}>{x}</Text></Pressable>)}
+  <Pressable onPress={()=>setSelectedNext('Not ready yet')} style={[s.nextOption,selectedNext==='Not ready yet'&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext==='Not ready yet'&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext==='Not ready yet'&&s.nextOptionTextOn]}>I’m not ready to choose yet.</Text></Pressable>
+  <View style={s.finishDivider}/>
+  <Pressable onPress={onSave} disabled={saved} style={[s.saveJournalButton,saved&&s.saveJournalButtonDone]}><Text style={s.saveJournalText}>{saved?'Saved to Journal ✓':'Save this reflection to Journal'}</Text></Pressable>
+  <Text style={s.stageNote}>Suggested pathway: {result.next_pathway.replaceAll('_',' → ')}. You can still choose differently.</Text>
+ </View>;
+}
+
 function CoreList({label,items,empty,note}){
  return <View style={s.corePanel}><Text style={s.fieldLabel}>{label}</Text>{items?.length?items.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>):<Text style={s.muted}>{empty}</Text>}<Text style={s.stageNote}>{note}</Text></View>;
 }
@@ -274,11 +326,17 @@ function Result({title,items}){return <View style={s.resultCard}><Text style={s.
 function AppRoot(){
  const [screen,setScreen]=useState('home');
  const [coreOpen,setCoreOpen]=useState(false);
+ const [journalEntries,setJournalEntries]=useState([
+  {when:'Today',text:'Feeling clearer about my next step.',change:'I know what I want to ask for.',tag:'Choice',icon:'◒'},
+  {when:'3 days ago',text:'Setting boundaries felt hard but good.',change:'I noticed I can pause before answering.',tag:'Boundary',icon:'◉'},
+  {when:'1 week ago',text:'Noticing patterns and what I need.',change:'Some things are still uncertain.',tag:'Uncertainty',icon:'▤'}
+ ]);
  const go=id=>{setCoreOpen(false);setScreen(id);};
+ const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go}>
-  {coreOpen?<Core onBack={()=>setCoreOpen(false)}/>:
+  {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
-   screen==='journal'?<Journal/>:
+   screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
    screen==='learn'?<Learn/>:
    screen==='support'?<Support/>:
    <More openCore={()=>setCoreOpen(true)}/>}
@@ -317,7 +375,7 @@ const s=StyleSheet.create({
  supportIcon:{width:44,height:44,borderRadius:22,borderWidth:1,borderColor:'rgba(255,247,236,.55)',alignItems:'center',justifyContent:'center',backgroundColor:'rgba(0,0,0,.12)'},supportIconText:{color:'#FFF7EC',fontSize:17,fontWeight:'900'},rowCopy:{flex:1,minWidth:0},supportTitle:{color:'#FFF7EC',fontFamily:SERIF,fontSize:15,fontWeight:'700'},supportSub:{color:'#E0D1C0',fontSize:10.5,lineHeight:15,marginTop:2},supportArrow:{color:'#F4E2CD',fontSize:22},
  coreHeader:{flexDirection:'row',alignItems:'center',gap:10,marginTop:4,marginBottom:10},back:{width:42,height:42,borderRadius:21,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',alignItems:'center',justifyContent:'center'},backText:{color:T.sand,fontSize:29,lineHeight:31},coreTitle:{color:T.text,fontFamily:SERIF,fontSize:25,fontWeight:'700',marginTop:2},coreLead:{color:T.muted,fontSize:12.5,lineHeight:19,marginBottom:10},progressTrack:{height:4,borderRadius:999,backgroundColor:'#2A241C',overflow:'hidden',marginBottom:12},progressFill:{height:4,borderRadius:999,backgroundColor:T.sand},
  corePanel:{borderRadius:17,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:9},fieldLabel:{color:T.sand,fontSize:9,fontWeight:'900',letterSpacing:1.6,marginBottom:7},coreInput:{minHeight:135,borderRadius:13,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08',padding:12,color:T.text,fontSize:15,lineHeight:22,textAlignVertical:'top'},
- resultCard:{borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',padding:13,marginBottom:8},resultLabel:{color:T.sand,fontSize:9,fontWeight:'900',letterSpacing:1.4,textTransform:'uppercase',marginBottom:6},body:{color:T.text,fontSize:12.5,lineHeight:19,marginVertical:1.5},muted:{color:T.muted,fontSize:11.5},coreHint:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:8},feelingWrap:{flexDirection:'row',flexWrap:'wrap',gap:7,marginTop:7},feelingChip:{paddingHorizontal:11,paddingVertical:8,borderRadius:999,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08'},feelingChipOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},feelingChipText:{color:T.muted,fontSize:11,fontWeight:'700',textTransform:'capitalize'},feelingChipTextOn:{color:'#E4EEE2'},feelingInput:{minHeight:46,borderRadius:13,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08',color:T.text,paddingHorizontal:12,fontSize:14},truthBadges:{flexDirection:'row',flexWrap:'wrap',gap:6,marginBottom:9},truthBadge:{paddingHorizontal:8,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A'},truthBadgeText:{color:'#DDE8DC',fontSize:8,fontWeight:'900',letterSpacing:1},truthBadgeMuted:{borderColor:'#5A5147',backgroundColor:'#17130F'},truthBadgeMutedText:{color:'#B5A99B',fontSize:8,fontWeight:'900',letterSpacing:.7},stageItem:{flexDirection:'row',gap:8,alignItems:'flex-start',marginVertical:4},stageBullet:{color:T.sand,fontSize:16,lineHeight:19},stageText:{color:T.text,fontSize:13,lineHeight:19,flex:1},stageNote:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:10,paddingTop:9,borderTopWidth:1,borderTopColor:'#2E281F'},contextTitle:{color:T.text,fontFamily:SERIF,fontSize:19,fontWeight:'700',marginBottom:4},choiceCard:{flexDirection:'row',alignItems:'flex-start',gap:10,borderWidth:1,borderColor:'#342C22',borderRadius:13,padding:10,marginTop:7,backgroundColor:'#0D0B08'},choiceNumber:{width:24,height:24,borderRadius:12,borderWidth:1,borderColor:T.sand,color:T.sand,textAlign:'center',lineHeight:22,fontSize:10,fontWeight:'900'},choiceText:{color:T.text,fontSize:12.5,lineHeight:18,flex:1},nextLead:{color:T.muted,fontSize:11.5,lineHeight:17,marginBottom:7},nextOption:{minHeight:48,borderWidth:1,borderColor:'#3A3025',borderRadius:13,padding:10,flexDirection:'row',alignItems:'center',gap:9,marginTop:7,backgroundColor:'#0D0B08'},nextOptionOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},nextRadio:{width:18,height:18,borderRadius:9,borderWidth:1,borderColor:'#6F6253'},nextRadioOn:{borderWidth:5,borderColor:T.eucalyptus,backgroundColor:'#F1E9DA'},nextOptionText:{color:'#D8CBBA',fontSize:12.5,lineHeight:18,flex:1},nextOptionTextOn:{color:T.text,fontWeight:'700'},coreNavRow:{flexDirection:'row',gap:8,marginTop:2,marginBottom:10},coreBackButton:{minHeight:47,minWidth:88,borderRadius:14,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',alignItems:'center',justifyContent:'center',paddingHorizontal:14},coreBackButtonText:{color:T.muted,fontWeight:'800',fontSize:12},coreNextButton:{minHeight:47,borderRadius:14,backgroundColor:T.sand,flex:1,alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14},coreNextText:{color:'#15100A',fontWeight:'900',fontSize:12.5},
+ resultCard:{borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',padding:13,marginBottom:8},resultLabel:{color:T.sand,fontSize:9,fontWeight:'900',letterSpacing:1.4,textTransform:'uppercase',marginBottom:6},body:{color:T.text,fontSize:12.5,lineHeight:19,marginVertical:1.5},muted:{color:T.muted,fontSize:11.5},coreHint:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:8},feelingWrap:{flexDirection:'row',flexWrap:'wrap',gap:7,marginTop:7},feelingChip:{paddingHorizontal:11,paddingVertical:8,borderRadius:999,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08'},feelingChipOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},feelingChipText:{color:T.muted,fontSize:11,fontWeight:'700',textTransform:'capitalize'},feelingChipTextOn:{color:'#E4EEE2'},feelingInput:{minHeight:46,borderRadius:13,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08',color:T.text,paddingHorizontal:12,fontSize:14},truthBadges:{flexDirection:'row',flexWrap:'wrap',gap:6,marginBottom:9},truthBadge:{paddingHorizontal:8,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A'},truthBadgeText:{color:'#DDE8DC',fontSize:8,fontWeight:'900',letterSpacing:1},truthBadgeMuted:{borderColor:'#5A5147',backgroundColor:'#17130F'},truthBadgeMutedText:{color:'#B5A99B',fontSize:8,fontWeight:'900',letterSpacing:.7},reviewCard:{borderWidth:1,borderColor:'#342C22',borderRadius:13,padding:10,marginTop:8,backgroundColor:'#0D0B08'},reviewText:{color:T.text,fontSize:12.5,lineHeight:18},reviewActions:{flexDirection:'row',gap:6,marginTop:9,flexWrap:'wrap'},reviewButton:{minHeight:36,paddingHorizontal:10,borderRadius:999,borderWidth:1,borderColor:'#4A4034',alignItems:'center',justifyContent:'center'},reviewButtonOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},reviewButtonNo:{borderColor:'#8A5A4A',backgroundColor:'#2A1712'},reviewButtonKnown:{borderColor:T.ochre,backgroundColor:'#2A2113'},reviewButtonText:{color:T.muted,fontSize:9.5,fontWeight:'800'},reviewButtonTextOn:{color:'#DDE8DC'},reviewButtonTextNo:{color:'#F0C8B9'},reviewButtonTextKnown:{color:'#F1D4A8'},contextBadge:{alignSelf:'flex-start',paddingHorizontal:8,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:'rgba(216,194,160,.4)',backgroundColor:'rgba(0,0,0,.12)',marginBottom:8},contextBadgeText:{color:T.sand,fontSize:8,fontWeight:'900',letterSpacing:1},contextCalm:{borderColor:T.eucalyptus,backgroundColor:'#111811'},contextWatch:{borderColor:T.ochre,backgroundColor:'#211A10'},contextUrgent:{borderColor:T.clay,backgroundColor:'#281511'},stageItem:{flexDirection:'row',gap:8,alignItems:'flex-start',marginVertical:4},stageBullet:{color:T.sand,fontSize:16,lineHeight:19},stageText:{color:T.text,fontSize:13,lineHeight:19,flex:1},stageNote:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:10,paddingTop:9,borderTopWidth:1,borderTopColor:'#2E281F'},contextTitle:{color:T.text,fontFamily:SERIF,fontSize:19,fontWeight:'700',marginBottom:4},choiceCard:{flexDirection:'row',alignItems:'flex-start',gap:10,borderWidth:1,borderColor:'#342C22',borderRadius:13,padding:10,marginTop:7,backgroundColor:'#0D0B08'},choiceCardOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},choiceNumber:{width:24,height:24,borderRadius:12,borderWidth:1,borderColor:T.sand,color:T.sand,textAlign:'center',lineHeight:22,fontSize:10,fontWeight:'900'},choiceNumberOn:{borderColor:T.eucalyptus,color:'#DDE8DC'},choiceCopy:{flex:1},choiceText:{color:T.text,fontSize:12.5,lineHeight:18},choiceTextOn:{fontWeight:'800'},choiceHint:{color:T.muted,fontSize:9.5,lineHeight:14,marginTop:3},nextLead:{color:T.muted,fontSize:11.5,lineHeight:17,marginBottom:7},nextOption:{minHeight:48,borderWidth:1,borderColor:'#3A3025',borderRadius:13,padding:10,flexDirection:'row',alignItems:'center',gap:9,marginTop:7,backgroundColor:'#0D0B08'},nextOptionOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},nextRadio:{width:18,height:18,borderRadius:9,borderWidth:1,borderColor:'#6F6253'},nextRadioOn:{borderWidth:5,borderColor:T.eucalyptus,backgroundColor:'#F1E9DA'},nextOptionText:{color:'#D8CBBA',fontSize:12.5,lineHeight:18,flex:1},nextOptionTextOn:{color:T.text,fontWeight:'700'},finishDivider:{height:1,backgroundColor:'#2E281F',marginVertical:12},saveJournalButton:{minHeight:46,borderRadius:13,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A',alignItems:'center',justifyContent:'center',paddingHorizontal:12},saveJournalButtonDone:{opacity:.7},saveJournalText:{color:'#DDE8DC',fontSize:11.5,fontWeight:'900'},coreNavRow:{flexDirection:'row',gap:8,marginTop:2,marginBottom:10},coreBackButton:{minHeight:47,minWidth:88,borderRadius:14,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',alignItems:'center',justifyContent:'center',paddingHorizontal:14},coreBackButtonText:{color:T.muted,fontWeight:'800',fontSize:12},coreNextButton:{minHeight:47,borderRadius:14,backgroundColor:T.sand,flex:1,alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14},coreNextText:{color:'#15100A',fontWeight:'900',fontSize:12.5},
  secondary:{minHeight:46,borderRadius:14,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#111711',alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14,marginTop:2,marginBottom:10},secondaryText:{color:T.text,fontWeight:'800',fontSize:12.5},secondaryArrow:{color:T.eucalyptus,fontSize:15},techCard:{borderColor:T.eucalyptus,backgroundColor:'#111711'},techKicker:{color:T.eucalyptus,fontSize:9,fontWeight:'900',letterSpacing:1.5,marginBottom:7},
  pressed:{opacity:.72}
 });
