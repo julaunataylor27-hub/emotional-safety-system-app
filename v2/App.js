@@ -142,7 +142,10 @@ function Journal({entries,setEntries}){
  const [entry,setEntry]=useState('');
  const [change,setChange]=useState('');
  const [tag,setTag]=useState('Reflection');
+ const [filter,setFilter]=useState('All');
+ const [historyOpen,setHistoryOpen]=useState(false);
  const tags=['Reflection','Boundary','Uncertainty','Choice'];
+ const filters=['All',...tags];
  const save=()=>{
   const v=entry.trim();
   if(!v)return;
@@ -151,6 +154,9 @@ function Journal({entries,setEntries}){
   setChange('');
   setTag('Reflection');
  };
+ const visible=filter==='All'?entries:entries.filter(x=>x.tag===filter);
+ const counts=tags.reduce((acc,x)=>({...acc,[x]:entries.filter(e=>e.tag===x).length}),{});
+ const recentChanges=entries.slice(0,3).map(x=>x.change).filter(Boolean);
  return <>
   <CinematicHero image={ART.journal} kicker="YOUR SPACE" title="Journal" body="Your thoughts, your pace. Reflect privately and notice what changes over time." height={285}/>
   <View style={s.journalComposer}>
@@ -163,8 +169,17 @@ function Journal({entries,setEntries}){
    <View style={s.tagRow}>{tags.map(x=><Pressable key={x} onPress={()=>setTag(x)} style={[s.tagChip,tag===x&&s.tagChipOn]}><Text style={[s.tagChipText,tag===x&&s.tagChipTextOn]}>{x}</Text></Pressable>)}</View>
    <Pressable onPress={save} style={({pressed})=>[s.journalButton,pressed&&s.pressed]}><Text style={s.journalButtonText}>Save reflection</Text><Text style={s.journalButtonText}>→</Text></Pressable>
   </View>
-  <View style={s.sectionHeader}><View><Text style={s.sectionEyebrow}>YOUR JOURNEY</Text><Text style={s.sectionHeading}>Recent entries</Text></View><Text style={s.sectionLink}>See all</Text></View>
-  <View style={s.stack}>{entries.map((item,i)=><JournalEntryCard key={i} item={item} accent={i===0?T.eucalyptus:T.sand}/>)}</View>
+
+  <View style={s.historyPanel}>
+   <View style={s.sectionHeader}><View><Text style={s.sectionEyebrow}>YOUR JOURNEY</Text><Text style={s.sectionHeading}>What has been showing up?</Text></View><Pressable onPress={()=>setHistoryOpen(v=>!v)}><Text style={s.sectionLink}>{historyOpen?'Hide':'View'}</Text></Pressable></View>
+   <Text style={s.historyIntro}>This is a neutral reflection of your saved tags — not a score, diagnosis or judgement.</Text>
+   <View style={s.historyCounts}>{tags.map(x=><View key={x} style={s.historyCountCard}><Text style={s.historyCountNumber}>{counts[x]}</Text><Text style={s.historyCountLabel}>{x}</Text></View>)}</View>
+   {historyOpen&&<View style={s.historyChanges}><Text style={s.fieldLabel}>RECENT “WHAT CHANGED” NOTES</Text>{recentChanges.length?recentChanges.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>):<Text style={s.muted}>No change notes saved yet.</Text>}</View>}
+  </View>
+
+  <View style={s.sectionHeader}><View><Text style={s.sectionEyebrow}>REFLECTION HISTORY</Text><Text style={s.sectionHeading}>Recent entries</Text></View><Text style={s.sectionLink}>{visible.length} shown</Text></View>
+  <View style={s.filterRow}>{filters.map(x=><Pressable key={x} onPress={()=>setFilter(x)} style={[s.filterChip,filter===x&&s.filterChipOn]}><Text style={[s.filterChipText,filter===x&&s.filterChipTextOn]}>{x}</Text></Pressable>)}</View>
+  <View style={s.stack}>{visible.length?visible.map((item,i)=><JournalEntryCard key={i} item={item} accent={i===0?T.eucalyptus:T.sand}/>):<View style={s.emptyState}><Text style={s.emptyTitle}>Nothing saved here yet.</Text><Text style={s.emptyText}>You can change the filter or add a new reflection whenever you want.</Text></View>}</View>
  </>;
 }
 
@@ -498,7 +513,7 @@ const s=StyleSheet.create({
  homeGrid:{flexDirection:'row',flexWrap:'wrap',gap:8},homeTile:{width:'48.8%',minHeight:108,borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',padding:12,justifyContent:'flex-end'},tileGlyph:{fontSize:21,marginBottom:10},tileTitle:{color:T.text,fontFamily:SERIF,fontSize:15,fontWeight:'700'},tileSub:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:1},
  signature:{flexDirection:'row',alignItems:'center',gap:9,marginVertical:17},signatureLine:{flex:1,height:1,backgroundColor:'#342B22'},signatureText:{color:'#8E8173',fontSize:8.5,letterSpacing:.7,textTransform:'uppercase'},
  journalComposer:{borderRadius:18,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:12},composerTitle:{color:T.text,fontFamily:SERIF,fontSize:18,fontWeight:'700',marginBottom:3},composerHint:{color:T.muted,fontSize:10.5,lineHeight:15,marginBottom:9},composerLabel:{color:T.sand,fontSize:8.5,fontWeight:'900',letterSpacing:1.2,marginTop:11,marginBottom:6},journalInput:{borderWidth:1,borderColor:'#3A3025',borderRadius:13,backgroundColor:'#0D0B08',color:T.text,minHeight:86,padding:12,fontSize:14,textAlignVertical:'top'},changeInput:{borderWidth:1,borderColor:'#3A3025',borderRadius:13,backgroundColor:'#0D0B08',color:T.text,minHeight:66,padding:12,fontSize:13.5,textAlignVertical:'top'},tagRow:{flexDirection:'row',flexWrap:'wrap',gap:6},tagChip:{paddingHorizontal:10,paddingVertical:7,borderRadius:999,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08'},tagChipOn:{borderColor:T.eucalyptus,backgroundColor:'#18231A'},tagChipText:{color:T.muted,fontSize:10.5,fontWeight:'700'},tagChipTextOn:{color:'#DDE8DC'},journalButton:{minHeight:47,borderRadius:13,backgroundColor:T.eucalyptus,alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14,marginTop:12},journalButtonText:{color:'#091109',fontWeight:'900',fontSize:13},
- sectionHeader:{flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between',marginVertical:10},sectionLink:{color:T.sand,fontSize:11,fontWeight:'700'},journalEntry:{minHeight:98,borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',flexDirection:'row',alignItems:'flex-start'},entryTop:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8,marginTop:12},entryTag:{paddingHorizontal:7,paddingVertical:3,borderRadius:999,borderWidth:1,borderColor:'rgba(120,146,126,.7)',backgroundColor:'rgba(33,52,38,.7)'},entryTagText:{color:'#D7E4D6',fontSize:8.5,fontWeight:'800'},changedLine:{marginTop:8,paddingTop:7,borderTopWidth:1,borderTopColor:'#2E281F'},changedLabel:{color:T.sand,fontSize:7.5,fontWeight:'900',letterSpacing:1.2},changedText:{color:'#DCCFBE',fontSize:10,lineHeight:14,marginTop:2},
+ sectionHeader:{flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between',marginVertical:10},sectionLink:{color:T.sand,fontSize:11,fontWeight:'700'},historyPanel:{borderRadius:17,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#11100D',padding:12,marginBottom:12},historyIntro:{color:T.muted,fontSize:10.5,lineHeight:15,marginBottom:9},historyCounts:{flexDirection:'row',flexWrap:'wrap',gap:7},historyCountCard:{width:'48.8%',minHeight:64,borderRadius:13,borderWidth:1,borderColor:'#332C23',backgroundColor:'#0D0B08',padding:10,justifyContent:'center'},historyCountNumber:{color:T.sand,fontFamily:SERIF,fontSize:19,fontWeight:'700'},historyCountLabel:{color:T.text,fontSize:9.5,fontWeight:'700',marginTop:2},historyChanges:{marginTop:10,paddingTop:10,borderTopWidth:1,borderTopColor:'#2E281F'},filterRow:{flexDirection:'row',flexWrap:'wrap',gap:6,marginBottom:10},filterChip:{paddingHorizontal:10,paddingVertical:7,borderRadius:999,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08'},filterChipOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},filterChipText:{color:T.muted,fontSize:9.5,fontWeight:'800'},filterChipTextOn:{color:'#DDE8DC'},emptyState:{borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#11100D',padding:14},emptyTitle:{color:T.text,fontFamily:SERIF,fontSize:15,fontWeight:'700'},emptyText:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:3},journalEntry:{minHeight:98,borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',flexDirection:'row',alignItems:'flex-start'},entryTop:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8,marginTop:12},entryTag:{paddingHorizontal:7,paddingVertical:3,borderRadius:999,borderWidth:1,borderColor:'rgba(120,146,126,.7)',backgroundColor:'rgba(33,52,38,.7)'},entryTagText:{color:'#D7E4D6',fontSize:8.5,fontWeight:'800'},changedLine:{marginTop:8,paddingTop:7,borderTopWidth:1,borderTopColor:'#2E281F'},changedLabel:{color:T.sand,fontSize:7.5,fontWeight:'900',letterSpacing:1.2},changedText:{color:'#DCCFBE',fontSize:10,lineHeight:14,marginTop:2},
  stack:{gap:8},featureCard:{minHeight:78,borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',overflow:'hidden',flexDirection:'row',alignItems:'center'},
  featureImage:{minHeight:86,padding:12,flexDirection:'row',alignItems:'center',gap:11,justifyContent:'center'},featureImageRadius:{borderRadius:15},cardShade:{...StyleSheet.absoluteFillObject,backgroundColor:'rgba(8,5,3,.56)'},
  featureIcon:{width:42,height:42,borderRadius:21,borderWidth:1,backgroundColor:'rgba(8,6,4,.58)',alignItems:'center',justifyContent:'center',margin:12},featureImageRadius:{borderRadius:15},
