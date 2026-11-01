@@ -6,7 +6,7 @@
   "scripts":{
     "start":"expo start",
     "android":"expo start --android",
-    "test":"node --test --test-concurrency=1 tests/core.test.cjs tests/structure.test.cjs"
+    "test":"node --test --test-concurrency=1 tests/core.test.cjs tests/structure.test.cjs tests/end_to_end.test.cjs"
   },
   "dependencies":{
     "expo":"~54.0.0",
