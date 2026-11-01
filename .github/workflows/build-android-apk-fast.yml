@@ -172,6 +172,9 @@ jobs:
       - name: Reconnect ESS Core prototype
         run: python scripts/patch_ess_core.py
 
+      - name: Apply approved mockup theme last
+        run: python scripts/patch_mockup_theme_v6.py
+
       - name: Test memory, PDFs, Life Journey and existing app features
         run: NODE_ENV=test npm test
 

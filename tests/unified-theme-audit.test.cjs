@@ -38,11 +38,10 @@ test('all converted legacy screens carry the unified-theme source marker',()=>{
   }
 });
 
-test('new theme foundation files carry the v5 marker',()=>{
-  for(const name of ['GoldenTreeHome.js','EvidenceTruthScreen.js','PresentationChrome.js']){
-    const body=fs.readFileSync(path.join(src,name),'utf8');
-    assert.match(body,/FULL_NEW_THEME_V5/,name);
-  }
+test('theme foundation files carry their current approved markers',()=>{
+  assert.match(fs.readFileSync(path.join(src,'GoldenTreeHome.js'),'utf8'),/MOCKUP_THEME_V6/);
+  assert.match(fs.readFileSync(path.join(src,'EvidenceTruthScreen.js'),'utf8'),/FULL_NEW_THEME_V5/);
+  assert.match(fs.readFileSync(path.join(src,'PresentationChrome.js'),'utf8'),/(FULL_NEW_THEME_V5|MOCKUP_THEME_V6)/);
 });
 
 test('master palette remains cinematic gold teal',()=>{

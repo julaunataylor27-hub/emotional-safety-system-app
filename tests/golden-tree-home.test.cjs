@@ -24,15 +24,16 @@ const Home=load('GoldenTreeHome').default;
 async function render(props={}){let r;await Renderer.act(async()=>{r=Renderer.create(React.createElement(Home,{onNavigate:()=>{},onValuePress:()=>{},...props}));});return r;}
 test('approved artwork and all eight values render as separate native controls',async()=>{
  const r=await render();assert.match(r.root.findByProps({testID:'golden-tree-home-artwork'}).props.accessibilityLabel,/Australian river landscape under stars/);
- for(const id of ['home-open-knowledge','home-safe-curiosity','home-evidence-truth','home-find-support','home-support-now'])assert.ok(r.root.findByProps({testID:id}),id);
+ for(const id of ['home-ess-core','home-open-knowledge','home-safe-curiosity','home-evidence-truth','home-find-support'])assert.ok(r.root.findByProps({testID:id}),id);
+ assert.equal(r.root.findAllByProps({testID:'home-support-now'}).length,0,'red persistent support bar must stay retired');
  for(const name of ['Knowledge','Understanding','Love','Kindness','Patience','Growth','Humanity','Life'])assert.equal(r.root.findByProps({testID:'home-value-'+name.toLowerCase()}).props.accessibilityLabel,'Explore '+name);
  assert.equal(r.root.findByProps({testID:'home-nav-home'}).props.accessibilityState.selected,true);
  await Renderer.act(async()=>r.unmount());
 });
 test('Journey, assessment, support, menu and navigation controls call their real routes',async()=>{
  const routes=[],values=[];const r=await render({onNavigate:x=>routes.push(x),onValuePress:x=>values.push(x)});
- for(const id of ['home-start-journey','home-explore-situation','home-life-journey','home-find-support','home-open-menu','home-nav-home','home-nav-journey','home-nav-learn','home-nav-support','home-nav-more'])await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
- assert.deepEqual(routes,['journey','assessment','lifeJourney','support','more','home','journey','learn','support','more']);
+ for(const id of ['home-start-journey','home-explore-situation','home-life-journey','home-find-support','home-open-menu','home-nav-home','home-nav-journal','home-nav-learn','home-nav-support','home-nav-more'])await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
+ assert.deepEqual(routes,['journey','assessment','lifeJourney','support','more','home','journal','learn','support','more']);
  await Renderer.act(async()=>r.root.findByProps({testID:'home-value-knowledge'}).props.onPress());assert.deepEqual(values,[]);
  await Renderer.act(async()=>r.root.findByProps({testID:'value-meaning-reflect'}).props.onPress());assert.deepEqual(values,['Knowledge']);
  assert.equal(r.root.findAllByProps({testID:'value-meaning-modal'}).length,0);
@@ -97,11 +98,12 @@ test('cinematic riders theme keeps interactive routes connected',async()=>{
  await Renderer.act(async()=>r.unmount());
 });
 
-test('photographic Knowledge card and support-now action navigate to the real tools',async()=>{
+test('compact mockup Home keeps Knowledge and five-tab navigation connected',async()=>{
  const routes=[];const r=await render({onNavigate:route=>routes.push(route)});
- for(const id of ['home-open-knowledge','home-support-now'])await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
+ for(const id of ['home-open-knowledge','home-find-support'])await Renderer.act(async()=>r.root.findByProps({testID:id}).props.onPress());
  assert.deepEqual(routes,['learn','support']);
- assert.ok(r.root.findByProps({testID:'home-nav-evidence'}));
+ assert.ok(r.root.findByProps({testID:'home-nav-journal'}));
+ assert.equal(r.root.findAllByProps({testID:'home-nav-evidence'}).length,0);
  await Renderer.act(async()=>r.unmount());
 });
 

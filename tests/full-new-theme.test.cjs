@@ -8,10 +8,10 @@ const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
 test('new Home is structurally different from the retired giant-hero design',()=>{
   const home=read('src/GoldenTreeHome.js');
   assert.ok(!home.includes('Knowledge Creates Choice'));
-  assert.match(home,/ESS CORE PROTOTYPE/);
-  assert.match(home,/Understand\. Reflect\. Choose\./);
-  assert.match(home,/testID="home-ess-core"/);
-  assert.match(home,/title="Evidence & Truth"/);
+  assert.match(home,/ESS Core Prototype/);
+  assert.match(home,/Understand what you feel/);
+  assert.match(home,/id="home-ess-core"/);
+  assert.match(home,/Evidence & Truth Test Lab/);
   assert.match(home,/title="Connection Trail"/);
 });
 
@@ -19,7 +19,7 @@ test('new shared shell replaces old subtitle and removes evidence from persisten
   const chrome=read('src/PresentationChrome.js');
   assert.match(chrome,/Australian Humanity/);
   assert.ok(!chrome.includes('Reflect · Learn · Grow'));
-  assert.match(chrome,/const items=\[\['home','Home'\],\['journey','Journey'\],\['learn','Knowledge'\],\['support','Humanity'\],\['more','More'\]\]/);
+  assert.match(chrome,/const items=\[\['home','Home'\],\['journal','Journey'\],\['learn','Knowledge'\],\['support','Humanity'\],\['more','More'\]\]/);
 });
 
 test('Evidence & Truth uses the new insight and next-step composition',()=>{

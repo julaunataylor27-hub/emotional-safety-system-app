@@ -20,16 +20,16 @@ export function AppHeader({onNavigate}){
 
 export function AppBottomNav({screen,onNavigate}){
  const {t}=useAppPreferences(),insets=useSafeAreaInsets();
- const active=['livingConnections','culturalInquiry','knowledgeTrail','learningTogether','exploreConnections','lawRightsKinship','independenceCommitment','safeCuriosity','ancientAnimals','twoFlames','connectionTrail'].includes(screen)?'learn':
-  ['journey','foundation','values','identity','story','projects','sharing','legacy','tech','summary','lifeJourney'].includes(screen)?'journey':screen;
- const items=[['home','Home'],['journey','Journey'],['learn','Knowledge'],['support','Humanity'],['more','More']];
+ const active=['livingConnections','culturalInquiry','knowledgeTrail','learningTogether','exploreConnections','lawRightsKinship','independenceCommitment','safeCuriosity','ancientAnimals','twoFlames','connectionTrail','evidence'].includes(screen)?'learn':
+  ['journal','journey','foundation','values','identity','story','projects','sharing','legacy','tech','summary','lifeJourney'].includes(screen)?'journal':screen;
+ const items=[['home','Home'],['journal','Journey'],['learn','Knowledge'],['support','Humanity'],['more','More']];
  return <View style={[s.navShell,{paddingBottom:Math.max(8,insets.bottom)}]}>
   <View style={s.nav}>{items.map(([route,icon])=>{
    const selected=route===active||(active==='evidence'&&route==='learn');
    return <Pressable key={route} testID={'app-nav-'+route} accessibilityRole="tab" accessibilityLabel={t(route)}
     accessibilityState={{selected}} onPress={()=>onNavigate(route)} style={s.navItem}>
     <View style={[s.navIconWrap,selected&&s.navIconOn]}><GoldenTreeIcon name={icon} size={23} color={selected?P.gold:P.muted} filled={selected}/></View>
-    <Text style={[s.navLabel,{color:selected?P.gold:P.muted}]}>{route==='learn'?'Learn':t(route)}</Text>
+    <Text style={[s.navLabel,{color:selected?P.gold:P.muted}]}>{route==='learn'?'Learn':route==='journal'?'Journal':t(route)}</Text>
     {selected&&<View style={s.active}/>}
    </Pressable>;
   })}</View>
