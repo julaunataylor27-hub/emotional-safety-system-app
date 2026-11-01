@@ -11,14 +11,17 @@ test('v2 is a clean five-tab app shell',()=>{
  for(const label of ['Home','Journal','Learn','Support','More']) assert.match(app,new RegExp("'"+label+"'"));
  assert.ok(!app.includes('home-support-now'));
  assert.ok(!app.includes("['evidence','Evidence']"));
- assert.match(app,/v2 clean rebuild/);
+ assert.match(app,/EMOTIONAL SAFETY SYSTEM · V2/);
+ assert.match(app,/HOME_HERO/);
+ assert.match(app,/Understand what’s happening\. Keep your choices\./);
 });
 
-test('v2 imports only its own core and theme',()=>{
+test('v2 imports only its own core and theme plus approved raw media',()=>{
  const app=read('App.js');
  assert.match(app,/\.\/src\/core\/essCore\.cjs/);
  assert.match(app,/\.\/src\/theme/);
  assert.ok(!app.includes('../src/'));
+ assert.match(app,/assets\/graphics\/australian-humanity\/home-hero\.webp/);
  assert.ok(!app.includes('patch_'));
 });
 
@@ -26,4 +29,15 @@ test('v2 explicitly rejects v1 layout migration',()=>{
  const readme=read('README.md');
  assert.match(readme,/Do not import v1 screen layouts/);
  assert.match(readme,/Do not run v1 UI patch scripts against v2/);
+});
+
+
+test('v2 premium visual system stays restrained and non-sci-fi',()=>{
+ const app=read('App.js');
+ assert.match(app,/ImageBackground/);
+ assert.match(app,/Evidence & Truth/);
+ assert.match(app,/How ESS reached this/);
+ assert.ok(!app.includes('signal-orbit'));
+ assert.ok(!app.includes('orbit-ring'));
+ assert.ok(!app.includes('home-support-now'));
 });
