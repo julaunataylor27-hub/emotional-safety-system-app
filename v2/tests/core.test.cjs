@@ -34,3 +34,12 @@ test('v2 core exposes the locked eight-stage backbone',()=>{
  assert.equal(r.backbone[7].id,'next');
  assert.equal(r.choice.user_remains_in_control,true);
 });
+
+
+test('v2 core explains optional destination recommendations',()=>{
+ const r=processSituation({text:"He hasn't replied. I think he doesn't care."});
+ assert.ok(Array.isArray(r.recommendations));
+ assert.ok(r.recommendations.some(x=>x.destination==='learn'));
+ assert.ok(r.recommendations.some(x=>x.destination==='journal'));
+ assert.equal(r.choice.user_remains_in_control,true);
+});
