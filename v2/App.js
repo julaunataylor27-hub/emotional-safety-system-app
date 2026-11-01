@@ -97,22 +97,49 @@ function Home({openCore,setScreen}){
 
 function Journal(){
  const [entry,setEntry]=useState('');
+ const [change,setChange]=useState('');
+ const [tag,setTag]=useState('Reflection');
  const [entries,setEntries]=useState([
-  ['Today','Feeling clearer about my next step.','◒'],
-  ['3 days ago','Setting boundaries felt hard but good.','◉'],
-  ['1 week ago','Noticing patterns and what I need.','▤']
+  {when:'Today',text:'Feeling clearer about my next step.',change:'I know what I want to ask for.',tag:'Choice',icon:'◒'},
+  {when:'3 days ago',text:'Setting boundaries felt hard but good.',change:'I noticed I can pause before answering.',tag:'Boundary',icon:'◉'},
+  {when:'1 week ago',text:'Noticing patterns and what I need.',change:'Some things are still uncertain.',tag:'Uncertainty',icon:'▤'}
  ]);
- const save=()=>{const v=entry.trim();if(!v)return;setEntries([['Just now',v,'✎'],...entries]);setEntry('');};
+ const tags=['Reflection','Boundary','Uncertainty','Choice'];
+ const save=()=>{
+  const v=entry.trim();
+  if(!v)return;
+  setEntries([{when:'Just now',text:v,change:change.trim()||'No follow-up added yet.',tag,icon:'✎'},...entries]);
+  setEntry('');
+  setChange('');
+  setTag('Reflection');
+ };
  return <>
   <CinematicHero image={ART.journal} kicker="YOUR SPACE" title="Journal" body="Your thoughts, your pace. Reflect privately and notice what changes over time." height={285}/>
   <View style={s.journalComposer}>
    <Text style={s.composerTitle}>What’s on your mind?</Text>
+   <Text style={s.composerHint}>Write it as you experienced it. You can leave anything blank.</Text>
    <TextInput value={entry} onChangeText={setEntry} multiline placeholder="Write in your own words…" placeholderTextColor={T.muted} style={s.journalInput}/>
-   <Pressable onPress={save} style={({pressed})=>[s.journalButton,pressed&&s.pressed]}><Text style={s.journalButtonText}>＋  New entry</Text><Text style={s.journalButtonText}>→</Text></Pressable>
+   <Text style={s.composerLabel}>What changed, if anything?</Text>
+   <TextInput value={change} onChangeText={setChange} multiline placeholder="A thought, feeling, boundary, choice or unanswered question…" placeholderTextColor={T.muted} style={s.changeInput}/>
+   <Text style={s.composerLabel}>Optional context</Text>
+   <View style={s.tagRow}>{tags.map(x=><Pressable key={x} onPress={()=>setTag(x)} style={[s.tagChip,tag===x&&s.tagChipOn]}><Text style={[s.tagChipText,tag===x&&s.tagChipTextOn]}>{x}</Text></Pressable>)}</View>
+   <Pressable onPress={save} style={({pressed})=>[s.journalButton,pressed&&s.pressed]}><Text style={s.journalButtonText}>Save reflection</Text><Text style={s.journalButtonText}>→</Text></Pressable>
   </View>
   <View style={s.sectionHeader}><View><Text style={s.sectionEyebrow}>YOUR JOURNEY</Text><Text style={s.sectionHeading}>Recent entries</Text></View><Text style={s.sectionLink}>See all</Text></View>
-  <View style={s.stack}>{entries.map(([when,text,icon],i)=><FeatureCard key={i} title={when} subtitle={text} icon={icon} accent={i===0?T.eucalyptus:T.sand}/>)}</View>
+  <View style={s.stack}>{entries.map((item,i)=><JournalEntryCard key={i} item={item} accent={i===0?T.eucalyptus:T.sand}/>)}</View>
  </>;
+}
+
+function JournalEntryCard({item,accent}){
+ return <View style={s.journalEntry}>
+  <View style={[s.featureIcon,{borderColor:accent}]}><Text style={[s.featureIconText,{color:accent}]}>{item.icon}</Text></View>
+  <View style={s.featureCopy}>
+   <View style={s.entryTop}><Text style={s.featureTitle}>{item.when}</Text><View style={s.entryTag}><Text style={s.entryTagText}>{item.tag}</Text></View></View>
+   <Text style={s.featureSub}>{item.text}</Text>
+   <View style={s.changedLine}><Text style={s.changedLabel}>WHAT CHANGED</Text><Text style={s.changedText}>{item.change}</Text></View>
+  </View>
+  <Text style={s.featureArrow}>›</Text>
+ </View>
 }
 
 function Learn(){
@@ -225,8 +252,8 @@ const s=StyleSheet.create({
  sectionIntro:{marginTop:3,marginBottom:9},sectionEyebrow:{color:T.sand,fontSize:8.5,fontWeight:'900',letterSpacing:1.8},sectionHeading:{color:T.text,fontFamily:SERIF,fontSize:21,lineHeight:26,fontWeight:'700',marginTop:2},
  homeGrid:{flexDirection:'row',flexWrap:'wrap',gap:8},homeTile:{width:'48.8%',minHeight:108,borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',padding:12,justifyContent:'flex-end'},tileGlyph:{fontSize:21,marginBottom:10},tileTitle:{color:T.text,fontFamily:SERIF,fontSize:15,fontWeight:'700'},tileSub:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:1},
  signature:{flexDirection:'row',alignItems:'center',gap:9,marginVertical:17},signatureLine:{flex:1,height:1,backgroundColor:'#342B22'},signatureText:{color:'#8E8173',fontSize:8.5,letterSpacing:.7,textTransform:'uppercase'},
- journalComposer:{borderRadius:18,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:12},composerTitle:{color:T.text,fontFamily:SERIF,fontSize:18,fontWeight:'700',marginBottom:8},journalInput:{borderWidth:1,borderColor:'#3A3025',borderRadius:13,backgroundColor:'#0D0B08',color:T.text,minHeight:86,padding:12,fontSize:14,textAlignVertical:'top'},journalButton:{minHeight:47,borderRadius:13,backgroundColor:T.eucalyptus,alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14,marginTop:8},journalButtonText:{color:'#091109',fontWeight:'900',fontSize:13},
- sectionHeader:{flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between',marginVertical:10},sectionLink:{color:T.sand,fontSize:11,fontWeight:'700'},
+ journalComposer:{borderRadius:18,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:12},composerTitle:{color:T.text,fontFamily:SERIF,fontSize:18,fontWeight:'700',marginBottom:3},composerHint:{color:T.muted,fontSize:10.5,lineHeight:15,marginBottom:9},composerLabel:{color:T.sand,fontSize:8.5,fontWeight:'900',letterSpacing:1.2,marginTop:11,marginBottom:6},journalInput:{borderWidth:1,borderColor:'#3A3025',borderRadius:13,backgroundColor:'#0D0B08',color:T.text,minHeight:86,padding:12,fontSize:14,textAlignVertical:'top'},changeInput:{borderWidth:1,borderColor:'#3A3025',borderRadius:13,backgroundColor:'#0D0B08',color:T.text,minHeight:66,padding:12,fontSize:13.5,textAlignVertical:'top'},tagRow:{flexDirection:'row',flexWrap:'wrap',gap:6},tagChip:{paddingHorizontal:10,paddingVertical:7,borderRadius:999,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08'},tagChipOn:{borderColor:T.eucalyptus,backgroundColor:'#18231A'},tagChipText:{color:T.muted,fontSize:10.5,fontWeight:'700'},tagChipTextOn:{color:'#DDE8DC'},journalButton:{minHeight:47,borderRadius:13,backgroundColor:T.eucalyptus,alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14,marginTop:12},journalButtonText:{color:'#091109',fontWeight:'900',fontSize:13},
+ sectionHeader:{flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between',marginVertical:10},sectionLink:{color:T.sand,fontSize:11,fontWeight:'700'},journalEntry:{minHeight:98,borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',flexDirection:'row',alignItems:'flex-start'},entryTop:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8,marginTop:12},entryTag:{paddingHorizontal:7,paddingVertical:3,borderRadius:999,borderWidth:1,borderColor:'rgba(120,146,126,.7)',backgroundColor:'rgba(33,52,38,.7)'},entryTagText:{color:'#D7E4D6',fontSize:8.5,fontWeight:'800'},changedLine:{marginTop:8,paddingTop:7,borderTopWidth:1,borderTopColor:'#2E281F'},changedLabel:{color:T.sand,fontSize:7.5,fontWeight:'900',letterSpacing:1.2},changedText:{color:'#DCCFBE',fontSize:10,lineHeight:14,marginTop:2},
  stack:{gap:8},featureCard:{minHeight:78,borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',overflow:'hidden',flexDirection:'row',alignItems:'center'},
  featureImage:{minHeight:86,padding:12,flexDirection:'row',alignItems:'center',gap:11,justifyContent:'center'},featureImageRadius:{borderRadius:15},cardShade:{...StyleSheet.absoluteFillObject,backgroundColor:'rgba(8,5,3,.56)'},
  featureIcon:{width:42,height:42,borderRadius:21,borderWidth:1,backgroundColor:'rgba(8,6,4,.58)',alignItems:'center',justifyContent:'center',margin:12},featureImageRadius:{borderRadius:15},
