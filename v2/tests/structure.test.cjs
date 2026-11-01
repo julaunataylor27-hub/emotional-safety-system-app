@@ -41,3 +41,16 @@ test('v2 premium visual system stays restrained and non-sci-fi',()=>{
  assert.ok(!app.includes('orbit-ring'));
  assert.ok(!app.includes('home-support-now'));
 });
+
+
+test('v2 uses the new Australian earth palette and rejects the old navy gold teal identity',()=>{
+ const theme=read('src/theme.js');
+ assert.match(theme,/bg:'#0A0907'/);
+ assert.match(theme,/sand:'#D8C2A0'/);
+ assert.match(theme,/eucalyptus:'#78927E'/);
+ assert.match(theme,/clay:'#B66A4D'/);
+ assert.match(theme,/ochre:'#C58D49'/);
+ assert.ok(!theme.includes("gold:'#D9A93F'"));
+ assert.ok(!theme.includes("teal:'#268E8C'"));
+ assert.ok(!theme.includes("bg:'#071014'"));
+});
