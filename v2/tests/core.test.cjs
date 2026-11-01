@@ -24,3 +24,13 @@ test('v2 research snapshot excludes raw input',()=>{
  assert.equal(JSON.stringify(r.research_snapshot).includes(secret),false);
  assert.equal(r.decision_record.verified_event,false);
 });
+
+
+test('v2 core exposes the locked eight-stage backbone',()=>{
+ const r=processSituation({text:'I feel unsure about what happened.'});
+ assert.equal(Array.isArray(r.backbone),true);
+ assert.equal(r.backbone.length,8);
+ assert.equal(r.backbone[0].id,'situation');
+ assert.equal(r.backbone[7].id,'next');
+ assert.equal(r.choice.user_remains_in_control,true);
+});
