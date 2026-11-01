@@ -10,7 +10,7 @@ test('new Home is structurally different from the retired giant-hero design',()=
   assert.ok(!home.includes('Knowledge Creates Choice'));
   assert.match(home,/ESS Core Prototype/);
   assert.match(home,/Understand what you feel/);
-  assert.match(home,/testID="home-ess-core"/);
+  assert.match(home,/id="home-ess-core"/);
   assert.match(home,/Evidence & Truth Test Lab/);
   assert.match(home,/title="Connection Trail"/);
 });
