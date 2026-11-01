@@ -137,3 +137,19 @@ test('Support uses context-aware pathways and preserves choice',()=>{
  assert.match(app,/pendingSupportMode/);
  assert.match(app,/initialMode/);
 });
+
+test('new Journal starts without invented reflections and tells users when storage is session-only',()=>{
+ const app=read('App.js');
+ assert.match(app,/const \[journalEntries,setJournalEntries\]=useState\(\[\]\)/);
+ assert.match(app,/Entries are kept only while this app session stays open/);
+ assert.ok(!app.includes('Feeling clearer about my next step.'));
+ assert.ok(!app.includes('3 days ago'));
+});
+test('More cards are actionable and do not promise unsupported feedback or secure saving',()=>{
+ const app=read('App.js');
+ assert.match(app,/onPress=\{\(\)=>setDetail\(title\)\}/);
+ assert.match(app,/Sending feedback is not connected in this prototype/);
+ assert.match(app,/Account features, protected journal storage and reliable preferences are not available yet/);
+ assert.match(app,/No theme setting is offered until it can update every screen consistently/);
+ assert.ok(!app.includes('<View style={s.topActions}><Text style={s.action}>⌕</Text>'));
+});
