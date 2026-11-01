@@ -103,3 +103,12 @@ test('Core routes into the rest of ESS without removing user choice',()=>{
  assert.match(app,/Leave it for now/);
  assert.match(app,/onNavigate=\{go\}/);
 });
+
+
+test('v2 UI shows explainable destination recommendations and versions',()=>{
+ const app=read('App.js');
+ assert.match(app,/SUGGESTED/);
+ assert.match(app,/recommendation\?\.reason/);
+ assert.match(app,/Core version:/);
+ assert.match(app,/Architecture version:/);
+});
