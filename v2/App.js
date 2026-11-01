@@ -199,20 +199,50 @@ function More({openCore}){
 
 function Core({onBack}){
  const [text,setText]=useState("He hasn't replied for 6 hours. I feel rejected and I think he doesn't care.");
+ const [step,setStep]=useState(0);
+ const [selectedNext,setSelectedNext]=useState('');
  const [showTechnical,setShowTechnical]=useState(false);
  const result=useMemo(()=>processSituation({text,feeling:'Not specified'}),[text]);
+
+ const stages=[
+  {id:'situation',title:"What's happening?"},
+  {id:'feeling',title:'What are you feeling?'},
+  {id:'known',title:'What do we actually know?'},
+  {id:'interpretation',title:'What might be interpretation?'},
+  {id:'uncertainty',title:'What is still uncertain?'},
+  {id:'context',title:'What context needs attention?'},
+  {id:'choice',title:'What choices are still yours?'},
+  {id:'next',title:'What feels like the next step?'}
+ ];
+ const stage=stages[step];
+
+ const stageBody=()=>{
+  if(stage.id==='situation') return <View style={s.corePanel}><Text style={s.fieldLabel}>IN YOUR OWN WORDS</Text><TextInput multiline value={text} onChangeText={setText} maxLength={2500} style={s.coreInput} placeholder="Write what happened…" placeholderTextColor={T.muted}/><Text style={s.coreHint}>Start with your experience. You do not need to prove anything here.</Text></View>;
+  if(stage.id==='feeling') return <CoreList label="FEELINGS / CUES" items={result.emotion.reported_or_detected} empty="No clear feeling words identified yet." note="These are self-reported feelings or language cues only." />;
+  if(stage.id==='known') return <CoreList label="REPORTED INFORMATION" items={result.evidence.reported_observations} empty="No clear reported observations yet." note="Reported information stays separate from independent verification." />;
+  if(stage.id==='interpretation') return <CoreList label="POSSIBLE INTERPRETATION" items={result.interpretation.possible_interpretations} empty="No obvious interpretation language identified." note="Interpretations can matter without being treated as fact." />;
+  if(stage.id==='uncertainty') return <CoreList label="UNKNOWNS" items={result.uncertainty.unknowns} empty="No additional unknowns identified." note="ESS keeps uncertainty visible instead of filling gaps." />;
+  if(stage.id==='context') return <View style={s.corePanel}><Text style={s.fieldLabel}>CONTEXT CHECK</Text><Text style={s.contextTitle}>{result.safety.title}</Text><Text style={s.stageNote}>This is a routing signal based on the words provided. It is not verification, diagnosis or a legal finding.</Text>{result.safety.risks?.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}</View>;
+  if(stage.id==='choice') return <View style={s.corePanel}><Text style={s.fieldLabel}>OPTIONS REMAIN YOURS</Text>{result.choice.options.map((x,i)=><View key={i} style={s.choiceCard}><Text style={s.choiceNumber}>{i+1}</Text><Text style={s.choiceText}>{x}</Text></View>)}<Text style={s.stageNote}>ESS can surface options. It does not choose for you.</Text></View>;
+  return <View style={s.corePanel}><Text style={s.fieldLabel}>YOU DECIDE</Text><Text style={s.nextLead}>Choose one if it fits, or leave the decision open for now.</Text>{result.choice.options.map((x,i)=><Pressable key={i} onPress={()=>setSelectedNext(x)} style={[s.nextOption,selectedNext===x&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext===x&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext===x&&s.nextOptionTextOn]}>{x}</Text></Pressable>)}<Pressable onPress={()=>setSelectedNext('Not ready yet')} style={[s.nextOption,selectedNext==='Not ready yet'&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext==='Not ready yet'&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext==='Not ready yet'&&s.nextOptionTextOn]}>I’m not ready to choose yet.</Text></Pressable><Text style={s.stageNote}>Suggested pathway: {result.next_pathway.replaceAll('_',' → ')}. You can still choose differently.</Text></View>;
+ };
+
+ const goBack=()=>step===0?onBack():setStep(v=>v-1);
  return <>
-  <View style={s.coreHeader}><Pressable onPress={onBack} style={s.back}><Text style={s.backText}>‹</Text></Pressable><View style={s.rowCopy}><Text style={s.sectionEyebrow}>ESS CORE</Text><Text style={s.coreTitle}>Understand this moment</Text></View></View>
-  <Text style={s.coreLead}>Write naturally. ESS separates feelings, reported information, interpretation and uncertainty without deciding for you.</Text>
-  <View style={s.corePanel}><Text style={s.fieldLabel}>WHAT IS HAPPENING?</Text><TextInput multiline value={text} onChangeText={setText} maxLength={2500} style={s.coreInput} placeholderTextColor={T.muted}/></View>
-  <Result title="What you may be feeling" items={result.emotion.reported_or_detected}/>
-  <Result title="What appears reported" items={result.evidence.reported_observations}/>
-  <Result title="Possible interpretation" items={result.interpretation.possible_interpretations}/>
-  <Result title="What is still uncertain" items={result.uncertainty.unknowns}/>
-  <Result title="Choices remain yours" items={result.choice.options}/>
-  <Pressable onPress={()=>setShowTechnical(v=>!v)} style={s.secondary}><Text style={s.secondaryText}>{showTechnical?'Hide technical details':'How ESS reached this'}</Text><Text style={s.secondaryArrow}>{showTechnical?'↑':'↓'}</Text></Pressable>
-  {showTechnical&&<View style={[s.corePanel,s.techCard]}><Text style={s.techKicker}>RIGOROUS LAYER</Text><Text style={s.body}>Pathway: {result.next_pathway.replaceAll('_',' → ')}</Text><Text style={s.body}>Rules: {result.decision_record.rule_ids.join(' · ')}</Text><Text style={s.body}>Verified event: no</Text><Text style={s.body}>User control preserved: {result.decision_record.user_control_preserved?'yes':'no'}</Text></View>}
+  <View style={s.coreHeader}><Pressable onPress={goBack} style={s.back}><Text style={s.backText}>‹</Text></Pressable><View style={s.rowCopy}><Text style={s.sectionEyebrow}>ESS CORE · STEP {step+1} OF 8</Text><Text style={s.coreTitle}>{stage.title}</Text></View></View>
+  <View style={s.progressTrack}><View style={[s.progressFill,{width:`${((step+1)/8)*100}%`}]}/></View>
+  <Text style={s.coreLead}>One step at a time. ESS keeps feelings, reported information, interpretation, uncertainty and choice separate.</Text>
+  {stageBody()}
+  <View style={s.coreNavRow}>
+   <Pressable onPress={goBack} style={s.coreBackButton}><Text style={s.coreBackButtonText}>{step===0?'Exit':'Back'}</Text></Pressable>
+   {step<7?<Pressable onPress={()=>setStep(v=>v+1)} style={s.coreNextButton}><Text style={s.coreNextText}>Continue</Text><Text style={s.coreNextText}>→</Text></Pressable>:<Pressable onPress={()=>setShowTechnical(v=>!v)} style={s.coreNextButton}><Text style={s.coreNextText}>{showTechnical?'Hide details':'How ESS reached this'}</Text><Text style={s.coreNextText}>{showTechnical?'↑':'↓'}</Text></Pressable>}
+  </View>
+  {step===7&&showTechnical&&<View style={[s.corePanel,s.techCard]}><Text style={s.techKicker}>RIGOROUS LAYER</Text><Text style={s.body}>Pathway: {result.next_pathway.replaceAll('_',' → ')}</Text><Text style={s.body}>Rules: {result.decision_record.rule_ids.join(' · ')}</Text><Text style={s.body}>Verified event: no</Text><Text style={s.body}>User control preserved: {result.decision_record.user_control_preserved?'yes':'no'}</Text><Text style={s.body}>Backbone stages: {result.backbone?.length||8}</Text></View>}
  </>;
+}
+
+function CoreList({label,items,empty,note}){
+ return <View style={s.corePanel}><Text style={s.fieldLabel}>{label}</Text>{items?.length?items.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>):<Text style={s.muted}>{empty}</Text>}<Text style={s.stageNote}>{note}</Text></View>;
 }
 
 function Result({title,items}){return <View style={s.resultCard}><Text style={s.resultLabel}>{title}</Text>{items?.length?items.map((x,i)=><Text key={i} style={s.body}>• {x}</Text>):<Text style={s.muted}>Nothing identified yet.</Text>}</View>}
