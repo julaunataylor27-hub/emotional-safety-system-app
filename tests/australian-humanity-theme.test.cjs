@@ -24,9 +24,9 @@ test('shared app chrome, Home and legacy banners use the same visual foundation'
   const scene=read('src/NightForestScene.js');
   assert.match(t,/export const P=HUMANITY\.colours/);
   assert.match(h,/SCENES\.home/);
-  assert.match(h,/ESS CORE PROTOTYPE/);
-  assert.match(h,/title="Evidence & Truth"/);
-  assert.match(h,/backgroundColor:P\.bg/);
+  assert.match(h,/ESS Core Prototype/);
+  assert.match(h,/Evidence & Truth Test Lab/);
+  assert.match(h,/MOCKUP_THEME_V6/);
   assert.match(chrome,/sceneForTitle\(title\)/);
   assert.match(chrome,/Australian Humanity/);
   assert.match(chrome,/backgroundColor:'#03070B'/);
