@@ -215,16 +215,67 @@ function LearnTrail({trail,onBack,onRelated}){
  </>;
 }
 
-function Support(){
+function Support({initialMode,onConsumeInitialMode}){
+ const MODES={
+  calm:{
+   id:'calm',label:'CALM SUPPORT',title:'You can slow this down.',body:'Use support for information, perspective or a human conversation — even when nothing urgent is happening.',
+   tone:'neutral',
+   actions:[
+    ['Talk it through','Find a trusted person or service to talk with.','◉'],
+    ['Understand my options','Look at possible next steps without committing.','◇'],
+    ['Learn more first','Go back to knowledge and context if that feels more useful.','▤']
+   ]
+  },
+  boundary:{
+   id:'boundary',label:'BOUNDARY / PRESSURE',title:'Your boundaries still matter.',body:'If something feels pressuring, ESS can help you slow the situation down and look at support without deciding for you.',
+   tone:'ochre',
+   actions:[
+    ['Pause before responding','Create room before making another decision.','Ⅱ'],
+    ['Talk to someone','Use a trusted person or service for perspective.','◉'],
+    ['Understand boundary options','Review practical boundary-focused choices.','◇']
+   ]
+  },
+  coercion:{
+   id:'coercion',label:'STRONGER SUPPORT',title:'You deserve room to choose freely.',body:'If the situation includes coercive pressure or restricted choice, support options can become more visible while your control stays central.',
+   tone:'green',
+   actions:[
+    ['Talk to a trusted support','Bring in another person if you want to.','◉'],
+    ['Make a safer pause plan','Think about how to create distance or time.','◇'],
+    ['Review support services','See formal help options without being forced to use them.','⌁']
+   ]
+  },
+  urgent:{
+   id:'urgent',label:'URGENT SAFETY',title:'Immediate safety comes first.',body:'If there may be immediate danger, ESS prioritises getting toward safety and trusted emergency help rather than collecting more information.',
+   tone:'danger',
+   actions:[
+    ['Move toward safety','Go somewhere safer if that is possible.','!'],
+    ['Contact emergency help','Use local emergency services if danger is happening now.','☎'],
+    ['Do not gather extra evidence','Your safety matters more than proving what happened.','◇']
+   ]
+  }
+ };
+ const [mode,setMode]=useState('calm');
+ React.useEffect(()=>{
+  if(initialMode&&MODES[initialMode])setMode(initialMode);
+  onConsumeInitialMode?.();
+ },[initialMode]);
+ const current=MODES[mode];
  return <>
-  <CinematicHero image={ART.support} kicker="SUPPORT" title="You don’t have to figure it out alone." body="Find trusted services, clear information and practical next steps — when you want them." height={300}/>
+  <CinematicHero image={ART.support} kicker="SUPPORT" title="You don’t have to figure it out alone." body="Find trusted services, clear information and practical next steps — at your pace." height={300}/>
+  <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Understand your options, reach human help if you want it, and keep control of what happens next.</Text></View>
+  <View style={s.supportModeTabs}>
+   {Object.values(MODES).map(x=><Pressable key={x.id} onPress={()=>setMode(x.id)} style={[s.supportModeTab,mode===x.id&&s.supportModeTabOn]}><Text style={[s.supportModeTabText,mode===x.id&&s.supportModeTabTextOn]}>{x.id==='calm'?'Calm':x.id==='boundary'?'Boundary':x.id==='coercion'?'Coercion':'Urgent'}</Text></Pressable>)}
+  </View>
+  <View style={[s.supportModePanel,current.tone==='danger'?s.supportDanger:current.tone==='ochre'?s.supportOchre:current.tone==='green'?s.supportGreen:s.supportNeutral]}>
+   <Text style={s.fieldLabel}>{current.label}</Text>
+   <Text style={s.supportModeTitle}>{current.title}</Text>
+   <Text style={s.supportModeBody}>{current.body}</Text>
+  </View>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>CHOOSE WHAT FITS</Text><Text style={s.sectionHeading}>Support options</Text></View>
   <View style={s.stack}>
-   <SupportCard title="I feel unsafe right now" subtitle="Urgent safety information and immediate help" icon="!" tone="danger"/>
-   <SupportCard title="Talk to someone" subtitle="Trusted services and human support" icon="◉" tone="ochre"/>
-   <SupportCard title="Understand my options" subtitle="Information, rights and possible next steps" icon="◇" tone="green"/>
-   <SupportCard title="Explore support topics" subtitle="Relationships, family, community and more" icon="⌁" tone="neutral"/>
+   {current.actions.map(([title,subtitle,icon],i)=><SupportCard key={title} title={title} subtitle={subtitle} icon={icon} tone={current.tone}/>)}
   </View>
+  <View style={s.supportReminder}><Text style={s.supportReminderTitle}>You can stop here.</Text><Text style={s.supportReminderText}>Support is available, not compulsory. You can return Home, Learn more first, or leave the decision open.</Text></View>
  </>;
 }
 
@@ -283,7 +334,7 @@ function Core({onBack,onSaveJournal,onNavigate}){
   if(stage.id==='known') return <KnownStage items={result.evidence.reported_observations}/>;
   if(stage.id==='interpretation') return <InterpretationStage items={result.interpretation.possible_interpretations} checks={interpretationChecks} onCheck={(item,value)=>setInterpretationChecks(v=>({...v,[item]:value}))}/>;
   if(stage.id==='uncertainty') return <UncertaintyStage items={result.uncertainty.unknowns} checks={unknownChecks} onCheck={(item,value)=>setUnknownChecks(v=>({...v,[item]:value}))} onLearn={()=>{const rec=result.recommendations?.find(x=>x.destination==='learn');onNavigate?.('learn',rec?.trail)}} recommendation={result.recommendations?.find(x=>x.destination==='learn')}/>;
-  if(stage.id==='context') return <ContextStage result={result} onSupport={()=>onNavigate?.('support')} recommendation={result.recommendations?.find(x=>x.destination==='support')}/>;
+  if(stage.id==='context') return <ContextStage result={result} onSupport={()=>onNavigate?.('support',result.safety.urgent?'urgent':result.safety.classification==='coercion'?'coercion':result.safety.classification==='pressure'?'boundary':'calm')} recommendation={result.recommendations?.find(x=>x.destination==='support')}/>;
   if(stage.id==='choice') return <ChoiceCompare options={result.choice.options} value={choicePreview} onChange={setChoicePreview}/>;
   return <FinishStage result={result} selectedNext={selectedNext} setSelectedNext={setSelectedNext} saved={savedToJournal} onSave={()=>{onSaveJournal?.({when:'Just now',text,change:selectedNext||'Decision left open.',tag:'Choice',icon:'◇'});setSavedToJournal(true);}} onNavigate={onNavigate} recommendations={result.recommendations||[]}/>;
  };
@@ -407,19 +458,20 @@ function AppRoot(){
  const [screen,setScreen]=useState('home');
  const [coreOpen,setCoreOpen]=useState(false);
  const [pendingLearnTrail,setPendingLearnTrail]=useState(null);
+ const [pendingSupportMode,setPendingSupportMode]=useState(null);
  const [journalEntries,setJournalEntries]=useState([
   {when:'Today',text:'Feeling clearer about my next step.',change:'I know what I want to ask for.',tag:'Choice',icon:'◒'},
   {when:'3 days ago',text:'Setting boundaries felt hard but good.',change:'I noticed I can pause before answering.',tag:'Boundary',icon:'◉'},
   {when:'1 week ago',text:'Noticing patterns and what I need.',change:'Some things are still uncertain.',tag:'Uncertainty',icon:'▤'}
  ]);
- const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);setScreen(id);};
+ const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);if(id==='support'&&detail)setPendingSupportMode(detail);setScreen(id);};
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go}>
   {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
    screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)}/>:
-   screen==='support'?<Support/>:
+   screen==='support'?<Support initialMode={pendingSupportMode} onConsumeInitialMode={()=>setPendingSupportMode(null)}/>:
    <More openCore={()=>setCoreOpen(true)}/>}
  </Shell>;
 }
@@ -452,7 +504,7 @@ const s=StyleSheet.create({
  featureIcon:{width:42,height:42,borderRadius:21,borderWidth:1,backgroundColor:'rgba(8,6,4,.58)',alignItems:'center',justifyContent:'center',margin:12},featureImageRadius:{borderRadius:15},
  featureIconText:{fontSize:16,fontWeight:'800'},featureCopy:{flex:1,minWidth:0},featureTitle:{color:T.text,fontFamily:SERIF,fontSize:15,fontWeight:'700'},featureSub:{color:'#D4C6B5',fontSize:10.5,lineHeight:15,marginTop:2},featureArrow:{color:T.sand,fontSize:22,marginRight:12},
  search:{minHeight:48,borderRadius:14,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',color:T.text,paddingHorizontal:13,fontSize:14,marginBottom:12},learnPurpose:{borderRadius:16,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#111811',padding:12,marginBottom:12},learnPurposeText:{color:'#DCE7DA',fontSize:12,lineHeight:18},learnTrailCard:{minHeight:116,borderRadius:17,borderWidth:1,borderColor:'#3A3025',overflow:'hidden',backgroundColor:'#15120D'},learnTrailImage:{minHeight:116,justifyContent:'center'},learnTrailImageRadius:{borderRadius:16},learnTrailContent:{minHeight:116,padding:12,flexDirection:'row',alignItems:'center',gap:10},learnTrailIcon:{color:T.sand,fontSize:21,width:28,textAlign:'center'},learnTrailTitle:{color:T.text,fontFamily:SERIF,fontSize:16,fontWeight:'700'},learnTrailSub:{color:'#D6C8B7',fontSize:10.5,lineHeight:15,marginTop:2},learnTrailHelp:{color:T.muted,fontSize:9.5,lineHeight:14,marginTop:5},learnDetailHero:{minHeight:250,borderRadius:22,overflow:'hidden',borderWidth:1,borderColor:'#3A3025',justifyContent:'flex-end',marginBottom:10},learnDetailCopy:{padding:17},learnDetailTitle:{color:T.text,fontFamily:SERIF,fontSize:21,lineHeight:27,fontWeight:'700',marginTop:5},learnSection:{borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:9},learnBody:{color:T.text,fontSize:12.5,lineHeight:19},sourceBadge:{alignSelf:'flex-start',paddingHorizontal:8,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A',marginBottom:8},sourceBadgeText:{color:'#DDE8DC',fontSize:7.5,fontWeight:'900',letterSpacing:1},
- supportCard:{minHeight:80,borderRadius:17,borderWidth:1,padding:12,flexDirection:'row',alignItems:'center',gap:11},supportDanger:{backgroundColor:'#6E2D24',borderColor:'#A65040'},supportOchre:{backgroundColor:'#4A321B',borderColor:'#805C32'},supportGreen:{backgroundColor:'#20372A',borderColor:'#4E6F58'},supportNeutral:{backgroundColor:'#15120D',borderColor:'#3A3025'},
+ supportModeTabs:{flexDirection:'row',gap:6,marginBottom:10,flexWrap:'wrap'},supportModeTab:{paddingHorizontal:10,paddingVertical:8,borderRadius:999,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08'},supportModeTabOn:{borderColor:T.sand,backgroundColor:'#201A13'},supportModeTabText:{color:T.muted,fontSize:9.5,fontWeight:'800'},supportModeTabTextOn:{color:T.text},supportModePanel:{borderRadius:17,borderWidth:1,padding:13,marginBottom:10},supportModeTitle:{color:T.text,fontFamily:SERIF,fontSize:20,lineHeight:25,fontWeight:'700'},supportModeBody:{color:'#E0D1C0',fontSize:11.5,lineHeight:17,marginTop:5},supportReminder:{borderRadius:15,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#11100D',padding:12,marginTop:10},supportReminderTitle:{color:T.text,fontFamily:SERIF,fontSize:14,fontWeight:'700'},supportReminderText:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:3},supportCard:{minHeight:80,borderRadius:17,borderWidth:1,padding:12,flexDirection:'row',alignItems:'center',gap:11},supportDanger:{backgroundColor:'#6E2D24',borderColor:'#A65040'},supportOchre:{backgroundColor:'#4A321B',borderColor:'#805C32'},supportGreen:{backgroundColor:'#20372A',borderColor:'#4E6F58'},supportNeutral:{backgroundColor:'#15120D',borderColor:'#3A3025'},
  supportIcon:{width:44,height:44,borderRadius:22,borderWidth:1,borderColor:'rgba(255,247,236,.55)',alignItems:'center',justifyContent:'center',backgroundColor:'rgba(0,0,0,.12)'},supportIconText:{color:'#FFF7EC',fontSize:17,fontWeight:'900'},rowCopy:{flex:1,minWidth:0},supportTitle:{color:'#FFF7EC',fontFamily:SERIF,fontSize:15,fontWeight:'700'},supportSub:{color:'#E0D1C0',fontSize:10.5,lineHeight:15,marginTop:2},supportArrow:{color:'#F4E2CD',fontSize:22},
  coreHeader:{flexDirection:'row',alignItems:'center',gap:10,marginTop:4,marginBottom:10},back:{width:42,height:42,borderRadius:21,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',alignItems:'center',justifyContent:'center'},backText:{color:T.sand,fontSize:29,lineHeight:31},coreTitle:{color:T.text,fontFamily:SERIF,fontSize:25,fontWeight:'700',marginTop:2},coreLead:{color:T.muted,fontSize:12.5,lineHeight:19,marginBottom:10},progressTrack:{height:4,borderRadius:999,backgroundColor:'#2A241C',overflow:'hidden',marginBottom:12},progressFill:{height:4,borderRadius:999,backgroundColor:T.sand},
  corePanel:{borderRadius:17,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:9},fieldLabel:{color:T.sand,fontSize:9,fontWeight:'900',letterSpacing:1.6,marginBottom:7},coreInput:{minHeight:135,borderRadius:13,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08',padding:12,color:T.text,fontSize:15,lineHeight:22,textAlignVertical:'top'},
