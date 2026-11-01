@@ -54,3 +54,13 @@ test('v2 uses the new Australian earth palette and rejects the old navy gold tea
  assert.ok(!theme.includes("teal:'#268E8C'"));
  assert.ok(!theme.includes("bg:'#071014'"));
 });
+
+
+test('2027 frame is the locked visual source of truth',()=>{
+ const guide=fs.readFileSync(path.join(root,'..','docs','ESS_V2_2027_VISUAL_SOURCE_OF_TRUTH.md'),'utf8');
+ assert.match(guide,/LOCKED DESIGN REFERENCE/);
+ assert.match(guide,/Human on the surface\. Rigorous underneath\./);
+ assert.match(guide,/Home\n2\. Journal\n3\. Learn\n4\. Support\n5\. More/);
+ assert.match(guide,/retired navy \/ gold \/ teal identity must not return/);
+ assert.match(guide,/avoids sci-fi \/ orbit \/ dashboard motifs/);
+});
