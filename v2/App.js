@@ -80,7 +80,6 @@ function Shell({screen,onTab,children}){
      <Text style={s.brandSub}>AUSTRALIAN HUMANITY</Text>
     </View>
    </View>
-   <View style={s.topActions}><Text style={s.action}>⌕</Text><Text style={s.action}>○</Text></View>
   </View>
   <ScrollView contentContainerStyle={s.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
   <View style={s.nav}>
@@ -159,7 +158,8 @@ function Journal({entries,setEntries}){
  const counts=tags.reduce((acc,x)=>({...acc,[x]:entries.filter(e=>e.tag===x).length}),{});
  const recentChanges=entries.slice(0,3).map(x=>x.change).filter(Boolean);
  return <>
-  <CinematicHero image={ART.journal} kicker="YOUR SPACE" title="Journal" body="Your thoughts, your pace. Reflect privately and notice what changes over time." height={285}/>
+  <CinematicHero image={ART.journal} kicker="YOUR SPACE" title="Journal" body="Your thoughts, your pace. Reflect and notice what changes over time." height={285}/>
+  <View style={s.learnPurpose}><Text style={s.fieldLabel}>PROTOTYPE PRIVACY NOTE</Text><Text style={s.learnPurposeText}>Entries are kept only while this app session stays open. They are not yet stored securely across restarts. Avoid sensitive details until protected saving is built and tested.</Text></View>
   <View style={s.journalComposer}>
    <Text style={s.composerTitle}>What’s on your mind?</Text>
    <Text style={s.composerHint}>Write it as you experienced it. You can leave anything blank.</Text>
@@ -329,17 +329,48 @@ function SupportCard({title,subtitle,icon,tone,selected,onPress}){
 }
 
 function More({openCore}){
+ const [detail,setDetail]=useState('');
+ const details={
+  'About ESS':{
+   description:'ESS helps a person reflect on feelings, reported experiences, possible interpretations, uncertainty and next steps. It does not independently determine what happened, diagnose anyone or replace professional advice.',
+   points:['Feelings are meaningful but do not prove another person’s intentions.','Evidence and interpretation should be kept separate.','The person can disagree, leave questions open or choose not to proceed.']
+  },
+  'Settings':{
+   description:'This is still a development prototype. Account features, protected journal storage and reliable preferences are not available yet.',
+   points:['Journal entries are session-only; closing the app may clear them.','Do not enter private or identifying details until protected storage is tested.','No theme setting is offered until it can update every screen consistently.']
+  },
+  'Research & development':{
+   description:'The ESS Core keeps transparent rule and version records so behaviour can be tested. Its effectiveness has not been independently validated.',
+   points:['Claims and educational sources require review before release.','Safety routing is not a substitute for an emergency assessment.','The project remains under development and professional review is needed.']
+  },
+  'Help':{
+   description:'To begin, open Start a reflection on Home. Learn explores context, Support presents options, and Journal records notes for this session.',
+   points:['You can go back, pause or leave a decision open.','If there is immediate danger in Australia, call 000 rather than waiting for ESS.','Support resources are opened only when you choose.']
+  },
+  'Share feedback':{
+   description:'Sending feedback is not connected in this prototype. ESS will not collect or transmit a feedback message from this screen.',
+   points:['A reviewed consent and feedback process is needed before this feature can be activated.','For now, record feedback outside the app without including sensitive personal details.']
+  }
+ };
+ const items=[
+  ['About ESS','Purpose, limits and principles','i',T.eucalyptus],
+  ['Settings','Privacy, accessibility and preferences','⚙',T.sand],
+  ['Research & development','Testing, sources and improvements','▤',T.ochre],
+  ['Help','FAQs and app guidance','?',T.sand],
+  ['Share feedback','Feedback channel not connected yet','…',T.eucalyptus]
+ ];
  return <>
-  <CinematicHero image={ART.more} kicker="MORE" title="The system behind the calm." body="Understand ESS, adjust your experience and see how the system is being developed." height={280}/>
+  <CinematicHero image={ART.more} kicker="MORE" title="The system behind the calm." body="Understand ESS, adjust your expectations and see how the system is being developed." height={280}/>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>ESS</Text><Text style={s.sectionHeading}>Explore the system</Text></View>
   <View style={s.stack}>
    <FeatureCard title="How ESS reached this" subtitle="Rules, versions and transparency" icon="◇" accent={T.eucalyptus} onPress={openCore}/>
-   <FeatureCard title="About ESS" subtitle="Purpose, limits and principles" icon="i" accent="#8AA9AF"/>
-   <FeatureCard title="Settings" subtitle="Privacy, accessibility and preferences" icon="⚙" accent={T.sand}/>
-   <FeatureCard title="Research & development" subtitle="Testing, sources and improvements" icon="▤" accent={T.ochre}/>
-   <FeatureCard title="Help" subtitle="FAQs and app guidance" icon="?" accent={T.sand}/>
-   <FeatureCard title="Share feedback" subtitle="Help make ESS stronger" icon="…" accent={T.eucalyptus}/>
+   {items.map(([title,subtitle,icon,accent])=><FeatureCard key={title} title={title} subtitle={subtitle} icon={icon} accent={accent} onPress={()=>setDetail(title)}/>)}
   </View>
+  {!!detail&&<View style={[s.learnSection,{marginTop:12}]}>
+   <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>ABOUT THIS SECTION</Text><Text style={s.supportModeTitle}>{detail}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close More details" onPress={()=>setDetail('')} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
+   <Text style={s.learnBody}>{details[detail].description}</Text>
+   {details[detail].points.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
+  </View>}
  </>;
 }
 
@@ -499,11 +530,7 @@ function AppRoot(){
  const [coreOpen,setCoreOpen]=useState(false);
  const [pendingLearnTrail,setPendingLearnTrail]=useState(null);
  const [pendingSupportMode,setPendingSupportMode]=useState(null);
- const [journalEntries,setJournalEntries]=useState([
-  {when:'Today',text:'Feeling clearer about my next step.',change:'I know what I want to ask for.',tag:'Choice',icon:'◒'},
-  {when:'3 days ago',text:'Setting boundaries felt hard but good.',change:'I noticed I can pause before answering.',tag:'Boundary',icon:'◉'},
-  {when:'1 week ago',text:'Noticing patterns and what I need.',change:'Some things are still uncertain.',tag:'Uncertainty',icon:'▤'}
- ]);
+ const [journalEntries,setJournalEntries]=useState([]);
  const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);if(id==='support'&&detail)setPendingSupportMode(detail);setScreen(id);};
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go}>
