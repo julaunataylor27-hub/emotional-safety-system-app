@@ -84,7 +84,7 @@ const LEARN_TRAILS=[
  }
 ].concat(CURATED_MODULES.map(module=>({...module,image:null,icon:'▤'})));
 
-function Shell({screen,onTab,children}){
+function Shell({screen,onTab,routeRevision,children}){
  return <SafeAreaView style={s.safe} edges={['top','bottom']}>
   <StatusBar style="light" backgroundColor="#0D0B09"/>
   <ImageBackground source={ART[screen]||ART.home} resizeMode="cover" style={StyleSheet.absoluteFillObject} accessible={false}><View style={screen==='home'?s.homeSceneShade:s.appSceneShade}/></ImageBackground>
@@ -97,7 +97,7 @@ function Shell({screen,onTab,children}){
     </View>
    </View>
   </View>
-  <ScrollView key={screen} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
+  <ScrollView key={screen+"-"+routeRevision} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
   <View style={s.nav}>
    {TABS.map(([id,label,icon])=><Pressable key={id} accessibilityRole="tab" accessibilityState={{selected:screen===id}}
     accessibilityLabel={`${label} tab`} accessibilityHint={`Open ${label}`} onPress={()=>onTab(id)} style={({pressed})=>[s.navItem,pressed&&s.pressed]}>
@@ -247,7 +247,7 @@ function Learn({initialTrail,onConsumeInitialTrail,onNavigate}){
   }
  },[initialTrail]);
  const filtered=LEARN_TRAILS.filter(x=>(x.title+' '+x.subtitle+' '+x.helps).toLowerCase().includes(query.toLowerCase()));
- if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onNavigate={onNavigate} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)setSelectedTrail(next);}}/>;
+ if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onNavigate={onNavigate} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)onNavigate?.('learn',next.title);}}/>;
  return <>
   <CinematicHero image={ART.learn} kicker="KNOWLEDGE TRAILS" title="Learn" body="Explore culture, history, wellbeing, rights and practical tools at your own pace." height={215}/>
   <TextInput value={query} onChangeText={setQuery} placeholder="⌕  Search learning topics…" placeholderTextColor={T.muted} style={s.search}/>
@@ -729,12 +729,14 @@ function Result({title,items}){return <View style={s.resultCard}><Text style={s.
 
 function AppRoot(){
  const [screen,setScreen]=useState('home');
+ const [routeRevision,setRouteRevision]=useState(0);
  const [coreOpen,setCoreOpen]=useState(false);
  const [pendingLearnTrail,setPendingLearnTrail]=useState(null);
  const [pendingSupportMode,setPendingSupportMode]=useState(null);
  const [pendingMoreDetail,setPendingMoreDetail]=useState(null);
  const [journalEntries,setJournalEntries]=useState([]);
  const go=(id,detail)=>{
+  setRouteRevision(v=>v+1);
   if(id==='core'){setScreen('home');setCoreOpen(true);return;}
   setCoreOpen(false);
   if(id==='learn'&&detail)setPendingLearnTrail(detail);
@@ -743,7 +745,7 @@ function AppRoot(){
   setScreen(id);
  };
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
- return <Shell screen={screen} onTab={go}>
+ return <Shell screen={screen} onTab={go} routeRevision={routeRevision}>
   {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
