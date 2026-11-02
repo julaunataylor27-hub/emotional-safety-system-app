@@ -3,6 +3,13 @@
 // calm overlays, 44dp minimum targets, five-tab navigation and contextual urgency.
 import {T} from './theme';
 export const V={
+ appSceneShade:{flex:1,backgroundColor:'rgba(6,6,5,.58)'},
+ tileIcon:{width:40,height:40,borderRadius:13,borderWidth:1,borderColor:'rgba(205,183,150,.2)',backgroundColor:'rgba(12,17,14,.48)',alignItems:'center',justifyContent:'center',marginBottom:15},
+ learnThumbnail:{width:98,height:98,borderRadius:12,backgroundColor:'#352A20'},
+ journalCallToAction:{minHeight:56,marginTop:22,backgroundColor:'#8FA890',borderRadius:14,paddingHorizontal:18,flexDirection:'row',alignItems:'center',gap:12,borderWidth:1,borderColor:'rgba(231,250,223,.33)'},
+ journalCallText:{color:'#18261A',fontWeight:'850',fontSize:15,flex:1},
+ journalCallPlus:{color:'#18261A',fontWeight:'900',fontSize:26},
+
  safe:{flex:1,backgroundColor:T.bg},
  topBar:{minHeight:64,marginTop:1,paddingHorizontal:18,paddingVertical:10,flexDirection:'row',alignItems:'center',backgroundColor:'rgba(12,11,10,.26)',borderBottomWidth:0},
  wordmark:{flexDirection:'row',alignItems:'center',gap:12,flex:1},
