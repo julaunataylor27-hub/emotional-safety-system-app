@@ -537,8 +537,10 @@ function FinishStage({result,review,selectedNext,setSelectedNext,saved,onSave,on
    <Text style={s.fieldLabel}>YOUR REVIEW — WHAT YOU CHOSE</Text>
    <Text style={s.body}>Feelings you selected: {review.feelings.length?review.feelings.join(', '):'None selected'}</Text>
    <Text style={s.body}>Interpretations reviewed: {review.interpretations.length}</Text>
+   {review.interpretations.map((x,i)=><Text key={'interp'+i} style={s.reviewSummaryLine}>• {x.status}: {x.text}</Text>)}
    <Text style={s.body}>Questions you kept open: {review.uncertainties.filter(x=>x.status==='Still open').length}</Text>
    <Text style={s.body}>Questions you marked answered: {review.uncertainties.filter(x=>x.status!=='Still open').length} (not independently verified)</Text>
+   {review.uncertainties.map((x,i)=><Text key={'unknown'+i} style={s.reviewSummaryLine}>• {x.status}: {x.text}</Text>)}
    <Text style={s.body}>Option you explored: {review.focused_option||'None selected'}</Text>
    <Text style={s.stageNote}>Your selections are your review, not evidence. They cannot verify events or override safety rules.</Text>
   </View>
