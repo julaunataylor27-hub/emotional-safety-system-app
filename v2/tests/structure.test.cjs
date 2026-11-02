@@ -187,3 +187,27 @@ test('2027 image build refuses stale or broken photography',()=>{
  assert.match(workflow,/npm run prepare:art/);
  assert.match(workflow,/Verify all offline 2027 scenes were prepared/);
 });
+
+test('2027 phone layout refinement keeps welcome, cards and every tab compact',()=>{
+ const app=read('App.js');
+ const v=read('src/visual2027.js');
+ assert.match(app,/height=\{300\}/); // Home hero
+ for(const height of [240,215,235,225])assert.ok(app.includes('height={'+height+'}'), 'Missing compact tab hero '+height);
+ assert.match(app,/screen==='home'\?s.homeSceneShade:s.appSceneShade/);
+ assert.match(v,/heroTitle:\{[^}]*fontSize:31,lineHeight:36/);
+ assert.match(v,/homeTile:\{[^}]*minHeight:104/);
+ assert.match(v,/primary:\{[^}]*minHeight:50/);
+ assert.match(v,/learnTrailCard:\{[^}]*minHeight:90/);
+ assert.match(v,/navItem:\{[^}]*minHeight:54/);
+ assert.match(app,/edges=\{\['top','bottom'\]\}/);
+});
+test('2027 warm cliff photo is real, credited, and part of the offline photo pipeline',()=>{
+ const script=read('scripts/prepare-scenes.mjs');
+ const credit=fs.readFileSync(path.join(root,'..','docs','ESS_V2_PHOTO_CREDITS.md'),'utf8');
+ const app=read('App.js');
+ assert.match(script,/\['home-coast','Kalbarri Cliffs\.jpg'\]/);
+ assert.match(credit,/Jakub Michankow/);
+ assert.match(credit,/CC BY 2\.0/);
+ assert.match(app,/Jakub Michankow/);
+ assert.ok(!app.includes('Leon Durrant'));
+});
