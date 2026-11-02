@@ -1,8 +1,8 @@
-name: Build ESS v2 Clean APK
+name: Build ESS v2 Content Integration APK
 
 on:
   push:
-    branches: [ess-v2-clean-rebuild]
+    branches: [ess-v2-content-integration-20261102]
     paths:
       - 'v2/**'
       - '.github/workflows/build-ess-v2-clean.yml'
@@ -41,11 +41,11 @@ jobs:
       - name: Build v2 release APK
         run: cd android && ./gradlew assembleRelease --no-daemon
       - name: Copy v2 APK
-        run: cp android/app/build/outputs/apk/release/app-release.apk ESS-v2-Clean-Rebuild.apk
+        run: cp android/app/build/outputs/apk/release/app-release.apk ESS-v2-Content-Integration.apk
       - name: Upload v2 APK
         uses: actions/upload-artifact@v4
         with:
-          name: ESS-v2-Clean-Rebuild-APK
-          path: v2/ESS-v2-Clean-Rebuild.apk
+          name: ESS-v2-Content-Integration-APK
+          path: v2/ESS-v2-Content-Integration.apk
           if-no-files-found: error
           retention-days: 30
