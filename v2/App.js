@@ -10,6 +10,7 @@ import {buildReflectionReview} from './src/core/reflectionReview.cjs';
 import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
 import {CURATED_MODULES} from './src/data/knowledgeLibrary.cjs';
 import {CONNECTION_STEPS} from './src/data/connectionPath.cjs';
+import {ENCOURAGEMENT_LESSON,ENCOURAGEMENT_CHOICES,encouragementChoice} from './src/data/encouragementGuide.cjs';
 import supportDirectory from './src/data/supportDirectory.json';
 
 // ESS_V2_2027_FULL_APP_VISUAL_CONTRACT: new offline photography, not old imagery.
@@ -82,7 +83,7 @@ const LEARN_TRAILS=[
   sourceStatus:'Keep tools transparent, testable and clearly separated from professional advice.',
   related:'Emotional Wellbeing'
  }
-].concat(CURATED_MODULES.map(module=>({...module,image:null,icon:'▤'})));
+].concat(CURATED_MODULES.map(module=>({...module,image:null,icon:'▤'})),[{...ENCOURAGEMENT_LESSON,image:ART.emotional,icon:'◇'}]);
 
 function Shell({screen,onTab,routeRevision,children}){
  return <SafeAreaView style={s.safe} edges={['top','bottom']}>
@@ -261,7 +262,9 @@ function Learn({initialTrail,onConsumeInitialTrail,onNavigate}){
 
 function LearnTrail({trail,onBack,onRelated,onNavigate}){
  const [clueIndex,setClueIndex]=useState(0);
- React.useEffect(()=>setClueIndex(0),[trail.id]);
+ const [encouragementId,setEncouragementId]=useState(null);
+ React.useEffect(()=>{setClueIndex(0);setEncouragementId(null);},[trail.id]);
+ const encouragement=encouragementChoice(encouragementId);
  const selectedClue=CONNECTION_STEPS[clueIndex];
  const openClue=clue=>{
   if(clue.destination==='learn'&&clue.target){onRelated(clue.target);return;}
@@ -306,6 +309,31 @@ function LearnTrail({trail,onBack,onRelated,onNavigate}){
       style={[s.coreNextButton,clueIndex===CONNECTION_STEPS.length-1&&s.disabledStep]}><Text style={s.coreNextText}>Next clue</Text><Text style={s.coreNextText}>→</Text></Pressable>
    </View>
    <Pressable accessibilityRole="button" accessibilityLabel="Leave connection trail" onPress={onBack} style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave the trail</Text></Pressable>
+  </View>}
+  {trail.id==='encouragement-stamina'&&<View style={s.encouragementPanel}>
+   <Text style={s.fieldLabel}>ENCOURAGEMENT IS AN INVITATION, NOT A DEMAND</Text>
+   <Text style={s.supportModeTitle}>What would help you right now?</Text>
+   <Text style={s.learnBody}>Choose a kind of encouragement, change your mind, or leave this open. You do not have to feel positive or share an experience.</Text>
+   <View style={s.encouragementChoices}>
+    {ENCOURAGEMENT_CHOICES.map(option=><Pressable key={option.id} accessibilityRole="button"
+     accessibilityLabel={option.title} accessibilityState={{selected:encouragementId===option.id}}
+     onPress={()=>setEncouragementId(id=>id===option.id?null:option.id)}
+     style={[s.encouragementOption,encouragementId===option.id&&s.encouragementOptionOn]}>
+     <Text style={s.encouragementOptionText}>{option.title}</Text>
+     <Text style={s.encouragementOptionMark}>{encouragementId===option.id?'✓':'›'}</Text>
+    </Pressable>)}
+   </View>
+   {encouragement&&<View style={s.encouragementResponse}>
+    <Text style={s.fieldLabel}>SOMETHING WORTH REMEMBERING</Text>
+    <Text style={s.encouragementMessage}>{encouragement.message}</Text>
+    <Text style={s.stageNote}>{encouragement.note}</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel={encouragement.actionLabel}
+     onPress={()=>encouragement.action==='core'?onNavigate?.('core',trail.title):onNavigate?.(encouragement.action)}
+     style={s.secondary}><Text style={s.secondaryText}>{encouragement.actionLabel}</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Clear encouragement choice" onPress={()=>setEncouragementId(null)}
+     style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave this open</Text></Pressable>
+   </View>}
+   <Text style={s.stageNote}>Choosing rest, a boundary, or human help is never a failure. ESS cannot judge how much you can cope with and is not an emergency service.</Text>
   </View>}
   <View style={s.learnSection}><Text style={s.fieldLabel}>KEY IDEAS</Text>{trail.ideas.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}</View>
   <View style={s.learnSection}><Text style={s.fieldLabel}>WHAT IS STILL UNCERTAIN?</Text><Text style={s.learnBody}>{trail.unknown}</Text></View>
@@ -725,6 +753,13 @@ function FinishStage({result,review,returnTrail,selectedNext,setSelectedNext,sav
    <DestinationCard icon="♡" title="Support" subtitle="See support options" suggested={recommendations.some(x=>x.destination==='support')} onPress={()=>onNavigate?.('support')}/>
    <DestinationCard icon="⌂" title="Home" subtitle="Return to the start" onPress={()=>onNavigate?.('home')}/>
   </View>
+  {!['danger','coercion','pressure'].includes(result.safety.classification)&&<Pressable
+   accessibilityRole="button" accessibilityLabel="Explore encouragement and emotional stamina"
+   onPress={()=>onNavigate?.('learn','Encouragement & Emotional Stamina')}
+   style={s.crossLinkButton}><View style={s.rowCopy}><Text style={s.crossLinkEyebrow}>OPTIONAL LEARNING</Text>
+   <Text style={s.crossLinkTitle}>Encouragement & Emotional Stamina</Text>
+   <Text style={s.crossLinkSub}>Notice effort, take a safe pause or explore a manageable next step—only if useful to you.</Text></View>
+   <Text style={s.crossLinkArrow}>→</Text></Pressable>
   <Pressable accessibilityRole="button" accessibilityLabel="Leave it for now without saving" onPress={()=>onNavigate?.('home')} style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave it for now</Text></Pressable>
   <Text style={s.stageNote}>Leaving returns Home. Nothing is saved unless you choose Save this reflection to Journal.</Text>
   <Text style={s.stageNote}>Suggested pathway: {result.next_pathway.replaceAll('_',' → ')}. Suggestions are optional; you decide what happens next.</Text>
