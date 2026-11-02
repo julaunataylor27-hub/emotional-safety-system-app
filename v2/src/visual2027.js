@@ -139,6 +139,15 @@ export const V={
   // The System Map lives inside More; the original Home + five-tab shell are unchanged.
  systemMap:{gap:8,marginTop:15},
  systemMapAction:{minHeight:62,flexDirection:'row',alignItems:'center',gap:8,padding:12,borderWidth:1,borderRadius:13,borderColor:'rgba(218,194,161,.4)',backgroundColor:'rgba(12,25,18,.9)'},
+  // Encouragement is a gentle optional reading panel, never a score or crisis override.
+ encouragementPanel:{borderRadius:17,borderWidth:1,borderColor:'rgba(146,184,151,.56)',backgroundColor:'rgba(18,39,30,.94)',padding:15,marginVertical:12},
+ encouragementChoices:{gap:9,marginTop:13},
+ encouragementOption:{minHeight:52,flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12,borderRadius:13,borderWidth:1,borderColor:'rgba(218,194,161,.37)',backgroundColor:'rgba(10,12,9,.87)',paddingVertical:10,paddingHorizontal:14},
+ encouragementOptionOn:{borderColor:'#B8D5B1',backgroundColor:'rgba(43,74,49,.95)'},
+ encouragementOptionText:{color:'#F4E7D4',fontSize:13.5,lineHeight:20,fontWeight:'700',flex:1},
+ encouragementOptionMark:{color:'#F4D3A4',fontSize:20,fontWeight:'800'},
+ encouragementResponse:{borderRadius:14,borderWidth:1,borderColor:'rgba(146,184,151,.52)',backgroundColor:'rgba(11,23,16,.96)',padding:14,marginTop:12},
+ encouragementMessage:{color:'#F1E6D6',fontSize:14.5,lineHeight:23},
   // Six-step optional Connection Trail. Uses existing readable 2027 family only.
  connectionChapters:{flexDirection:'row',flexWrap:'wrap',gap:8,marginTop:13,marginBottom:10},
  connectionChip:{minHeight:44,borderRadius:12,borderWidth:1,borderColor:'rgba(216,194,160,.38)',backgroundColor:'rgba(10,9,7,.88)',paddingHorizontal:12,paddingVertical:9,justifyContent:'center'},
