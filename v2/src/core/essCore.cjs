@@ -153,10 +153,20 @@ const CORE_BACKBONE = Object.freeze([
 
 function processSituation(input = {}) {
   const text = String(input.text || '').trim().slice(0, 2500);
-  const selectedFeeling = String(input.feeling || 'Not specified');
-  const evidence = assessEvidence({ text, feeling: selectedFeeling });
+  // Only direct user selection counts as self-report. Language cues remain suggestions.
+  // Never use feeling selections to infer danger, truth, intent or legal responsibility.
+  const selections = Array.isArray(input.selectedFeelings) ? input.selectedFeelings : [];
+  const ownWords = String(input.otherFeeling || '').trim().slice(0, 50);
+  const legacyFeeling = String(input.feeling || '').trim();
+  const reportedFeelings = [...new Set(
+    [...selections, ownWords, ...(legacyFeeling && legacyFeeling !== 'Not specified' ? [legacyFeeling] : [])]
+      .map(x => String(x || '').trim().toLowerCase().slice(0, 50))
+      .filter(Boolean)
+  )].slice(0, 8);
+  const evidence = assessEvidence({ text, feeling: 'Not specified' });
   const statements = separateStatements(text);
-  const emotions = detectEmotions(text, selectedFeeling);
+  const languageCues = detectEmotions(text, 'Not specified');
+  const emotions = [...new Set([...reportedFeelings, ...languageCues])].slice(0, 12);
   const unknowns = buildUnknowns(text, evidence);
 
   const output = {
@@ -167,7 +177,9 @@ function processSituation(input = {}) {
     },
     emotion: {
       reported_or_detected: emotions,
-      note: 'Emotions are self-reported or language cues only; they are not proof of another person’s intent.'
+      user_selected: reportedFeelings,
+      language_cues: languageCues,
+      note: 'Only feelings you select or enter are treated as your self-report. Other words are language cues, not verified facts or evidence of another person’s intent.'
     },
     evidence: {
       reported_observations: statements.reported,
