@@ -6,7 +6,7 @@ Images are bundled locally in the compiled APK by `v2/scripts/prepare-scenes.mjs
 
 | App image | Original filename (Wikimedia Commons) | Photographer | License |
 |---|---|---|---|
-| Home coast | [The Gap, Torndirrup National Park, Albany, Western Australia.jpg](https://commons.wikimedia.org/wiki/File:The_Gap,_Torndirrup_National_Park,_Albany,_Western_Australia.jpg) | Leon Durrant | CC BY-SA 4.0 |
+| Home coast | [Kalbarri Cliffs.jpg](https://commons.wikimedia.org/wiki/File:Kalbarri_Cliffs.jpg) | Jakub Michankow | CC BY 2.0 |
 | Journal Banksia | [Australian native Banksia flower.jpg](https://commons.wikimedia.org/wiki/File:Australian_native_Banksia_flower.jpg) | Heidi la Tanguera | CC BY-SA 4.0 |
 | Learn coast | [Kalbarri NP Coastal.jpg](https://commons.wikimedia.org/wiki/File:Kalbarri_NP_Coastal.jpg) | Bjørn Christian Tørrissen | CC BY-SA 3.0 |
 | Support gorge | [Joffre Gorge.jpg](https://commons.wikimedia.org/wiki/File:Joffre_Gorge.jpg) | Iktoh | CC BY-SA 4.0 |
