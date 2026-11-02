@@ -136,6 +136,14 @@ export const V={
  serviceListRow:{minHeight:70,flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:8},
  serviceDetails:{borderTopWidth:1,borderTopColor:'rgba(216,194,160,.28)',paddingTop:12,marginTop:10},
  contactRow:{flexDirection:'row',gap:10,alignItems:'center',flexWrap:'wrap',marginTop:10},
+  // Six-step optional Connection Trail. Uses existing readable 2027 family only.
+ connectionChapters:{flexDirection:'row',flexWrap:'wrap',gap:8,marginTop:13,marginBottom:10},
+ connectionChip:{minHeight:44,borderRadius:12,borderWidth:1,borderColor:'rgba(216,194,160,.38)',backgroundColor:'rgba(10,9,7,.88)',paddingHorizontal:12,paddingVertical:9,justifyContent:'center'},
+ connectionChipOn:{backgroundColor:'rgba(45,62,43,.94)',borderColor:T.eucalyptus},
+ connectionChipText:{color:'#E7D7C6',fontSize:11.5,fontWeight:'700'},
+ connectionChipTextOn:{color:'#F6EBDD',fontWeight:'900'},
+ connectionSelected:{borderRadius:14,borderWidth:1,borderColor:'rgba(216,194,160,.36)',backgroundColor:'rgba(11,19,14,.95)',padding:14,marginVertical:8},
+ disabledStep:{opacity:.45},
   // Reflection, choice, evidence and secondary routes share the same 2027 readable surface.
  fieldLabel:{color:'#E8CDA8',fontSize:11,fontWeight:'800',letterSpacing:1.35,marginBottom:9},
  body:{color:T.text,fontSize:14,lineHeight:22,marginVertical:2},
