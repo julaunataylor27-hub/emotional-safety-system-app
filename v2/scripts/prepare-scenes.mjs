@@ -8,7 +8,7 @@ import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dir=path.join(root,'assets','scenes');
 const scenes=[
- ['home-coast','The Gap, Torndirrup National Park, Albany, Western Australia.jpg'],
+ ['home-coast','Kalbarri Cliffs.jpg'],
  ['journal-banksia','Australian native Banksia flower.jpg'],
  ['learn-coast','Kalbarri NP Coastal.jpg'],
  ['support-gorge','Joffre Gorge.jpg'],
