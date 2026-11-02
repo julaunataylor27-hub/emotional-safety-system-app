@@ -8,6 +8,8 @@ import {V} from './src/visual2027';
 import {processSituation} from './src/core/essCore.cjs';
 import {buildReflectionReview} from './src/core/reflectionReview.cjs';
 import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
+import {CURATED_MODULES} from './src/data/knowledgeLibrary.cjs';
+import supportDirectory from './src/data/supportDirectory.json';
 
 // ESS_V2_2027_FULL_APP_VISUAL_CONTRACT: new offline photography, not old imagery.
 const ART={
@@ -79,7 +81,7 @@ const LEARN_TRAILS=[
   sourceStatus:'Keep tools transparent, testable and clearly separated from professional advice.',
   related:'Emotional Wellbeing'
  }
-];
+].concat(CURATED_MODULES.map(module=>({...module,image:null,icon:'▤'})));
 
 function Shell({screen,onTab,children}){
  return <SafeAreaView style={s.safe} edges={['top','bottom']}>
@@ -233,7 +235,7 @@ function JournalEntryCard({item,accent,onDelete}){
  </Pressable>;
 }
 
-function Learn({initialTrail,onConsumeInitialTrail}){
+function Learn({initialTrail,onConsumeInitialTrail,onNavigate}){
  const [query,setQuery]=useState('');
  const [selectedTrail,setSelectedTrail]=useState(null);
  React.useEffect(()=>{
@@ -244,26 +246,50 @@ function Learn({initialTrail,onConsumeInitialTrail}){
   }
  },[initialTrail]);
  const filtered=LEARN_TRAILS.filter(x=>(x.title+' '+x.subtitle+' '+x.helps).toLowerCase().includes(query.toLowerCase()));
- if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)setSelectedTrail(next);}}/>;
+ if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onNavigate={onNavigate} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)setSelectedTrail(next);}}/>;
  return <>
   <CinematicHero image={ART.learn} kicker="KNOWLEDGE TRAILS" title="Learn" body="Explore culture, history, wellbeing, rights and practical tools at your own pace." height={215}/>
   <TextInput value={query} onChangeText={setQuery} placeholder="⌕  Search learning topics…" placeholderTextColor={T.muted} style={s.search}/>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Find context or knowledge that helps you understand something better — without forcing a conclusion.</Text></View>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>EXPLORE</Text><Text style={s.sectionHeading}>Learning paths</Text></View>
   <View style={s.stack}>{filtered.map(trail=><Pressable key={trail.id} accessibilityRole="button" accessibilityLabel={`${trail.title} learning trail`} onPress={()=>setSelectedTrail(trail)} style={({pressed})=>[s.learnTrailCard,pressed&&s.pressed]}>
-   <View style={s.learnTrailContent}><Image source={trail.image} resizeMode="cover" style={s.learnThumbnail}/><View style={s.rowCopy}><Text style={s.learnTrailTitle}>{trail.title}</Text><Text style={s.learnTrailSub}>{trail.subtitle}</Text></View><Text style={s.featureArrow}>›</Text></View>
+   <View style={s.learnTrailContent}>{trail.image?<Image source={trail.image} resizeMode="cover" style={s.learnThumbnail}/>:<View style={s.knowledgeIcon}><AppIcon name="learn" size={30} color={T.ochre}/></View>}<View style={s.rowCopy}><Text style={s.learnTrailTitle}>{trail.title}</Text><Text style={s.learnTrailSub}>{trail.subtitle}</Text></View><Text style={s.featureArrow}>›</Text></View>
   </Pressable>)}</View>
  </>;
 }
 
-function LearnTrail({trail,onBack,onRelated}){
+function LearnTrail({trail,onBack,onRelated,onNavigate}){
+ const openSource=url=>{
+  if(!/^https:\/\//.test(url))return Alert.alert('Source unavailable','The source address was not accepted.');
+  Linking.openURL(url).catch(()=>Alert.alert('Could not open source','The original website could not open. You can copy the displayed address and try again.'));
+ };
  return <>
   <View style={s.coreHeader}><Pressable onPress={onBack} style={s.back}><Text style={s.backText}>‹</Text></Pressable><View style={s.rowCopy}><Text style={s.sectionEyebrow}>LEARN TRAIL</Text><Text style={s.coreTitle}>{trail.title}</Text></View></View>
-  <ImageBackground source={trail.image} resizeMode="cover" style={s.learnDetailHero} imageStyle={s.heroImage}><View style={s.heroVignette}/><View style={s.learnDetailCopy}><Text style={s.kicker}>WHAT THIS HELPS YOU UNDERSTAND</Text><Text style={s.learnDetailTitle}>{trail.helps}</Text></View></ImageBackground>
+  <View style={s.learnDetailHero}>
+   {trail.image&&<ImageBackground source={trail.image} resizeMode="cover" style={StyleSheet.absoluteFillObject}/>}
+   <View style={s.learnDetailShade}/>
+   <View style={s.learnDetailCopy}><Text style={s.kicker}>WHAT THIS HELPS YOU UNDERSTAND</Text><Text style={s.learnDetailTitle}>{trail.helps}</Text></View>
+  </View>
+  {!!trail.scope&&<View style={s.sourceScope}><Text style={s.sourceScopeText}>SCOPE: {trail.scope}</Text></View>}
   <View style={s.learnSection}><Text style={s.fieldLabel}>KEY IDEAS</Text>{trail.ideas.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}</View>
   <View style={s.learnSection}><Text style={s.fieldLabel}>WHAT IS STILL UNCERTAIN?</Text><Text style={s.learnBody}>{trail.unknown}</Text></View>
-  <View style={s.learnSection}><Text style={s.fieldLabel}>SOURCE STATUS</Text><View style={s.sourceBadge}><Text style={s.sourceBadgeText}>SOURCE DISCIPLINE ON</Text></View><Text style={s.learnBody}>{trail.sourceStatus}</Text></View>
+  <View style={s.learnSection}><Text style={s.fieldLabel}>SOURCE STATUS</Text><View style={s.sourceBadge}><Text style={s.sourceBadgeText}>SOURCE DISCIPLINE ON</Text></View><Text style={s.learnBody}>{trail.sourceStatus}</Text>
+   {!!trail.reviewStatus&&<Text style={s.stageNote}>{trail.reviewStatus}</Text>}
+  </View>
+  {!!trail.sources?.length&&<View style={s.learnSection}>
+   <Text style={s.fieldLabel}>READ THE ORIGINAL SOURCES</Text>
+   <Text style={s.stageNote}>These are named public sources. External websites open only when you choose. Your Journal and reflections are not sent to them.</Text>
+   {trail.sources.map((source,i)=><View key={i} style={s.sourceItem}>
+    <Text style={s.learnTrailTitle}>{source.title}</Text>
+    <Text style={s.learnTrailSub}>{source.role}</Text>
+    <Text style={s.learnTrailSub}>Attributed to: {source.author}</Text>
+    <Text style={s.learnTrailSub}>Source reviewed: {source.checked}</Text>
+    <Pressable accessibilityRole="link" accessibilityLabel={`Open source ${source.title}`} onPress={()=>openSource(source.url)} style={s.sourceAction}><Text style={s.sourceActionText}>Read source →</Text></Pressable>
+    <Text selectable style={s.sourceUrl}>{source.url}</Text>
+   </View>)}
+  </View>}
   <Pressable onPress={()=>onRelated(trail.related)} style={s.crossLinkButton}><View><Text style={s.crossLinkEyebrow}>RELATED TRAIL</Text><Text style={s.crossLinkTitle}>{trail.related}</Text><Text style={s.crossLinkSub}>Keep following the knowledge path if it helps.</Text></View><Text style={s.crossLinkArrow}>→</Text></Pressable>
+  <Pressable accessibilityRole="button" accessibilityLabel="View support options if needed" onPress={()=>onNavigate?.('support')} style={s.secondary}><Text style={s.secondaryText}>Support options, when you need them</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Learn for context · not forced conclusions</Text><View style={s.signatureLine}/></View>
  </>;
 }
@@ -610,7 +636,7 @@ function AppRoot(){
   {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
-   screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)}/>:
+   screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)} onNavigate={go}/>:
    screen==='support'?<Support initialMode={pendingSupportMode} onConsumeInitialMode={()=>setPendingSupportMode(null)} onNavigate={go}/>:
    <More initialDetail={pendingMoreDetail} onConsumeInitialDetail={()=>setPendingMoreDetail(null)}/>}
  </Shell>;
