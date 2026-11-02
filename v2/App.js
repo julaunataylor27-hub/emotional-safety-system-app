@@ -83,7 +83,7 @@ const LEARN_TRAILS=[
 function Shell({screen,onTab,children}){
  return <SafeAreaView style={s.safe} edges={['top','bottom']}>
   <StatusBar style="light" backgroundColor="#0D0B09"/>
-  <ImageBackground source={ART[screen]||ART.home} resizeMode="cover" style={StyleSheet.absoluteFillObject} accessible={false}><View style={s.appSceneShade}/></ImageBackground>
+  <ImageBackground source={ART[screen]||ART.home} resizeMode="cover" style={StyleSheet.absoluteFillObject} accessible={false}><View style={screen==='home'?s.homeSceneShade:s.appSceneShade}/></ImageBackground>
   <View style={s.topBar}>
    <View style={s.wordmark}>
     <View style={s.mark}><Text style={s.markText}>ESS</Text></View>
@@ -133,7 +133,7 @@ function FeatureCard({title,subtitle,icon,accent,onPress,image}){
 function Home({openCore,setScreen}){
  return <>
   <CinematicHero image={ART.home} kicker="WELCOME TO ESS" title="You’re in the right place."
-   body="A calm place to understand what’s happening, keep your choices and decide what comes next." height={360}>
+   body="A calm place to understand what’s happening, keep your choices and decide what comes next." height={300}>
    <View style={s.heroMeta}><Pill>You stay in control</Pill><Pill>No judgement</Pill></View>
    <Pressable accessibilityRole="button" accessibilityLabel="Start a reflection" accessibilityHint="Open the ESS Core guided reflection" onPress={openCore} style={({pressed})=>[s.primary,pressed&&s.pressed]}>
     <Text style={s.primaryText}>Start a reflection</Text><Text style={s.primaryArrow}>→</Text>
@@ -171,7 +171,7 @@ function Journal({entries,setEntries}){
  const counts=tags.reduce((acc,x)=>({...acc,[x]:entries.filter(e=>e.tag===x).length}),{});
  const recentChanges=entries.slice(0,3).map(x=>x.change).filter(Boolean);
  return <>
-  <CinematicHero image={ART.journal} kicker="YOUR PRIVATE SPACE" title="Journal" body="Your thoughts, your pace. Reflect and notice what changes over time." height={280}>
+  <CinematicHero image={ART.journal} kicker="YOUR PRIVATE SPACE" title="Journal" body="Your thoughts, your pace. Reflect and notice what changes over time." height={240}>
    <Pressable accessibilityRole="button" accessibilityLabel="New journal entry" onPress={()=>setComposerOpen(v=>!v)} style={s.journalCallToAction}>
     <AppIcon name="journal" size={21} color="#18261A"/>
     <Text style={s.journalCallText}>{composerOpen?'Close entry':'New entry'}</Text>
@@ -228,7 +228,7 @@ function Learn({initialTrail,onConsumeInitialTrail}){
  const filtered=LEARN_TRAILS.filter(x=>(x.title+' '+x.subtitle+' '+x.helps).toLowerCase().includes(query.toLowerCase()));
  if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)setSelectedTrail(next);}}/>;
  return <>
-  <CinematicHero image={ART.learn} kicker="KNOWLEDGE TRAILS" title="Learn" body="Explore culture, history, wellbeing, rights and practical tools at your own pace." height={270}/>
+  <CinematicHero image={ART.learn} kicker="KNOWLEDGE TRAILS" title="Learn" body="Explore culture, history, wellbeing, rights and practical tools at your own pace." height={215}/>
   <TextInput value={query} onChangeText={setQuery} placeholder="⌕  Search learning topics…" placeholderTextColor={T.muted} style={s.search}/>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Find context or knowledge that helps you understand something better — without forcing a conclusion.</Text></View>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>EXPLORE</Text><Text style={s.sectionHeading}>Learning paths</Text></View>
@@ -299,7 +299,7 @@ function Support({initialMode,onConsumeInitialMode,onNavigate}){
  },[initialMode]);
  const current=MODES[mode];
  return <>
-  <CinematicHero image={ART.support} kicker="SUPPORT" title="You don’t have to figure it out alone." body="Find trusted services, clear information and practical next steps — at your pace." height={300}/>
+  <CinematicHero image={ART.support} kicker="SUPPORT" title="You don’t have to figure it out alone." body="Find trusted services, clear information and practical next steps — at your pace." height={235}/>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Understand your options, reach human help if you want it, and keep control of what happens next.</Text></View>
   <View style={s.supportModeTabs}>
    {Object.values(MODES).map(x=><Pressable key={x.id} accessibilityRole="button" accessibilityState={{selected:mode===x.id}} accessibilityLabel={`${x.id} support mode`} onPress={()=>{setMode(x.id);setSelectedAction(null);}} style={[s.supportModeTab,mode===x.id&&s.supportModeTabOn]}><Text style={[s.supportModeTabText,mode===x.id&&s.supportModeTabTextOn]}>{x.id==='calm'?'Calm':x.id==='boundary'?'Boundary':x.id==='coercion'?'Coercion':'Urgent'}</Text></Pressable>)}
@@ -384,7 +384,7 @@ function More({openCore}){
   ['Photography credits','Creators, licenses and source images','i',T.sand]
  ];
  return <>
-  <CinematicHero image={ART.more} kicker="MORE" title="The system behind the calm." body="Understand ESS, adjust your expectations and see how the system is being developed." height={280}/>
+  <CinematicHero image={ART.more} kicker="MORE" title="The system behind the calm." body="Understand ESS, adjust your expectations and see how the system is being developed." height={225}/>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>ESS</Text><Text style={s.sectionHeading}>Explore the system</Text></View>
   <View style={s.stack}>
    <FeatureCard title="How ESS reached this" subtitle="Rules, versions and transparency" icon="◇" accent={T.eucalyptus} onPress={openCore}/>
