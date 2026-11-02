@@ -89,3 +89,11 @@ test('transparency details are visible immediately rather than hidden below the 
  assert.match(app,/initialDetail=\{pendingMoreDetail\}/);
  assert.match(app,/if\(id==='more'&&detail\)setPendingMoreDetail\(detail\)/);
 });
+
+test('a saved session-only journal entry can be removed by the person after confirmation',()=>{
+ assert.match(app,/accessibilityLabel="Delete this saved reflection"/);
+ assert.match(app,/Alert\.alert\('Delete this reflection\?'/);
+ assert.match(app,/\{text:'Cancel',style:'cancel'\}/);
+ assert.match(app,/\{text:'Delete',style:'destructive',onPress:\(\)=>onDelete\?\.\(\)\}/);
+ assert.match(app,/setEntries\(current=>current\.filter\(x=>x!==item\)\)/);
+});
