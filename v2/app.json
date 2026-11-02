@@ -1,13 +1,13 @@
 {
-  "expo":{
-    "name":"Emotional Safety System v2",
-    "slug":"emotional-safety-system-v2",
-    "version":"0.1.0",
-    "orientation":"portrait",
-    "userInterfaceStyle":"dark",
-    "android":{
-      "package":"au.com.emotionalsafetysystem.v2",
-      "versionCode":1
+  "expo": {
+    "name": "ESS v2 Connected Test",
+    "slug": "emotional-safety-system-v2",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "au.com.emotionalsafetysystem.v2.connected",
+      "versionCode": 2
     }
   }
 }

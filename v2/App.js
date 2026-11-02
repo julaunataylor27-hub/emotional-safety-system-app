@@ -8,6 +8,11 @@ import {V} from './src/visual2027';
 import {processSituation} from './src/core/essCore.cjs';
 import {buildReflectionReview} from './src/core/reflectionReview.cjs';
 import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
+import {CURATED_MODULES} from './src/data/knowledgeLibrary.cjs';
+import {CONNECTION_STEPS} from './src/data/connectionPath.cjs';
+import {ENCOURAGEMENT_LESSON,ENCOURAGEMENT_CHOICES,encouragementChoice} from './src/data/encouragementGuide.cjs';
+import {ESS_PURPOSE} from './src/data/essPurpose.cjs';
+import supportDirectory from './src/data/supportDirectory.json';
 
 // ESS_V2_2027_FULL_APP_VISUAL_CONTRACT: new offline photography, not old imagery.
 const ART={
@@ -79,9 +84,9 @@ const LEARN_TRAILS=[
   sourceStatus:'Keep tools transparent, testable and clearly separated from professional advice.',
   related:'Emotional Wellbeing'
  }
-];
+].concat(CURATED_MODULES.map(module=>({...module,image:null,icon:'▤'})),[{...ENCOURAGEMENT_LESSON,image:ART.emotional,icon:'◇'}]);
 
-function Shell({screen,onTab,children}){
+function Shell({screen,onTab,routeRevision,children}){
  return <SafeAreaView style={s.safe} edges={['top','bottom']}>
   <StatusBar style="light" backgroundColor="#0D0B09"/>
   <ImageBackground source={ART[screen]||ART.home} resizeMode="cover" style={StyleSheet.absoluteFillObject} accessible={false}><View style={screen==='home'?s.homeSceneShade:s.appSceneShade}/></ImageBackground>
@@ -94,7 +99,7 @@ function Shell({screen,onTab,children}){
     </View>
    </View>
   </View>
-  <ScrollView key={screen} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
+  <ScrollView key={screen+"-"+routeRevision} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
   <View style={s.nav}>
    {TABS.map(([id,label,icon])=><Pressable key={id} accessibilityRole="tab" accessibilityState={{selected:screen===id}}
     accessibilityLabel={`${label} tab`} accessibilityHint={`Open ${label}`} onPress={()=>onTab(id)} style={({pressed})=>[s.navItem,pressed&&s.pressed]}>
@@ -147,6 +152,13 @@ function Home({openCore,setScreen}){
    <Pressable accessibilityRole="button" accessibilityLabel="Find support when needed" onPress={()=>setScreen('support')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="support" size={23} color={T.clay}/></View><Text style={s.tileTitle}>Find support</Text><Text style={s.tileSub}>when needed</Text></Pressable>
    <Pressable accessibilityRole="button" accessibilityLabel="How ESS reached this" onPress={()=>setScreen('more','How ESS reached this')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="evidence" size={23} color={T.eucalyptus}/></View><Text style={s.tileTitle}>How ESS</Text><Text style={s.tileSub}>reached this</Text></Pressable>
   </View>
+  <Pressable accessibilityRole="button" accessibilityLabel="Why the Emotional Safety System exists"
+   accessibilityHint="Read the purpose behind ESS" onPress={()=>setScreen('more','Why ESS Exists')}
+   style={s.purposeHomeLink}>
+   <View style={s.rowCopy}><Text style={s.purposeHomeEyebrow}>WHY ESS EXISTS</Text>
+    <Text style={s.purposeHomeText}>Strength includes recognising effort, allowing recovery and choosing what comes next.</Text>
+   </View><Text style={s.featureArrow}>›</Text>
+  </Pressable>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Human on the surface. Rigorous underneath.</Text><View style={s.signatureLine}/></View>
  </>;
 }
@@ -233,7 +245,7 @@ function JournalEntryCard({item,accent,onDelete}){
  </Pressable>;
 }
 
-function Learn({initialTrail,onConsumeInitialTrail}){
+function Learn({initialTrail,onConsumeInitialTrail,onNavigate}){
  const [query,setQuery]=useState('');
  const [selectedTrail,setSelectedTrail]=useState(null);
  React.useEffect(()=>{
@@ -244,26 +256,113 @@ function Learn({initialTrail,onConsumeInitialTrail}){
   }
  },[initialTrail]);
  const filtered=LEARN_TRAILS.filter(x=>(x.title+' '+x.subtitle+' '+x.helps).toLowerCase().includes(query.toLowerCase()));
- if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)setSelectedTrail(next);}}/>;
+ if(selectedTrail) return <LearnTrail trail={selectedTrail} onBack={()=>setSelectedTrail(null)} onNavigate={onNavigate} onRelated={title=>{const next=LEARN_TRAILS.find(x=>x.title===title);if(next)onNavigate?.('learn',next.title);}}/>;
  return <>
   <CinematicHero image={ART.learn} kicker="KNOWLEDGE TRAILS" title="Learn" body="Explore culture, history, wellbeing, rights and practical tools at your own pace." height={215}/>
   <TextInput value={query} onChangeText={setQuery} placeholder="⌕  Search learning topics…" placeholderTextColor={T.muted} style={s.search}/>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Find context or knowledge that helps you understand something better — without forcing a conclusion.</Text></View>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>EXPLORE</Text><Text style={s.sectionHeading}>Learning paths</Text></View>
   <View style={s.stack}>{filtered.map(trail=><Pressable key={trail.id} accessibilityRole="button" accessibilityLabel={`${trail.title} learning trail`} onPress={()=>setSelectedTrail(trail)} style={({pressed})=>[s.learnTrailCard,pressed&&s.pressed]}>
-   <View style={s.learnTrailContent}><Image source={trail.image} resizeMode="cover" style={s.learnThumbnail}/><View style={s.rowCopy}><Text style={s.learnTrailTitle}>{trail.title}</Text><Text style={s.learnTrailSub}>{trail.subtitle}</Text></View><Text style={s.featureArrow}>›</Text></View>
+   <View style={s.learnTrailContent}>{trail.image?<Image source={trail.image} resizeMode="cover" style={s.learnThumbnail}/>:<View style={s.knowledgeIcon}><AppIcon name="learn" size={30} color={T.ochre}/></View>}<View style={s.rowCopy}><Text style={s.learnTrailTitle}>{trail.title}</Text><Text style={s.learnTrailSub}>{trail.subtitle}</Text></View><Text style={s.featureArrow}>›</Text></View>
   </Pressable>)}</View>
  </>;
 }
 
-function LearnTrail({trail,onBack,onRelated}){
+function LearnTrail({trail,onBack,onRelated,onNavigate}){
+ const [clueIndex,setClueIndex]=useState(0);
+ const [encouragementId,setEncouragementId]=useState(null);
+ React.useEffect(()=>{setClueIndex(0);setEncouragementId(null);},[trail.id]);
+ const encouragement=encouragementChoice(encouragementId);
+ const selectedClue=CONNECTION_STEPS[clueIndex];
+ const openClue=clue=>{
+  if(clue.destination==='learn'&&clue.target){onRelated(clue.target);return;}
+  if(clue.destination==='core'){onNavigate?.('core',trail.title);return;}
+  onNavigate?.(clue.destination);
+ };
+ const openSource=url=>{
+  if(!/^https:\/\//.test(url))return Alert.alert('Source unavailable','The source address was not accepted.');
+  Linking.openURL(url).catch(()=>Alert.alert('Could not open source','The original website could not open. You can copy the displayed address and try again.'));
+ };
  return <>
   <View style={s.coreHeader}><Pressable onPress={onBack} style={s.back}><Text style={s.backText}>‹</Text></Pressable><View style={s.rowCopy}><Text style={s.sectionEyebrow}>LEARN TRAIL</Text><Text style={s.coreTitle}>{trail.title}</Text></View></View>
-  <ImageBackground source={trail.image} resizeMode="cover" style={s.learnDetailHero} imageStyle={s.heroImage}><View style={s.heroVignette}/><View style={s.learnDetailCopy}><Text style={s.kicker}>WHAT THIS HELPS YOU UNDERSTAND</Text><Text style={s.learnDetailTitle}>{trail.helps}</Text></View></ImageBackground>
+  <View style={s.learnDetailHero}>
+   {trail.image&&<ImageBackground source={trail.image} resizeMode="cover" style={StyleSheet.absoluteFillObject}/>}
+   <View style={s.learnDetailShade}/>
+   <View style={s.learnDetailCopy}><Text style={s.kicker}>WHAT THIS HELPS YOU UNDERSTAND</Text><Text style={s.learnDetailTitle}>{trail.helps}</Text></View>
+  </View>
+  {!!trail.scope&&<View style={s.sourceScope}><Text style={s.sourceScopeText}>SCOPE: {trail.scope}</Text></View>}
+  {trail.id==='connection-trail'&&<View style={s.learnSection}>
+   <Text style={s.fieldLabel}>FOLLOW THE CONNECTION TRAIL · OPTIONAL</Text>
+   <Text style={s.learnBody}>Choose any clue in any order. No progress score, surveillance or automatic saving.</Text>
+   <View style={s.connectionChapters}>
+    {CONNECTION_STEPS.map((clue,i)=><Pressable key={clue.id} accessibilityRole="button" accessibilityLabel={'Open clue '+(i+1)+': '+clue.title}
+     accessibilityState={{selected:clueIndex===i}} onPress={()=>setClueIndex(i)}
+     style={[s.connectionChip,clueIndex===i&&s.connectionChipOn]}><Text style={[s.connectionChipText,clueIndex===i&&s.connectionChipTextOn]}>{i+1}. {clue.title}</Text></Pressable>)}
+   </View>
+   <View style={s.connectionSelected}>
+    <Text style={s.kicker}>CLUE {clueIndex+1} OF {CONNECTION_STEPS.length}</Text>
+    <Text style={s.supportModeTitle}>{selectedClue.title}</Text>
+    <Text style={s.body}>{selectedClue.prompt}</Text>
+    <Text style={s.stageNote}>{selectedClue.helps}</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel={selectedClue.label} onPress={()=>openClue(selectedClue)} style={s.secondary}>
+     <Text style={s.secondaryText}>{selectedClue.label}</Text><Text style={s.secondaryArrow}>→</Text>
+    </Pressable>
+    <Text style={s.stageNote}>{selectedClue.hint}</Text>
+   </View>
+   <View style={s.coreNavRow}>
+    <Pressable accessibilityRole="button" accessibilityLabel="Previous clue" disabled={clueIndex===0}
+      onPress={()=>setClueIndex(i=>Math.max(0,i-1))} style={[s.coreBackButton,clueIndex===0&&s.disabledStep]}><Text style={s.coreBackButtonText}>Previous</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Next clue" disabled={clueIndex===CONNECTION_STEPS.length-1}
+      onPress={()=>setClueIndex(i=>Math.min(CONNECTION_STEPS.length-1,i+1))}
+      style={[s.coreNextButton,clueIndex===CONNECTION_STEPS.length-1&&s.disabledStep]}><Text style={s.coreNextText}>Next clue</Text><Text style={s.coreNextText}>→</Text></Pressable>
+   </View>
+   <Pressable accessibilityRole="button" accessibilityLabel="Leave connection trail" onPress={onBack} style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave the trail</Text></Pressable>
+  </View>}
+  {trail.id==='encouragement-stamina'&&<View style={s.encouragementPanel}>
+   <Text style={s.fieldLabel}>ENCOURAGEMENT IS AN INVITATION, NOT A DEMAND</Text>
+   <Text style={s.supportModeTitle}>What would help you right now?</Text>
+   <Text style={s.learnBody}>Choose a kind of encouragement, change your mind, or leave this open. You do not have to feel positive or share an experience.</Text>
+   <View style={s.encouragementChoices}>
+    {ENCOURAGEMENT_CHOICES.map(option=><Pressable key={option.id} accessibilityRole="button"
+     accessibilityLabel={option.title} accessibilityState={{selected:encouragementId===option.id}}
+     onPress={()=>setEncouragementId(id=>id===option.id?null:option.id)}
+     style={[s.encouragementOption,encouragementId===option.id&&s.encouragementOptionOn]}>
+     <Text style={s.encouragementOptionText}>{option.title}</Text>
+     <Text style={s.encouragementOptionMark}>{encouragementId===option.id?'✓':'›'}</Text>
+    </Pressable>)}
+   </View>
+   {encouragement&&<View style={s.encouragementResponse}>
+    <Text style={s.fieldLabel}>SOMETHING WORTH REMEMBERING</Text>
+    <Text style={s.encouragementMessage}>{encouragement.message}</Text>
+    <Text style={s.stageNote}>{encouragement.note}</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel={encouragement.actionLabel}
+     onPress={()=>encouragement.action==='core'?onNavigate?.('core',trail.title):onNavigate?.(encouragement.action)}
+     style={s.secondary}><Text style={s.secondaryText}>{encouragement.actionLabel}</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Clear encouragement choice" onPress={()=>setEncouragementId(null)}
+     style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave this open</Text></Pressable>
+   </View>}
+   <Text style={s.stageNote}>Choosing rest, a boundary, or human help is never a failure. ESS cannot judge how much you can cope with and is not an emergency service.</Text>
+  </View>}
   <View style={s.learnSection}><Text style={s.fieldLabel}>KEY IDEAS</Text>{trail.ideas.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}</View>
   <View style={s.learnSection}><Text style={s.fieldLabel}>WHAT IS STILL UNCERTAIN?</Text><Text style={s.learnBody}>{trail.unknown}</Text></View>
-  <View style={s.learnSection}><Text style={s.fieldLabel}>SOURCE STATUS</Text><View style={s.sourceBadge}><Text style={s.sourceBadgeText}>SOURCE DISCIPLINE ON</Text></View><Text style={s.learnBody}>{trail.sourceStatus}</Text></View>
+  <View style={s.learnSection}><Text style={s.fieldLabel}>SOURCE STATUS</Text><View style={s.sourceBadge}><Text style={s.sourceBadgeText}>SOURCE DISCIPLINE ON</Text></View><Text style={s.learnBody}>{trail.sourceStatus}</Text>
+   {!!trail.reviewStatus&&<Text style={s.stageNote}>{trail.reviewStatus}</Text>}
+  </View>
+  {!!trail.sources?.length&&<View style={s.learnSection}>
+   <Text style={s.fieldLabel}>READ THE ORIGINAL SOURCES</Text>
+   <Text style={s.stageNote}>These are named public sources. External websites open only when you choose. Your Journal and reflections are not sent to them.</Text>
+   {trail.sources.map((source,i)=><View key={i} style={s.sourceItem}>
+    <Text style={s.learnTrailTitle}>{source.title}</Text>
+    <Text style={s.learnTrailSub}>{source.role}</Text>
+    <Text style={s.learnTrailSub}>Attributed to: {source.author}</Text>
+    <Text style={s.learnTrailSub}>Source reviewed: {source.checked}</Text>
+    <Pressable accessibilityRole="link" accessibilityLabel={`Open source ${source.title}`} onPress={()=>openSource(source.url)} style={s.sourceAction}><Text style={s.sourceActionText}>Read source →</Text></Pressable>
+    <Text selectable style={s.sourceUrl}>{source.url}</Text>
+   </View>)}
+  </View>}
   <Pressable onPress={()=>onRelated(trail.related)} style={s.crossLinkButton}><View><Text style={s.crossLinkEyebrow}>RELATED TRAIL</Text><Text style={s.crossLinkTitle}>{trail.related}</Text><Text style={s.crossLinkSub}>Keep following the knowledge path if it helps.</Text></View><Text style={s.crossLinkArrow}>→</Text></Pressable>
+  <Pressable accessibilityRole="button" accessibilityLabel="Start a reflection in ESS Core" onPress={()=>onNavigate?.('core',trail.title)} style={s.secondary}><Text style={s.secondaryText}>Reflect on my own question</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
+  <Pressable accessibilityRole="button" accessibilityLabel="View support options if needed" onPress={()=>onNavigate?.('support')} style={s.secondary}><Text style={s.secondaryText}>Support options, when you need them</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Learn for context · not forced conclusions</Text><View style={s.signatureLine}/></View>
  </>;
 }
@@ -309,6 +408,7 @@ function Support({initialMode,onConsumeInitialMode,onNavigate}){
  };
  const [mode,setMode]=useState('calm');
  const [selectedAction,setSelectedAction]=useState(null);
+ const [directoryOpen,setDirectoryOpen]=useState(false);
  const selectedGuide=getSupportAction(selectedAction);
  const openExternal=url=>Linking.openURL(url).catch(()=>Alert.alert('Could not open this option','You can use the displayed number or website directly.'));
  React.useEffect(()=>{
@@ -316,6 +416,7 @@ function Support({initialMode,onConsumeInitialMode,onNavigate}){
   onConsumeInitialMode?.();
  },[initialMode]);
  const current=MODES[mode];
+ if(directoryOpen)return <SupportDirectory onBack={()=>setDirectoryOpen(false)}/>;
  return <>
   <CinematicHero image={ART.support} kicker="SUPPORT" title="You don’t have to figure it out alone." body="Find trusted services, clear information and practical next steps — at your pace." height={235}/>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Understand your options, reach human help if you want it, and keep control of what happens next.</Text></View>
@@ -352,7 +453,72 @@ function Support({initialMode,onConsumeInitialMode,onNavigate}){
     <Text style={s.stageNote}>These links open outside ESS only when you choose them. The app does not place calls, refer you or send your reflection automatically.</Text>
    </>}
   </View>}
+  <Pressable accessibilityRole="button" accessibilityLabel="Browse Australian support directory" onPress={()=>setDirectoryOpen(true)} style={s.secondary}><Text style={s.secondaryText}>Browse Australian support directory</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <View style={s.supportReminder}><Text style={s.supportReminderTitle}>You can stop here.</Text><Text style={s.supportReminderText}>Support is available, not compulsory. You can return Home, Learn more first, or leave the decision open.</Text></View>
+ </>;
+}
+
+function SupportDirectory({onBack}){
+ const regions=['National','WA','NSW','VIC','QLD','SA','TAS','ACT','NT'];
+ const [region,setRegion]=useState('National');
+ const [query,setQuery]=useState('');
+ const [expandedId,setExpandedId]=useState(null);
+ const [limit,setLimit]=useState(18);
+ const emergency=supportDirectory.services.find(x=>x.id==='emergency');
+ const normalized=query.trim().toLowerCase();
+ const matches=supportDirectory.services.filter(service=>
+   service.id!=='emergency' &&
+   (region==='National'?service.regions.includes('National'):service.regions.includes(region)||service.regions.includes('National')) &&
+   (!normalized||[service.name,service.help,service.category,service.audience,service.notes].join(' ').toLowerCase().includes(normalized))
+ );
+ const listing=emergency?[emergency,...matches]:matches;
+ const openContact=url=>{
+  if(typeof url!=='string'||!(/^(https:\/\/|tel:|sms:)/.test(url)))return Alert.alert('Link unavailable','Contact information could not be opened.');
+  Linking.openURL(url).catch(()=>Alert.alert('Could not open','The provider may be reached using the displayed address or number.'));
+ };
+ return <>
+  <View style={s.coreHeader}>
+   <Pressable accessibilityRole="button" accessibilityLabel="Back to support choices" onPress={onBack} style={s.back}><Text style={s.backText}>‹</Text></Pressable>
+   <View style={s.rowCopy}><Text style={s.sectionEyebrow}>AUSTRALIA · PUBLIC SUPPORT</Text><Text style={s.coreTitle}>Find a service</Text></View>
+  </View>
+  <View style={s.learnPurpose}>
+   <Text style={s.fieldLabel}>YOUR CHOICE · YOUR LOCATION</Text>
+   <Text style={s.learnPurposeText}>Browse {supportDirectory.services.length} public directory records with a region and search. No GPS, account or personal reflection is used.</Text>
+   <Text style={s.stageNote}>Information checked {supportDirectory.checked}; hours, contacts and eligibility may change. Please verify with each provider. ESS makes no automatic calls, referrals or messages.</Text>
+  </View>
+  <View style={s.filterRow}>
+   {regions.map(x=><Pressable key={x} accessibilityRole="button" accessibilityLabel={x+' support region'} accessibilityState={{selected:region===x}} onPress={()=>{setRegion(x);setExpandedId(null);setLimit(18);}} style={[s.filterChip,region===x&&s.filterChipOn]}><Text style={[s.filterChipText,region===x&&s.filterChipTextOn]}>{x}</Text></Pressable>)}
+  </View>
+  <TextInput value={query} onChangeText={v=>{setQuery(v);setLimit(18);setExpandedId(null);}}
+   accessibilityLabel="Search public support services" placeholder="Search services, housing, crisis, family…" placeholderTextColor={T.muted} style={s.search}/>
+  <Text style={s.stageNote}>Emergency 000 is always shown first, even if you apply filters. Other results: {matches.length}. Phone and web links work only when tapped.</Text>
+  <View style={s.stack}>
+   {listing.slice(0,limit).map(service=><View key={service.id} style={s.resultCard}>
+    <Pressable accessibilityRole="button" accessibilityLabel={'Details for '+service.name} accessibilityState={{expanded:expandedId===service.id}} onPress={()=>setExpandedId(id=>id===service.id?null:service.id)} style={s.serviceListRow}>
+     <View style={s.rowCopy}>
+      <Text style={s.supportTitle}>{service.name}</Text>
+      <Text style={s.supportSub}>{service.help}</Text>
+      <Text style={s.knowledgeMeta}>{service.category} · {service.regions.join(' / ')}</Text>
+     </View>
+     <Text style={s.featureArrow}>{expandedId===service.id?'⌃':'›'}</Text>
+    </Pressable>
+    {expandedId===service.id&&<View style={s.serviceDetails}>
+     <Text style={s.learnBody}>For: {service.audience}</Text>
+     <Text style={s.learnTrailSub}>Hours (as recorded): {service.hours}</Text>
+     {!!service.notes&&<Text style={s.stageNote}>{service.notes}</Text>}
+     {service.contacts.map((contact,i)=><View key={i} style={s.contactRow}>
+      <Text style={s.supportSub}>{contact.label}: {contact.number}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={'Open '+contact.label+' for '+service.name} onPress={()=>openContact(contact.url)} style={s.reviewButton}><Text style={s.reviewButtonText}>{contact.url.startsWith('sms:')?'Open text':'Open dialler'}</Text></Pressable>
+     </View>)}
+     {!!service.website&&<Pressable accessibilityRole="link" accessibilityLabel={'Open website of '+service.name} onPress={()=>openContact(service.website)} style={s.sourceAction}><Text style={s.sourceActionText}>Provider website →</Text></Pressable>}
+     {!!service.source_url&&<Pressable accessibilityRole="link" accessibilityLabel={'Read verification source for '+service.name} onPress={()=>openContact(service.source_url)} style={s.sourceAction}><Text style={s.sourceActionText}>Read verification source →</Text></Pressable>}
+     <Text selectable style={s.sourceUrl}>{service.source_url||service.website}</Text>
+     <Text style={s.stageNote}>Source checked: {service.checked}. These directory records are not live availability.</Text>
+    </View>}
+   </View>)}
+   {listing.length>limit&&<Pressable accessibilityRole="button" accessibilityLabel="Show more support services" onPress={()=>setLimit(v=>v+18)} style={s.secondary}><Text style={s.secondaryText}>Show more services</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
+   {!matches.length&&<Text style={s.stageNote}>No matching service apart from emergency support. Try a broader search or National.</Text>}
+  </View>
  </>;
 }
 
@@ -365,16 +531,24 @@ function SupportCard({title,subtitle,icon,tone,selected,onPress}){
  </Pressable>
 }
 
-function More({initialDetail,onConsumeInitialDetail}){
+function More({initialDetail,onConsumeInitialDetail,onNavigate}){
  const [detail,setDetail]=useState('');
  React.useEffect(()=>{if(initialDetail){setDetail(initialDetail);onConsumeInitialDetail?.();}},[initialDetail]);
  const details={
+  [ESS_PURPOSE.title]:{
+   description:ESS_PURPOSE.mission,
+   points:ESS_PURPOSE.commitments
+  },
+  'System Map':{
+   description:'One connected Emotional Safety System: use what helps, leave anything open, and remain in control. None of these pathways automatically saves or sends your personal information.',
+   points:['Understand: begin your own reflection and examine how ESS separates reported words from interpretation.','Check evidence: consider sources, what is known and what remains uncertain.','Learn: follow public topics with attributed sources and honest limits.','Reflect: keep a session-only Journal entry if you deliberately choose.','Support: browse options without an automatic referral or contact.','Explore: follow the six-step Connection Trail in any order.']
+  },
   'How ESS reached this':{
    description:'ESS uses local, deterministic rules to separate reported words, possible interpretations, uncertainty and optional next steps. For the rule IDs used in your own reflection, use the final reflection step.',
    points:['ESS does not independently verify events or determine another person’s intentions.','Feelings you select are separate from language cues identified by ESS.','Reviewing or rejecting an interpretation affects your summary, not the safety classification.','No decision is forced. You can leave questions and choices open.','Safety routing is limited wording analysis, not a professional risk assessment.']
   },
   'About ESS':{
-   description:'ESS helps a person reflect on feelings, reported experiences, possible interpretations, uncertainty and next steps. It does not independently determine what happened, diagnose anyone or replace professional advice.',
+   description:ESS_PURPOSE.mission+' ESS does not independently determine what happened, diagnose anyone or replace professional advice.',
    points:['Feelings are meaningful but do not prove another person’s intentions.','Evidence and interpretation should be kept separate.','The person can disagree, leave questions open or choose not to proceed.']
   },
   'Settings':{
@@ -399,6 +573,8 @@ function More({initialDetail,onConsumeInitialDetail}){
   }
  };
  const items=[
+  [ESS_PURPOSE.title,'The reason this system was created','◇',T.eucalyptus],
+  ['System Map','One system · six useful pathways','◇',T.eucalyptus],
   ['About ESS','Purpose, limits and principles','i',T.eucalyptus],
   ['Settings','Privacy, accessibility and preferences','⚙',T.sand],
   ['Research & development','Testing, sources and improvements','▤',T.ochre],
@@ -411,8 +587,33 @@ function More({initialDetail,onConsumeInitialDetail}){
   <View style={[s.learnSection,{marginTop:12}]}>
 
    <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>ABOUT THIS SECTION</Text><Text style={s.supportModeTitle}>{detail}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close More details" onPress={()=>setDetail('')} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
+   {detail===ESS_PURPOSE.title&&<View style={s.purposeStatement}>
+    <Text style={s.purposeEyebrow}>THE PURPOSE BEHIND ESS</Text>
+    <Text style={s.purposeQuote}>“{ESS_PURPOSE.statement}”</Text>
+    <Text style={s.purposeAttribution}>Purpose statement adopted {ESS_PURPOSE.adopted}</Text>
+   </View>}
    <Text style={s.learnBody}>{details[detail].description}</Text>
+   {detail===ESS_PURPOSE.title&&<View style={s.purposePrinciples}>
+    <Text style={s.fieldLabel}>THE PRINCIPLES THAT GUIDE US</Text>
+    {ESS_PURPOSE.principles.map((principle,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{principle}</Text></View>)}
+    <Text style={s.stageNote}>{ESS_PURPOSE.status}</Text>
+   </View>}
    {details[detail].points.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
+   {detail==='System Map'&&<View style={s.systemMap}>
+    {[
+     ['Understand','Open a blank guided reflection','core'],
+     ['Evidence','Explore reported information and sources','learn','Evidence & Truth Lab'],
+     ['Learn','Browse public learning paths','learn'],
+     ['Reflect','Open my session-only Journal','journal'],
+     ['Support','Browse human support options','support'],
+     ['Connection Trail','Follow six clues at your pace','learn','Connection Trail']
+    ].map(([name,description,target,subtarget])=><Pressable key={name} accessibilityRole="button" accessibilityLabel={'Open '+name+' pathway'}
+      onPress={()=>onNavigate?.(target,subtarget)} style={s.systemMapAction}>
+      <View style={s.rowCopy}><Text style={s.supportTitle}>{name}</Text><Text style={s.supportSub}>{description}</Text></View>
+      <Text style={s.featureArrow}>›</Text>
+    </Pressable>)}
+    <Text style={s.stageNote}>ESS is an educational prototype: it cannot verify an event, diagnose someone, or substitute for emergency or professional help.</Text>
+   </View>}
    {detail==='Photography credits'&&<Pressable accessibilityRole="link" accessibilityLabel="Open photography credits and source licenses" onPress={()=>Linking.openURL('https://github.com/julaunataylor27-hub/emotional-safety-system-app/blob/ess-v2-clean-rebuild/docs/ESS_V2_PHOTO_CREDITS.md').catch(()=>Alert.alert('Link unavailable','See the ESS v2 source repository for photo credits.'))} style={s.secondary}><Text style={s.secondaryText}>View image sources and licences</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
   </View>
  </>;
@@ -427,7 +628,7 @@ function More({initialDetail,onConsumeInitialDetail}){
  </>;
 }
 
-function Core({onBack,onSaveJournal,onNavigate}){
+function Core({onBack,onSaveJournal,onNavigate,returnTrail}){
  const [text,setText]=useState('');
  const [step,setStep]=useState(0);
  const [selectedNext,setSelectedNext]=useState('');
@@ -461,7 +662,7 @@ function Core({onBack,onSaveJournal,onNavigate}){
   if(stage.id==='uncertainty') return <UncertaintyStage items={result.uncertainty.unknowns} checks={unknownChecks} onCheck={(item,value)=>setUnknownChecks(v=>({...v,[item]:value}))} onLearn={()=>{const rec=result.recommendations?.find(x=>x.destination==='learn');onNavigate?.('learn',rec?.trail)}} recommendation={result.recommendations?.find(x=>x.destination==='learn')}/>;
   if(stage.id==='context') return <ContextStage result={result} onSupport={()=>onNavigate?.('support',result.safety.urgent?'urgent':result.safety.classification==='coercion'?'coercion':result.safety.classification==='pressure'?'boundary':'calm')} recommendation={result.recommendations?.find(x=>x.destination==='support')}/>;
   if(stage.id==='choice') return <ChoiceCompare options={result.choice.options} value={choicePreview} onChange={setChoicePreview}/>;
-  return <FinishStage result={result} review={review} selectedNext={selectedNext} setSelectedNext={setSelectedNext}
+  return <FinishStage result={result} review={review} returnTrail={returnTrail} selectedNext={selectedNext} setSelectedNext={setSelectedNext}
    saved={savedToJournal} onSave={()=>{
     onSaveJournal?.({when:'Just now',text:text.trim()||'No situation details provided.',
       change:selectedNext||choicePreview||'Decision left open.',tag:'Choice',icon:'◇',review});
@@ -548,7 +749,7 @@ function ChoiceCompare({options,value,onChange}){
  </View>;
 }
 
-function FinishStage({result,review,selectedNext,setSelectedNext,saved,onSave,onNavigate,recommendations}){
+function FinishStage({result,review,returnTrail,selectedNext,setSelectedNext,saved,onSave,onNavigate,recommendations}){
  return <View style={s.corePanel}>
   <Text style={s.fieldLabel}>YOU DECIDE</Text>
   <Text style={s.nextLead}>Choose one if it fits, or leave the decision open for now.</Text>
@@ -571,10 +772,17 @@ function FinishStage({result,review,selectedNext,setSelectedNext,saved,onSave,on
   <Text style={s.finishHeading}>Where would you like to go next?</Text>
   <View style={s.destinationGrid}>
    <DestinationCard icon="✎" title="Journal" subtitle="Review what you saved" suggested={recommendations.some(x=>x.destination==='journal')} onPress={()=>onNavigate?.('journal')}/>
-   <DestinationCard icon="▤" title="Learn" subtitle="Explore more context" suggested={recommendations.some(x=>x.destination==='learn')} onPress={()=>onNavigate?.('learn')}/>
+   <DestinationCard icon="▤" title="Learn" subtitle={returnTrail?'Return to '+returnTrail:'Explore more context'} suggested={recommendations.some(x=>x.destination==='learn')} onPress={()=>onNavigate?.('learn',returnTrail)}/>
    <DestinationCard icon="♡" title="Support" subtitle="See support options" suggested={recommendations.some(x=>x.destination==='support')} onPress={()=>onNavigate?.('support')}/>
    <DestinationCard icon="⌂" title="Home" subtitle="Return to the start" onPress={()=>onNavigate?.('home')}/>
   </View>
+  {!['danger','coercion','pressure'].includes(result.safety.classification)&&<Pressable
+   accessibilityRole="button" accessibilityLabel="Explore encouragement and emotional stamina"
+   onPress={()=>onNavigate?.('learn','Encouragement & Emotional Stamina')}
+   style={s.crossLinkButton}><View style={s.rowCopy}><Text style={s.crossLinkEyebrow}>OPTIONAL LEARNING</Text>
+   <Text style={s.crossLinkTitle}>Encouragement & Emotional Stamina</Text>
+   <Text style={s.crossLinkSub}>Notice effort, take a safe pause or explore a manageable next step—only if useful to you.</Text></View>
+   <Text style={s.crossLinkArrow}>→</Text></Pressable>
   <Pressable accessibilityRole="button" accessibilityLabel="Leave it for now without saving" onPress={()=>onNavigate?.('home')} style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave it for now</Text></Pressable>
   <Text style={s.stageNote}>Leaving returns Home. Nothing is saved unless you choose Save this reflection to Journal.</Text>
   <Text style={s.stageNote}>Suggested pathway: {result.next_pathway.replaceAll('_',' → ')}. Suggestions are optional; you decide what happens next.</Text>
@@ -599,20 +807,30 @@ function Result({title,items}){return <View style={s.resultCard}><Text style={s.
 
 function AppRoot(){
  const [screen,setScreen]=useState('home');
+ const [routeRevision,setRouteRevision]=useState(0);
  const [coreOpen,setCoreOpen]=useState(false);
  const [pendingLearnTrail,setPendingLearnTrail]=useState(null);
  const [pendingSupportMode,setPendingSupportMode]=useState(null);
  const [pendingMoreDetail,setPendingMoreDetail]=useState(null);
+ const [returnTrail,setReturnTrail]=useState(null);
  const [journalEntries,setJournalEntries]=useState([]);
- const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);if(id==='support'&&detail)setPendingSupportMode(detail);if(id==='more'&&detail)setPendingMoreDetail(detail);setScreen(id);};
+ const go=(id,detail)=>{
+  setRouteRevision(v=>v+1);
+  if(id==='core'){setReturnTrail(detail||null);setScreen('home');setCoreOpen(true);return;}
+  setCoreOpen(false);
+  if(id==='learn'&&detail)setPendingLearnTrail(detail);
+  if(id==='support'&&detail)setPendingSupportMode(detail);
+  if(id==='more'&&detail)setPendingMoreDetail(detail);
+  setScreen(id);
+ };
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
- return <Shell screen={screen} onTab={go}>
-  {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
+ return <Shell screen={screen} onTab={go} routeRevision={routeRevision}>
+  {coreOpen?<Core onBack={()=>returnTrail?go('learn',returnTrail):go('home')} onSaveJournal={saveCoreToJournal} onNavigate={go} returnTrail={returnTrail}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
-   screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)}/>:
+   screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)} onNavigate={go}/>:
    screen==='support'?<Support initialMode={pendingSupportMode} onConsumeInitialMode={()=>setPendingSupportMode(null)} onNavigate={go}/>:
-   <More initialDetail={pendingMoreDetail} onConsumeInitialDetail={()=>setPendingMoreDetail(null)}/>}
+   <More initialDetail={pendingMoreDetail} onConsumeInitialDetail={()=>setPendingMoreDetail(null)} onNavigate={go}/>}
  </Shell>;
 }
 
