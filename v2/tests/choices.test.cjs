@@ -74,3 +74,18 @@ test('How ESS reached this opens explanation; leaving exits without an automatic
  assert.match(app,/Nothing is saved unless you choose Save this reflection to Journal/);
  assert.match(app,/onSaveJournal\?\.\(/);
 });
+
+test('journal entry chevrons open the actual reviewed details',()=>{
+ assert.match(app,/function JournalEntryCard\(\{item,accent\}\)/);
+ assert.match(app,/accessibilityLabel="Review saved journal entry"/);
+ assert.match(app,/onPress=\{\(\)=>setExpanded\(v=>!v\)\}/);
+ assert.match(app,/\{expanded&&<View style=\{s\.journalExpanded\}>/);
+ assert.match(app,/item\.review\?\.interpretations\?\.map/);
+ assert.match(app,/item\.review\?\.uncertainties\?\.map/);
+});
+test('transparency details are visible immediately rather than hidden below the More menu',()=>{
+ assert.match(app,/if\(detail\) return <>/);
+ assert.match(app,/Back to More menu/);
+ assert.match(app,/initialDetail=\{pendingMoreDetail\}/);
+ assert.match(app,/if\(id==='more'&&detail\)setPendingMoreDetail\(detail\)/);
+});
