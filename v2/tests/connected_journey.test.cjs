@@ -56,3 +56,16 @@ test('connected APK uses separate Android package to protect the approved instal
  const doc=fs.readFileSync(path.join(__dirname,'../CONTENT_INTEGRATION.md'),'utf8');
  assert.ok(doc.includes('ess-v2-layout-locked-20261102'));
 });
+
+test('System Map has real routes and does not create a sixth navigation tab',()=>{
+ assert.match(app,/detail==='System Map'/);
+ assert.match(app,/One system · six useful pathways/);
+ assert.match(app,/onNavigate\?\.\(target,subtarget\)/);
+ assert.match(app,/onNavigate=\{go\}/);
+ for(const label of ['Understand','Evidence','Learn','Reflect','Support','Connection Trail']){
+  assert.ok(app.includes("['"+label+"',"),'Missing pathway: '+label);
+ }
+ assert.match(app,/function More\(\{initialDetail,onConsumeInitialDetail,onNavigate\}\)/);
+ assert.match(visual,/systemMapAction:/);
+ assert.ok(!app.includes("['map','Map'"));
+});
