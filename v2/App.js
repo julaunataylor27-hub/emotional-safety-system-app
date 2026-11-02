@@ -156,6 +156,7 @@ function Journal({entries,setEntries}){
  const [tag,setTag]=useState('Reflection');
  const [filter,setFilter]=useState('All');
  const [historyOpen,setHistoryOpen]=useState(false);
+ const [composerOpen,setComposerOpen]=useState(false);
  const tags=['Reflection','Boundary','Uncertainty','Choice'];
  const filters=['All',...tags];
  const save=()=>{
@@ -170,9 +171,15 @@ function Journal({entries,setEntries}){
  const counts=tags.reduce((acc,x)=>({...acc,[x]:entries.filter(e=>e.tag===x).length}),{});
  const recentChanges=entries.slice(0,3).map(x=>x.change).filter(Boolean);
  return <>
-  <CinematicHero image={ART.journal} kicker="YOUR SPACE" title="Journal" body="Your thoughts, your pace. Reflect and notice what changes over time." height={285}/>
+  <CinematicHero image={ART.journal} kicker="YOUR PRIVATE SPACE" title="Journal" body="Your thoughts, your pace. Reflect and notice what changes over time." height={280}>
+   <Pressable accessibilityRole="button" accessibilityLabel="New journal entry" onPress={()=>setComposerOpen(v=>!v)} style={s.journalCallToAction}>
+    <AppIcon name="journal" size={21} color="#18261A"/>
+    <Text style={s.journalCallText}>{composerOpen?'Close entry':'New entry'}</Text>
+    <Text style={s.journalCallPlus}>{composerOpen?'−':'+'}</Text>
+   </Pressable>
+  </CinematicHero>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>PROTOTYPE PRIVACY NOTE</Text><Text style={s.learnPurposeText}>Entries are kept only while this app session stays open. They are not yet stored securely across restarts. Avoid sensitive details until protected saving is built and tested.</Text></View>
-  <View style={s.journalComposer}>
+  {composerOpen&&<View style={s.journalComposer}>
    <Text style={s.composerTitle}>What’s on your mind?</Text>
    <Text style={s.composerHint}>Write it as you experienced it. You can leave anything blank.</Text>
    <TextInput value={entry} onChangeText={setEntry} multiline placeholder="Write in your own words…" placeholderTextColor={T.muted} style={s.journalInput}/>
@@ -180,8 +187,8 @@ function Journal({entries,setEntries}){
    <TextInput value={change} onChangeText={setChange} multiline placeholder="A thought, feeling, boundary, choice or unanswered question…" placeholderTextColor={T.muted} style={s.changeInput}/>
    <Text style={s.composerLabel}>Optional context</Text>
    <View style={s.tagRow}>{tags.map(x=><Pressable key={x} onPress={()=>setTag(x)} style={[s.tagChip,tag===x&&s.tagChipOn]}><Text style={[s.tagChipText,tag===x&&s.tagChipTextOn]}>{x}</Text></Pressable>)}</View>
-   <Pressable onPress={save} style={({pressed})=>[s.journalButton,pressed&&s.pressed]}><Text style={s.journalButtonText}>Save reflection</Text><Text style={s.journalButtonText}>→</Text></Pressable>
-  </View>
+   <Pressable onPress={()=>{if(entry.trim()){save();setComposerOpen(false);}}} style={({pressed})=>[s.journalButton,pressed&&s.pressed]}><Text style={s.journalButtonText}>Save reflection</Text><Text style={s.journalButtonText}>→</Text></Pressable>
+  </View>}
 
   <View style={s.historyPanel}>
    <View style={s.sectionHeader}><View><Text style={s.sectionEyebrow}>YOUR JOURNEY</Text><Text style={s.sectionHeading}>What has been showing up?</Text></View><Pressable onPress={()=>setHistoryOpen(v=>!v)}><Text style={s.sectionLink}>{historyOpen?'Hide':'View'}</Text></Pressable></View>
