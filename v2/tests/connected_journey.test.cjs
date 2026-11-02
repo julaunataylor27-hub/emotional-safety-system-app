@@ -32,7 +32,7 @@ test('Connection Trail is selectable, reversible and never blocks a route',()=>{
 test('new routes connect blank Core, Learn, Journal and Support without text transfer',()=>{
  assert.match(app,/if\(id==='core'\)\{setScreen\('home'\);setCoreOpen\(true\);return;\}/);
  assert.match(app,/onNavigate\?\.\('learn',next\.title\)/);
- assert.match(app,/onNavigate\?\.\('core'\)/);
+ assert.match(app,/onNavigate\?\.\('core',trail\.title\)/);
  assert.match(app,/onNavigate\?\.\('support'\)/);
  assert.match(app,/onNavigate\?\.\(clue\.destination\)/);
  assert.match(app,/const \[text,setText\]=useState\(''\)/);
@@ -68,4 +68,13 @@ test('System Map has real routes and does not create a sixth navigation tab',()=
  assert.match(app,/function More\(\{initialDetail,onConsumeInitialDetail,onNavigate\}\)/);
  assert.match(visual,/systemMapAction:/);
  assert.ok(!app.includes("['map','Map'"));
+});
+
+test('returning from Core restores the learning topic without transferring reading into reflection',()=>{
+ assert.match(app,/setReturnTrail\(detail\|\|null\)/);
+ assert.match(app,/returnTrail=\{returnTrail\}/);
+ assert.match(app,/onBack=\{\(\)=>returnTrail\?go\('learn',returnTrail\):go\('home'\)\}/);
+ assert.match(app,/onNavigate\?\.\('learn',returnTrail\)/);
+ assert.match(app,/const \[text,setText\]=useState\(''\)/);
+ assert.ok(!app.includes('setText(trail.helps)'));
 });
