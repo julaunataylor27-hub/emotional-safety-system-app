@@ -191,7 +191,7 @@ const CURATED_MODULES=Object.freeze([
     "sources": [
       {
         "title": "CERN — Birth of the Web",
-        "url": "https://home.cern/science/computing/birth-web",
+        "url": "https://home.cern/science/computing/the-birth-of-the-web",
         "author": "CERN",
         "checked": "22 October 2026 (project register)",
         "role": "Historical account and milestones",
