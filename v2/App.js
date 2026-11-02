@@ -335,6 +335,7 @@ function Support({initialMode,onConsumeInitialMode,onNavigate}){
  };
  const [mode,setMode]=useState('calm');
  const [selectedAction,setSelectedAction]=useState(null);
+ const [directoryOpen,setDirectoryOpen]=useState(false);
  const selectedGuide=getSupportAction(selectedAction);
  const openExternal=url=>Linking.openURL(url).catch(()=>Alert.alert('Could not open this option','You can use the displayed number or website directly.'));
  React.useEffect(()=>{
@@ -342,6 +343,7 @@ function Support({initialMode,onConsumeInitialMode,onNavigate}){
   onConsumeInitialMode?.();
  },[initialMode]);
  const current=MODES[mode];
+ if(directoryOpen)return <SupportDirectory onBack={()=>setDirectoryOpen(false)}/>;
  return <>
   <CinematicHero image={ART.support} kicker="SUPPORT" title="You don’t have to figure it out alone." body="Find trusted services, clear information and practical next steps — at your pace." height={235}/>
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Understand your options, reach human help if you want it, and keep control of what happens next.</Text></View>
@@ -378,7 +380,72 @@ function Support({initialMode,onConsumeInitialMode,onNavigate}){
     <Text style={s.stageNote}>These links open outside ESS only when you choose them. The app does not place calls, refer you or send your reflection automatically.</Text>
    </>}
   </View>}
+  <Pressable accessibilityRole="button" accessibilityLabel="Browse Australian support directory" onPress={()=>setDirectoryOpen(true)} style={s.secondary}><Text style={s.secondaryText}>Browse Australian support directory</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <View style={s.supportReminder}><Text style={s.supportReminderTitle}>You can stop here.</Text><Text style={s.supportReminderText}>Support is available, not compulsory. You can return Home, Learn more first, or leave the decision open.</Text></View>
+ </>;
+}
+
+function SupportDirectory({onBack}){
+ const regions=['National','WA','NSW','VIC','QLD','SA','TAS','ACT','NT'];
+ const [region,setRegion]=useState('National');
+ const [query,setQuery]=useState('');
+ const [expandedId,setExpandedId]=useState(null);
+ const [limit,setLimit]=useState(18);
+ const emergency=supportDirectory.services.find(x=>x.id==='emergency');
+ const normalized=query.trim().toLowerCase();
+ const matches=supportDirectory.services.filter(service=>
+   service.id!=='emergency' &&
+   (region==='National'?service.regions.includes('National'):service.regions.includes(region)||service.regions.includes('National')) &&
+   (!normalized||[service.name,service.help,service.category,service.audience,service.notes].join(' ').toLowerCase().includes(normalized))
+ );
+ const listing=emergency?[emergency,...matches]:matches;
+ const openContact=url=>{
+  if(typeof url!=='string'||!(/^(https:\/\/|tel:|sms:)/.test(url)))return Alert.alert('Link unavailable','Contact information could not be opened.');
+  Linking.openURL(url).catch(()=>Alert.alert('Could not open','The provider may be reached using the displayed address or number.'));
+ };
+ return <>
+  <View style={s.coreHeader}>
+   <Pressable accessibilityRole="button" accessibilityLabel="Back to support choices" onPress={onBack} style={s.back}><Text style={s.backText}>‹</Text></Pressable>
+   <View style={s.rowCopy}><Text style={s.sectionEyebrow}>AUSTRALIA · PUBLIC SUPPORT</Text><Text style={s.coreTitle}>Find a service</Text></View>
+  </View>
+  <View style={s.learnPurpose}>
+   <Text style={s.fieldLabel}>YOUR CHOICE · YOUR LOCATION</Text>
+   <Text style={s.learnPurposeText}>Browse {supportDirectory.services.length} public directory records with a region and search. No GPS, account or personal reflection is used.</Text>
+   <Text style={s.stageNote}>Information checked {supportDirectory.checked}; hours, contacts and eligibility may change. Please verify with each provider. ESS makes no automatic calls, referrals or messages.</Text>
+  </View>
+  <View style={s.filterRow}>
+   {regions.map(x=><Pressable key={x} accessibilityRole="button" accessibilityLabel={x+' support region'} accessibilityState={{selected:region===x}} onPress={()=>{setRegion(x);setExpandedId(null);setLimit(18);}} style={[s.filterChip,region===x&&s.filterChipOn]}><Text style={[s.filterChipText,region===x&&s.filterChipTextOn]}>{x}</Text></Pressable>)}
+  </View>
+  <TextInput value={query} onChangeText={v=>{setQuery(v);setLimit(18);setExpandedId(null);}}
+   accessibilityLabel="Search public support services" placeholder="Search services, housing, crisis, family…" placeholderTextColor={T.muted} style={s.search}/>
+  <Text style={s.stageNote}>Emergency 000 is always shown first, even if you apply filters. Other results: {matches.length}. Phone and web links work only when tapped.</Text>
+  <View style={s.stack}>
+   {listing.slice(0,limit).map(service=><View key={service.id} style={s.resultCard}>
+    <Pressable accessibilityRole="button" accessibilityLabel={'Details for '+service.name} accessibilityState={{expanded:expandedId===service.id}} onPress={()=>setExpandedId(id=>id===service.id?null:service.id)} style={s.serviceListRow}>
+     <View style={s.rowCopy}>
+      <Text style={s.supportTitle}>{service.name}</Text>
+      <Text style={s.supportSub}>{service.help}</Text>
+      <Text style={s.knowledgeMeta}>{service.category} · {service.regions.join(' / ')}</Text>
+     </View>
+     <Text style={s.featureArrow}>{expandedId===service.id?'⌃':'›'}</Text>
+    </Pressable>
+    {expandedId===service.id&&<View style={s.serviceDetails}>
+     <Text style={s.learnBody}>For: {service.audience}</Text>
+     <Text style={s.learnTrailSub}>Hours (as recorded): {service.hours}</Text>
+     {!!service.notes&&<Text style={s.stageNote}>{service.notes}</Text>}
+     {service.contacts.map((contact,i)=><View key={i} style={s.contactRow}>
+      <Text style={s.supportSub}>{contact.label}: {contact.number}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={'Open '+contact.label+' for '+service.name} onPress={()=>openContact(contact.url)} style={s.reviewButton}><Text style={s.reviewButtonText}>{contact.url.startsWith('sms:')?'Open text':'Open dialler'}</Text></Pressable>
+     </View>)}
+     {!!service.website&&<Pressable accessibilityRole="link" accessibilityLabel={'Open website of '+service.name} onPress={()=>openContact(service.website)} style={s.sourceAction}><Text style={s.sourceActionText}>Provider website →</Text></Pressable>}
+     {!!service.source_url&&<Pressable accessibilityRole="link" accessibilityLabel={'Read verification source for '+service.name} onPress={()=>openContact(service.source_url)} style={s.sourceAction}><Text style={s.sourceActionText}>Read verification source →</Text></Pressable>}
+     <Text selectable style={s.sourceUrl}>{service.source_url||service.website}</Text>
+     <Text style={s.stageNote}>Source checked: {service.checked}. These directory records are not live availability.</Text>
+    </View>}
+   </View>)}
+   {listing.length>limit&&<Pressable accessibilityRole="button" accessibilityLabel="Show more support services" onPress={()=>setLimit(v=>v+18)} style={s.secondary}><Text style={s.secondaryText}>Show more services</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
+   {!matches.length&&<Text style={s.stageNote}>No matching service apart from emergency support. Try a broader search or National.</Text>}
+  </View>
  </>;
 }
 
