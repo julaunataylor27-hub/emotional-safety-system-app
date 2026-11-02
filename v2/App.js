@@ -746,7 +746,7 @@ function AppRoot(){
  };
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go} routeRevision={routeRevision}>
-  {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
+  {coreOpen?<Core onBack={()=>go('home')} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
    screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)} onNavigate={go}/>:
