@@ -76,7 +76,7 @@ test('How ESS reached this opens explanation; leaving exits without an automatic
 });
 
 test('journal entry chevrons open the actual reviewed details',()=>{
- assert.match(app,/function JournalEntryCard\(\{item,accent\}\)/);
+ assert.match(app,/function JournalEntryCard\(\{item,accent,onDelete\}\)/);
  assert.match(app,/accessibilityLabel="Review saved journal entry"/);
  assert.match(app,/onPress=\{\(\)=>setExpanded\(v=>!v\)\}/);
  assert.match(app,/\{expanded&&<View style=\{s\.journalExpanded\}>/);
