@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run prepare:art && expo start",
     "android": "npm run prepare:art && expo start --android",
-    "test": "node --test --test-concurrency=1 tests/core.test.cjs tests/structure.test.cjs tests/end_to_end.test.cjs tests/support.test.cjs tests/choices.test.cjs tests/content.test.cjs tests/connected_journey.test.cjs",
+    "test": "node --test --test-concurrency=1 tests/core.test.cjs tests/structure.test.cjs tests/end_to_end.test.cjs tests/support.test.cjs tests/choices.test.cjs tests/content.test.cjs tests/connected_journey.test.cjs tests/encouragement.test.cjs",
     "prepare:art": "node scripts/prepare-scenes.mjs"
   },
   "dependencies": {
