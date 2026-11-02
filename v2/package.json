@@ -1,0 +1,25 @@
+{
+  "name": "emotional-safety-system-v2",
+  "version": "0.1.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "npm run prepare:art && expo start",
+    "android": "npm run prepare:art && expo start --android",
+    "test": "node --test --test-concurrency=1 tests/core.test.cjs tests/structure.test.cjs tests/end_to_end.test.cjs tests/support.test.cjs tests/choices.test.cjs",
+    "prepare:art": "node scripts/prepare-scenes.mjs"
+  },
+  "dependencies": {
+    "expo": "~54.0.0",
+    "expo-status-bar": "~3.0.8",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "react-native-safe-area-context": "~5.6.0",
+    "lucide-react-native": "1.39.0",
+    "react-native-svg": "15.12.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "babel-preset-expo": "^54.0.0"
+  }
+}
