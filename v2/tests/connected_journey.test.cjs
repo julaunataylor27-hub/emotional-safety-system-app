@@ -48,3 +48,11 @@ test('connection navigation shares the complete 2027 visual identity',()=>{
  assert.match(app,/ESS_V2_2027_FULL_APP_VISUAL_CONTRACT/);
  assert.doesNotMatch(app,/assets\/graphics\/australian-humanity/);
 });
+
+test('connected APK uses separate Android package to protect the approved installed app',()=>{
+ const identity=JSON.parse(fs.readFileSync(path.join(__dirname,'../app.json'),'utf8'));
+ assert.equal(identity.expo.android.package,'au.com.emotionalsafetysystem.v2.connected');
+ assert.equal(identity.expo.android.versionCode,2);
+ const doc=fs.readFileSync(path.join(__dirname,'../CONTENT_INTEGRATION.md'),'utf8');
+ assert.ok(doc.includes('ess-v2-layout-locked-20261102'));
+});
