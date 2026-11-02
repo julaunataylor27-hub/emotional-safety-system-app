@@ -12,7 +12,7 @@ test('v2 is a clean five-tab app shell',()=>{
  assert.ok(!app.includes('home-support-now'));
  assert.ok(!app.includes("['evidence','Evidence']"));
  assert.match(app,/You’re in the right place\./);
- assert.match(app,/home-hero\.webp/);
+ assert.match(app,/home-coast\.jpg/);
  assert.match(app,/You’re in the right place\./);
 });
 
@@ -21,7 +21,7 @@ test('v2 imports only its own core and theme plus approved raw media',()=>{
  assert.match(app,/\.\/src\/core\/essCore\.cjs/);
  assert.match(app,/\.\/src\/theme/);
  assert.ok(!app.includes('../src/'));
- assert.match(app,/assets\/graphics\/australian-humanity\/home-hero\.webp/);
+ assert.match(app,/assets\/scenes\/home-coast\.jpg/);
  assert.ok(!app.includes('patch_'));
 });
 
@@ -152,4 +152,38 @@ test('More cards are actionable and do not promise unsupported feedback or secur
  assert.match(app,/Account features, protected journal storage and reliable preferences are not available yet/);
  assert.match(app,/No theme setting is offered until it can update every screen consistently/);
  assert.ok(!app.includes('<View style={s.topActions}><Text style={s.action}>⌕</Text>'));
+});
+
+test('2027 redesign replaces all legacy art and assigns distinct images to each primary tab',()=>{
+ const app=read('App.js');
+ for(const x of ['home-coast','journal-banksia','learn-coast','support-gorge','more-stars','culture-flora','history-country','emotions-flower','rights-parliament','everyday-landscape']){
+  assert.ok(app.includes("assets/scenes/"+x+".jpg"),"Missing new scene "+x);
+ }
+ assert.doesNotMatch(app,/assets\/graphics\/australian-humanity/);
+ assert.match(app,/ESS_V2_2027_FULL_APP_VISUAL_CONTRACT/);
+ assert.match(app,/source=\{ART\[screen\]\|\|ART.home\}/);
+ assert.match(app,/\.\.\.V/);
+ assert.match(app,/edges=\{\['top','bottom'\]\}/);
+});
+test('2027 navigation uses vector icons and no persistent v1 duplicated image heroes',()=>{
+ const app=read('App.js');
+ assert.match(app,/lucide-react-native/);
+ assert.match(app,/AppIcon name=\{id\}/);
+ assert.match(app,/no duplicated image banners/i);
+ assert.match(app,/style=\{s.learnThumbnail\}/);
+ assert.match(app,/New journal entry/);
+ assert.match(app,/composerOpen&&/);
+ const v=read('src/visual2027.js');
+ for(const required of ['appSceneShade','topBar','nav','homeTile','learnThumbnail','journalCallToAction','supportCard','corePanel','primary','heroTitle']){
+  assert.ok(v.includes(required+':'),"Missing visual rule "+required);
+ }
+});
+test('2027 image build refuses stale or broken photography',()=>{
+ const script=read('scripts/prepare-scenes.mjs');
+ assert.match(script,/commons\.wikimedia\.org/);
+ assert.match(script,/Fail closed|refusing to build|invalid JPEG/);
+ assert.match(script,/await download\(name,source\)/);
+ const workflow=fs.readFileSync(path.join(root,'..','.github','workflows','build-ess-v2-clean.yml'),'utf8');
+ assert.match(workflow,/npm run prepare:art/);
+ assert.match(workflow,/Verify all offline 2027 scenes were prepared/);
 });
