@@ -8,6 +8,12 @@ on:
       - '.github/workflows/build-ess-v2-clean.yml'
   workflow_dispatch:
 
+# Only the newest content-branch commit needs an APK. Each newest build still
+# runs the FULL prepare -> test -> Android compile -> artifact gate.
+concurrency:
+  group: ess-v2-content-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
