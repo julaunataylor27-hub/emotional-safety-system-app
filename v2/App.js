@@ -435,7 +435,7 @@ function Core({onBack,onSaveJournal,onNavigate}){
  const stage=stages[step];
 
  const stageBody=()=>{
-  if(stage.id==='situation') return <View style={s.corePanel}><Text style={s.fieldLabel}>IN YOUR OWN WORDS</Text><TextInput multiline value={text} onChangeText={setText} maxLength={2500} style={s.coreInput} placeholder="Write what happened…" placeholderTextColor={T.muted}/><Text style={s.coreHint}>Start with your experience. You do not need to prove anything here.</Text></View>;
+  if(stage.id==='situation') return <View style={s.corePanel}><Text style={s.fieldLabel}>IN YOUR OWN WORDS</Text><TextInput multiline value={text} onChangeText={value=>{setText(value);setInterpretationChecks({});setUnknownChecks({});setChoicePreview('');setSelectedNext('');setSavedToJournal(false);}} maxLength={2500} style={s.coreInput} placeholder="Write what happened…" placeholderTextColor={T.muted}/><Text style={s.coreHint}>Start with your experience. You do not need to prove anything here.</Text></View>;
   if(stage.id==='feeling') return <FeelingStage detected={result.emotion.language_cues} selected={confirmedFeelings} onToggle={x=>setConfirmedFeelings(v=>v.includes(x)?v.filter(y=>y!==x):[...v,x])} other={otherFeeling} onOther={setOtherFeeling}/>;
   if(stage.id==='known') return <KnownStage items={result.evidence.reported_observations}/>;
   if(stage.id==='interpretation') return <InterpretationStage items={result.interpretation.possible_interpretations} checks={interpretationChecks} onCheck={(item,value)=>setInterpretationChecks(v=>({...v,[item]:value}))}/>;
@@ -529,12 +529,22 @@ function ChoiceCompare({options,value,onChange}){
  </View>;
 }
 
-function FinishStage({result,selectedNext,setSelectedNext,saved,onSave,onNavigate,recommendations}){
+function FinishStage({result,review,selectedNext,setSelectedNext,saved,onSave,onNavigate,recommendations}){
  return <View style={s.corePanel}>
   <Text style={s.fieldLabel}>YOU DECIDE</Text>
   <Text style={s.nextLead}>Choose one if it fits, or leave the decision open for now.</Text>
+  <View style={s.reviewSummary}>
+   <Text style={s.fieldLabel}>YOUR REVIEW — WHAT YOU CHOSE</Text>
+   <Text style={s.body}>Feelings you selected: {review.feelings.length?review.feelings.join(', '):'None selected'}</Text>
+   <Text style={s.body}>Interpretations reviewed: {review.interpretations.length}</Text>
+   <Text style={s.body}>Questions you kept open: {review.uncertainties.filter(x=>x.status==='Still open').length}</Text>
+   <Text style={s.body}>Questions you marked answered: {review.uncertainties.filter(x=>x.status!=='Still open').length} (not independently verified)</Text>
+   <Text style={s.body}>Option you explored: {review.focused_option||'None selected'}</Text>
+   <Text style={s.stageNote}>Your selections are your review, not evidence. They cannot verify events or override safety rules.</Text>
+  </View>
   {result.choice.options.map((x,i)=><Pressable key={i} onPress={()=>setSelectedNext(x)} style={[s.nextOption,selectedNext===x&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext===x&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext===x&&s.nextOptionTextOn]}>{x}</Text></Pressable>)}
   <Pressable onPress={()=>setSelectedNext('Not ready yet')} style={[s.nextOption,selectedNext==='Not ready yet'&&s.nextOptionOn]}><View style={[s.nextRadio,selectedNext==='Not ready yet'&&s.nextRadioOn]}/><Text style={[s.nextOptionText,selectedNext==='Not ready yet'&&s.nextOptionTextOn]}>I’m not ready to choose yet.</Text></Pressable>
+  {!!selectedNext&&<Text style={s.stageNote}>You selected: {selectedNext}. You can change your mind.</Text>}
   <View style={s.finishDivider}/>
   <Pressable onPress={onSave} disabled={saved} style={[s.saveJournalButton,saved&&s.saveJournalButtonDone]}><Text style={s.saveJournalText}>{saved?'Saved to Journal ✓':'Save this reflection to Journal'}</Text></Pressable>
   <Text style={s.finishHeading}>Where would you like to go next?</Text>
@@ -544,7 +554,8 @@ function FinishStage({result,selectedNext,setSelectedNext,saved,onSave,onNavigat
    <DestinationCard icon="♡" title="Support" subtitle="See support options" suggested={recommendations.some(x=>x.destination==='support')} onPress={()=>onNavigate?.('support')}/>
    <DestinationCard icon="⌂" title="Home" subtitle="Return to the start" onPress={()=>onNavigate?.('home')}/>
   </View>
-  <Pressable onPress={()=>setSelectedNext('Leave it for now')} style={[s.leaveOpenButton,selectedNext==='Leave it for now'&&s.leaveOpenButtonOn]}><Text style={s.leaveOpenText}>Leave it for now</Text></Pressable>
+  <Pressable accessibilityRole="button" accessibilityLabel="Leave it for now without saving" onPress={()=>onNavigate?.('home')} style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave it for now</Text></Pressable>
+  <Text style={s.stageNote}>Leaving returns Home. Nothing is saved unless you choose Save this reflection to Journal.</Text>
   <Text style={s.stageNote}>Suggested pathway: {result.next_pathway.replaceAll('_',' → ')}. Suggestions are optional; you decide what happens next.</Text>
  </View>;
 }
