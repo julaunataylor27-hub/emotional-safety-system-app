@@ -139,6 +139,15 @@ export const V={
   // The System Map lives inside More; the original Home + five-tab shell are unchanged.
  systemMap:{gap:8,marginTop:15},
  systemMapAction:{minHeight:62,flexDirection:'row',alignItems:'center',gap:8,padding:12,borderWidth:1,borderRadius:13,borderColor:'rgba(218,194,161,.4)',backgroundColor:'rgba(12,25,18,.9)'},
+  // Founder-selected ESS purpose in existing 2027 layout; compact Home link, full More detail.
+ purposeHomeLink:{minHeight:82,borderRadius:16,borderWidth:1,borderColor:'rgba(221,196,156,.46)',backgroundColor:'rgba(24,31,23,.93)',padding:14,flexDirection:'row',alignItems:'center',gap:10,marginTop:15},
+ purposeHomeEyebrow:{fontSize:9,letterSpacing:1.5,color:'#EACCA2',fontWeight:'900',marginBottom:6},
+ purposeHomeText:{fontSize:12.8,lineHeight:19.5,color:'#F4E7D6',fontWeight:'600'},
+ purposeStatement:{borderWidth:1,borderColor:'rgba(226,188,136,.58)',borderRadius:17,backgroundColor:'rgba(31,26,18,.95)',padding:17,marginBottom:17},
+ purposeEyebrow:{color:'#EACCA2',fontSize:9.5,fontWeight:'900',letterSpacing:1.2,marginBottom:10},
+ purposeQuote:{color:'#F9E8D1',fontSize:20,lineHeight:29,fontFamily:'serif',fontWeight:'700'},
+ purposeAttribution:{fontSize:10.7,color:'#E2CBAF',marginTop:15,lineHeight:16},
+ purposePrinciples:{borderTopWidth:1,borderTopColor:'rgba(216,194,160,.32)',paddingTop:13,marginTop:15},
   // Encouragement is a gentle optional reading panel, never a score or crisis override.
  encouragementPanel:{borderRadius:17,borderWidth:1,borderColor:'rgba(146,184,151,.56)',backgroundColor:'rgba(18,39,30,.94)',padding:15,marginVertical:12},
  encouragementChoices:{gap:9,marginTop:13},
