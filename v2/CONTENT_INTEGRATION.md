@@ -40,6 +40,15 @@ Imported the project's **73 dated public directory entries**, with region and te
 - **Quality gates:** content dataset + page metadata tests, six-step route tests, visual identity tests and complete Android APK compile.
 - **Faster clean builds:** obsolete commits are cancelled by workflow concurrency; the latest build still runs all checks.
 
+## Encouragement & Emotional Stamina — optional guide (2 November 2026)
+- New public Learn trail with original encouragement copy, an explicit educational disclaimer, uncertainty statement, and attributed healthdirect Australia, APA and WHO sources.
+- Four user-selected types of encouragement: **Notice an effort**, **Give myself a safe pause**, **Consider one manageable step**, or **Reach out for encouragement**. Every choice reveals different wording and a genuine optional route (Journal, Learn, blank ESS Core or Support). A second tap clears selection; “Leave this open” is also available.
+- From the final ESS Core step, the encouragement learning path is offered only when the deterministic safety classification is **not** danger, coercion or pressure. These risk-related pathways keep support/safety in focus. This does not mean ESS can detect all danger from text.
+- Encouragement is not a resilience score, guaranteed clinical result, diagnosis, requirement to forgive, or request to tolerate harm. Rest, safe boundaries and seeking help count as legitimate choices.
+- The learning panel is session UI state only; it does not upload, automatically store or send the selected choice to anyone. Journal notes remain opt-in and session-only.
+- Test in `tests/encouragement.test.cjs` verifies source attribution, no forced positivity, route actions, explicit clear/leave and safety precedence.
+- Editorial sources and language were checked for this draft on 2 November 2026. A clinical or safeguarding assessment of ESS effectiveness has **not** been conducted.
+
 ## Next content migrations (not yet included)
 - Full interactive legal reading from the vetted 25-source register after legal review and fresh source checks.
 - Individually attributed cultural comparisons after relevant knowledge-holder review and permission checks.
