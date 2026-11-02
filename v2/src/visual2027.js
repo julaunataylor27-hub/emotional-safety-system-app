@@ -118,6 +118,7 @@ export const V={
  tagChip:{minHeight:43,paddingHorizontal:12,paddingVertical:9,borderRadius:999,borderWidth:1,borderColor:'rgba(216,194,160,.31)',backgroundColor:'rgba(12,10,8,.94)'},
  reviewButton:{minHeight:44,paddingHorizontal:12,borderRadius:11,borderWidth:1,borderColor:'rgba(216,194,160,.42)',alignItems:'center',justifyContent:'center'},
  accessibleTap:{minHeight:44,minWidth:44,justifyContent:'center',alignItems:'center'},
+ journalExpanded:{borderTopWidth:1,borderTopColor:'rgba(216,194,160,.3)',paddingTop:12,marginTop:12},
  reviewSummary:{borderRadius:14,borderWidth:1,borderColor:'rgba(126,170,137,.5)',backgroundColor:'rgba(15,37,25,.93)',padding:13,marginBottom:14},
  reviewSummaryLine:{color:'#ECE2D3',fontSize:12.4,lineHeight:20,marginVertical:4},
   // Reflection, choice, evidence and secondary routes share the same 2027 readable surface.
