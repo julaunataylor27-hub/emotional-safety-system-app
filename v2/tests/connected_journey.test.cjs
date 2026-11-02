@@ -30,7 +30,7 @@ test('Connection Trail is selectable, reversible and never blocks a route',()=>{
  assert.match(app,/No progress score, surveillance or automatic saving/i);
 });
 test('new routes connect blank Core, Learn, Journal and Support without text transfer',()=>{
- assert.match(app,/if\(id==='core'\)\{setScreen\('home'\);setCoreOpen\(true\);return;\}/);
+ assert.match(app,/if\(id==='core'\)\{setReturnTrail\(detail\|\|null\);setScreen\('home'\);setCoreOpen\(true\);return;\}/);
  assert.match(app,/onNavigate\?\.\('learn',next\.title\)/);
  assert.match(app,/onNavigate\?\.\('core',trail\.title\)/);
  assert.match(app,/onNavigate\?\.\('support'\)/);
