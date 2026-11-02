@@ -6,6 +6,7 @@ import {House,BookOpen,NotebookPen,HeartHandshake,Menu,ShieldCheck,Info,Settings
 import {T} from './src/theme';
 import {V} from './src/visual2027';
 import {processSituation} from './src/core/essCore.cjs';
+import {buildReflectionReview} from './src/core/reflectionReview.cjs';
 import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
 
 // ESS_V2_2027_FULL_APP_VISUAL_CONTRACT: new offline photography, not old imagery.
@@ -144,7 +145,7 @@ function Home({openCore,setScreen}){
    <Pressable accessibilityRole="button" accessibilityLabel="Understand your situation" onPress={openCore} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="understand" size={23} color={T.eucalyptus}/></View><Text style={s.tileTitle}>Understand</Text><Text style={s.tileSub}>your situation</Text></Pressable>
    <Pressable accessibilityRole="button" accessibilityLabel="Learn and explore" onPress={()=>setScreen('learn')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="learn" size={23} color={T.ochre}/></View><Text style={s.tileTitle}>Learn</Text><Text style={s.tileSub}>and explore</Text></Pressable>
    <Pressable accessibilityRole="button" accessibilityLabel="Find support when needed" onPress={()=>setScreen('support')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="support" size={23} color={T.clay}/></View><Text style={s.tileTitle}>Find support</Text><Text style={s.tileSub}>when needed</Text></Pressable>
-   <Pressable accessibilityRole="button" accessibilityLabel="How ESS reached this" onPress={()=>setScreen('more')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="evidence" size={23} color={T.eucalyptus}/></View><Text style={s.tileTitle}>How ESS</Text><Text style={s.tileSub}>reached this</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="How ESS reached this" onPress={()=>setScreen('more','How ESS reached this')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="evidence" size={23} color={T.eucalyptus}/></View><Text style={s.tileTitle}>How ESS</Text><Text style={s.tileSub}>reached this</Text></Pressable>
   </View>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Human on the surface. Rigorous underneath.</Text><View style={s.signatureLine}/></View>
  </>;
@@ -347,9 +348,14 @@ function SupportCard({title,subtitle,icon,tone,selected,onPress}){
  </Pressable>
 }
 
-function More({openCore}){
+function More({initialDetail,onConsumeInitialDetail}){
  const [detail,setDetail]=useState('');
+ React.useEffect(()=>{if(initialDetail){setDetail(initialDetail);onConsumeInitialDetail?.();}},[initialDetail]);
  const details={
+  'How ESS reached this':{
+   description:'ESS uses local, deterministic rules to separate reported words, possible interpretations, uncertainty and optional next steps. For the rule IDs used in your own reflection, use the final reflection step.',
+   points:['ESS does not independently verify events or determine another person’s intentions.','Feelings you select are separate from language cues identified by ESS.','Reviewing or rejecting an interpretation affects your summary, not the safety classification.','No decision is forced. You can leave questions and choices open.','Safety routing is limited wording analysis, not a professional risk assessment.']
+  },
   'About ESS':{
    description:'ESS helps a person reflect on feelings, reported experiences, possible interpretations, uncertainty and next steps. It does not independently determine what happened, diagnose anyone or replace professional advice.',
    points:['Feelings are meaningful but do not prove another person’s intentions.','Evidence and interpretation should be kept separate.','The person can disagree, leave questions open or choose not to proceed.']
@@ -387,7 +393,7 @@ function More({openCore}){
   <CinematicHero image={ART.more} kicker="MORE" title="The system behind the calm." body="Understand ESS, adjust your expectations and see how the system is being developed." height={225}/>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>ESS</Text><Text style={s.sectionHeading}>Explore the system</Text></View>
   <View style={s.stack}>
-   <FeatureCard title="How ESS reached this" subtitle="Rules, versions and transparency" icon="◇" accent={T.eucalyptus} onPress={openCore}/>
+   <FeatureCard title="How ESS reached this" subtitle="Rules, versions and transparency" icon="◇" accent={T.eucalyptus} onPress={()=>setDetail('How ESS reached this')}/>
    {items.map(([title,subtitle,icon,accent])=><FeatureCard key={title} title={title} subtitle={subtitle} icon={icon} accent={accent} onPress={()=>setDetail(title)}/>)}
   </View>
   {!!detail&&<View style={[s.learnSection,{marginTop:12}]}>
@@ -555,8 +561,9 @@ function AppRoot(){
  const [coreOpen,setCoreOpen]=useState(false);
  const [pendingLearnTrail,setPendingLearnTrail]=useState(null);
  const [pendingSupportMode,setPendingSupportMode]=useState(null);
+ const [pendingMoreDetail,setPendingMoreDetail]=useState(null);
  const [journalEntries,setJournalEntries]=useState([]);
- const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);if(id==='support'&&detail)setPendingSupportMode(detail);setScreen(id);};
+ const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);if(id==='support'&&detail)setPendingSupportMode(detail);if(id==='more'&&detail)setPendingMoreDetail(detail);setScreen(id);};
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go}>
   {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
@@ -564,7 +571,7 @@ function AppRoot(){
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
    screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)}/>:
    screen==='support'?<Support initialMode={pendingSupportMode} onConsumeInitialMode={()=>setPendingSupportMode(null)} onNavigate={go}/>:
-   <More openCore={()=>setCoreOpen(true)}/>}
+   <More initialDetail={pendingMoreDetail} onConsumeInitialDetail={()=>setPendingMoreDetail(null)}/>}
  </Shell>;
 }
 
