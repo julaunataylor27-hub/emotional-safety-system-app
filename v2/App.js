@@ -369,6 +369,10 @@ function More({openCore}){
   'Share feedback':{
    description:'Sending feedback is not connected in this prototype. ESS will not collect or transmit a feedback message from this screen.',
    points:['A reviewed consent and feedback process is needed before this feature can be activated.','For now, record feedback outside the app without including sensitive personal details.']
+  },
+  'Photography credits':{
+   description:'Visuals are independently credited Creative Commons photographs. They are not proof of cultural affiliation, stories or events. Original image URLs, permissions and transformations are documented for review.',
+   points:['Leon Durrant · The Gap, Albany (CC BY-SA 4.0)','Heidi la Tanguera · Banksia (CC BY-SA 4.0)','Bjørn Christian Tørrissen · Kalbarri coast (CC BY-SA 3.0)','Iktoh · Joffre Gorge (CC BY-SA 4.0)','Leonel Padron · Leeman stars (CC BY 2.0)','Geoff Derrin · Banksia obovata (CC BY-SA 4.0)','Orderinchaos · Kalbarri road (CC BY-SA 3.0)','Hesperian · Banksia media (CC BY-SA 3.0)','Ryan Wick · Parliament House (CC BY 2.0)','Zoharby · Pinnacles Desert (CC BY-SA 3.0)']
   }
  };
  const items=[
@@ -376,7 +380,8 @@ function More({openCore}){
   ['Settings','Privacy, accessibility and preferences','⚙',T.sand],
   ['Research & development','Testing, sources and improvements','▤',T.ochre],
   ['Help','FAQs and app guidance','?',T.sand],
-  ['Share feedback','Feedback channel not connected yet','…',T.eucalyptus]
+  ['Share feedback','Feedback channel not connected yet','…',T.eucalyptus],
+  ['Photography credits','Creators, licenses and source images','i',T.sand]
  ];
  return <>
   <CinematicHero image={ART.more} kicker="MORE" title="The system behind the calm." body="Understand ESS, adjust your expectations and see how the system is being developed." height={280}/>
@@ -389,6 +394,7 @@ function More({openCore}){
    <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>ABOUT THIS SECTION</Text><Text style={s.supportModeTitle}>{detail}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close More details" onPress={()=>setDetail('')} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
    <Text style={s.learnBody}>{details[detail].description}</Text>
    {details[detail].points.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
+   {detail==='Photography credits'&&<Pressable accessibilityRole="link" accessibilityLabel="Open photography credits and source licenses" onPress={()=>Linking.openURL('https://github.com/julaunataylor27-hub/emotional-safety-system-app/blob/ess-v2-clean-rebuild/docs/ESS_V2_PHOTO_CREDITS.md').catch(()=>Alert.alert('Link unavailable','See the ESS v2 source repository for photo credits.'))} style={s.secondary}><Text style={s.secondaryText}>View image sources and licences</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
   </View>}
  </>;
 }
