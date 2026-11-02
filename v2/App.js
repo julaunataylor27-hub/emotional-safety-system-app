@@ -205,18 +205,25 @@ function Journal({entries,setEntries}){
 }
 
 function JournalEntryCard({item,accent}){
- return <View style={s.journalEntry}>
-  <View style={[s.featureIcon,{borderColor:accent}]}><Text style={[s.featureIconText,{color:accent}]}>{item.icon}</Text></View>
+ const [expanded,setExpanded]=useState(false);
+ return <Pressable accessibilityRole="button" accessibilityLabel="Review saved journal entry" accessibilityState={{expanded}}
+  onPress={()=>setExpanded(v=>!v)} style={({pressed})=>[s.journalEntry,pressed&&s.pressed]}>
+  <View style={[s.featureIcon,{borderColor:accent}]}><AppIcon name="journal" size={18} color={accent}/></View>
   <View style={s.featureCopy}>
    <View style={s.entryTop}><Text style={s.featureTitle}>{item.when}</Text><View style={s.entryTag}><Text style={s.entryTagText}>{item.tag}</Text></View></View>
    <Text style={s.featureSub}>{item.text}</Text>
    <View style={s.changedLine}><Text style={s.changedLabel}>WHAT CHANGED</Text><Text style={s.changedText}>{item.change}</Text></View>
-   {!!item.review?.feelings?.length&&<Text style={s.changedText}>Your selected feelings: {item.review.feelings.join(', ')}</Text>}
-   {!!item.review?.interpretations?.length&&<Text style={s.changedText}>Interpretations reviewed: {item.review.interpretations.length}</Text>}
-   {!!item.review?.uncertainties?.length&&<Text style={s.changedText}>Questions reviewed: {item.review.uncertainties.length}</Text>
+   {expanded&&<View style={s.journalExpanded}>
+    <Text style={s.fieldLabel}>YOUR REVIEW</Text>
+    {!!item.review?.feelings?.length&&<Text style={s.body}>Feelings you selected: {item.review.feelings.join(', ')}</Text>}
+    {item.review?.interpretations?.map((x,i)=><Text key={'i'+i} style={s.reviewSummaryLine}>• {x.status}: {x.text}</Text>)}
+    {item.review?.uncertainties?.map((x,i)=><Text key={'u'+i} style={s.reviewSummaryLine}>• {x.status}: {x.text}</Text>)}
+    {item.review?.focused_option&&<Text style={s.body}>Option you explored: {item.review.focused_option}</Text>}
+    <Text style={s.stageNote}>This is your session-only note and personal review, not a verified record of events.</Text>
+   </View>}
   </View>
-  <Text style={s.featureArrow}>›</Text>
- </View>
+  <Text style={s.featureArrow}>{expanded?'⌃':'›'}</Text>
+ </Pressable>;
 }
 
 function Learn({initialTrail,onConsumeInitialTrail}){
