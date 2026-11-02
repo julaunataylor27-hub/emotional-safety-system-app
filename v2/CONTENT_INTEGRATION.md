@@ -9,7 +9,7 @@ Started: 2 November 2026 (Australia/Perth)
 - The baseline APK remains the correct download if the user wants to return to the design they already liked.
 
 ## Scope of integration
-Only add capabilities inside the existing Home, Journal, Learn, Support, More and ESS Core structure. Preserve the cinematic 2027 theme, existing five tabs, app package and Android safe areas. Never import the old v1 screens or patch scripts.
+Only add capabilities inside the existing Home, Journal, Learn, Support, More and ESS Core structure. Preserve the cinematic 2027 theme, five tabs and Android safe areas. This connected testing copy deliberately uses **a separate Android package** (`au.com.emotionalsafetysystem.v2.connected`) so it installs alongside the original app instead of overwriting it. Never import the old v1 screens or patch scripts.
 
 Added **7 offline public learning trails** with questions, limits, scope, source-specific attribution and deliberate external links:
 - Evidence & Truth Lab (research method and safe evidence)
@@ -30,6 +30,15 @@ Imported the project's **73 dated public directory entries**, with region and te
 - User Journal entries remain session-only until user-controlled protected storage is designed, reviewed and tested.
 - Safety rules, uncertainty, personal consent, user review and urgent support options remain unchanged.
 - APP content additions use blank thumbnail icon fallbacks instead of duplicating landscape pictures.
+
+## Single-system connected experience
+- **More → System Map:** direct actions for Understand, Evidence, Learn, Reflect, Support and Connection Trail. No extra tab.
+- **Learn → Connection Trail:** 6 optional selectable clues, Previous/Next, direct routing to related public reading, blank ESS Core reflection, session-only Journal and user-chosen Support. Users may leave at any time; no score.
+- **Learn → any topic:** public knowledge, relevant source status and links, related trail, a deliberate blank ESS Core reflection and optional Support route.
+- **No personal data handoff:** reading and public queries are not copied to Core, external providers or service URLs. No automatic saving.
+- **Navigation resets to top** when opening a new route; the active Android inset and 2027 visual tokens are retained.
+- **Quality gates:** content dataset + page metadata tests, six-step route tests, visual identity tests and complete Android APK compile.
+- **Faster clean builds:** obsolete commits are cancelled by workflow concurrency; the latest build still runs all checks.
 
 ## Next content migrations (not yet included)
 - Full interactive legal reading from the vetted 25-source register after legal review and fresh source checks.
