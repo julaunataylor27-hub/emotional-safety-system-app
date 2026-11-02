@@ -211,6 +211,9 @@ function JournalEntryCard({item,accent}){
    <View style={s.entryTop}><Text style={s.featureTitle}>{item.when}</Text><View style={s.entryTag}><Text style={s.entryTagText}>{item.tag}</Text></View></View>
    <Text style={s.featureSub}>{item.text}</Text>
    <View style={s.changedLine}><Text style={s.changedLabel}>WHAT CHANGED</Text><Text style={s.changedText}>{item.change}</Text></View>
+   {!!item.review?.feelings?.length&&<Text style={s.changedText}>Your selected feelings: {item.review.feelings.join(', ')}</Text>}
+   {!!item.review?.interpretations?.length&&<Text style={s.changedText}>Interpretations reviewed: {item.review.interpretations.length}</Text>}
+   {!!item.review?.uncertainties?.length&&<Text style={s.changedText}>Questions reviewed: {item.review.uncertainties.length}</Text>
   </View>
   <Text style={s.featureArrow}>›</Text>
  </View>
@@ -406,7 +409,7 @@ function More({initialDetail,onConsumeInitialDetail}){
 }
 
 function Core({onBack,onSaveJournal,onNavigate}){
- const [text,setText]=useState("He hasn't replied for 6 hours. I feel rejected and I think he doesn't care.");
+ const [text,setText]=useState('');
  const [step,setStep]=useState(0);
  const [selectedNext,setSelectedNext]=useState('');
  const [confirmedFeelings,setConfirmedFeelings]=useState([]);
@@ -416,7 +419,8 @@ function Core({onBack,onSaveJournal,onNavigate}){
  const [unknownChecks,setUnknownChecks]=useState({});
  const [choicePreview,setChoicePreview]=useState('');
  const [savedToJournal,setSavedToJournal]=useState(false);
- const result=useMemo(()=>processSituation({text,feeling:'Not specified'}),[text]);
+ const result=useMemo(()=>processSituation({text,selectedFeelings:confirmedFeelings,otherFeeling}),[text,confirmedFeelings,otherFeeling]);
+ const review=useMemo(()=>buildReflectionReview({selectedFeelings:confirmedFeelings,otherFeeling,interpretationChecks,unknownChecks,choicePreview,selectedNext}),[confirmedFeelings,otherFeeling,interpretationChecks,unknownChecks,choicePreview,selectedNext]);
 
  const stages=[
   {id:'situation',title:"What's happening?"},
@@ -432,13 +436,18 @@ function Core({onBack,onSaveJournal,onNavigate}){
 
  const stageBody=()=>{
   if(stage.id==='situation') return <View style={s.corePanel}><Text style={s.fieldLabel}>IN YOUR OWN WORDS</Text><TextInput multiline value={text} onChangeText={setText} maxLength={2500} style={s.coreInput} placeholder="Write what happened…" placeholderTextColor={T.muted}/><Text style={s.coreHint}>Start with your experience. You do not need to prove anything here.</Text></View>;
-  if(stage.id==='feeling') return <FeelingStage detected={result.emotion.reported_or_detected} selected={confirmedFeelings} onToggle={x=>setConfirmedFeelings(v=>v.includes(x)?v.filter(y=>y!==x):[...v,x])} other={otherFeeling} onOther={setOtherFeeling}/>;
+  if(stage.id==='feeling') return <FeelingStage detected={result.emotion.language_cues} selected={confirmedFeelings} onToggle={x=>setConfirmedFeelings(v=>v.includes(x)?v.filter(y=>y!==x):[...v,x])} other={otherFeeling} onOther={setOtherFeeling}/>;
   if(stage.id==='known') return <KnownStage items={result.evidence.reported_observations}/>;
   if(stage.id==='interpretation') return <InterpretationStage items={result.interpretation.possible_interpretations} checks={interpretationChecks} onCheck={(item,value)=>setInterpretationChecks(v=>({...v,[item]:value}))}/>;
   if(stage.id==='uncertainty') return <UncertaintyStage items={result.uncertainty.unknowns} checks={unknownChecks} onCheck={(item,value)=>setUnknownChecks(v=>({...v,[item]:value}))} onLearn={()=>{const rec=result.recommendations?.find(x=>x.destination==='learn');onNavigate?.('learn',rec?.trail)}} recommendation={result.recommendations?.find(x=>x.destination==='learn')}/>;
   if(stage.id==='context') return <ContextStage result={result} onSupport={()=>onNavigate?.('support',result.safety.urgent?'urgent':result.safety.classification==='coercion'?'coercion':result.safety.classification==='pressure'?'boundary':'calm')} recommendation={result.recommendations?.find(x=>x.destination==='support')}/>;
   if(stage.id==='choice') return <ChoiceCompare options={result.choice.options} value={choicePreview} onChange={setChoicePreview}/>;
-  return <FinishStage result={result} selectedNext={selectedNext} setSelectedNext={setSelectedNext} saved={savedToJournal} onSave={()=>{onSaveJournal?.({when:'Just now',text,change:selectedNext||'Decision left open.',tag:'Choice',icon:'◇'});setSavedToJournal(true);}} onNavigate={onNavigate} recommendations={result.recommendations||[]}/>;
+  return <FinishStage result={result} review={review} selectedNext={selectedNext} setSelectedNext={setSelectedNext}
+   saved={savedToJournal} onSave={()=>{
+    onSaveJournal?.({when:'Just now',text:text.trim()||'No situation details provided.',
+      change:selectedNext||choicePreview||'Decision left open.',tag:'Choice',icon:'◇',review});
+    setSavedToJournal(true);
+   }} onNavigate={onNavigate} recommendations={result.recommendations||[]}/>;
  };
 
  const goBack=()=>step===0?onBack():setStep(v=>v-1);
