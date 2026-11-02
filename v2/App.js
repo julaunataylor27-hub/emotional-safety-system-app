@@ -121,7 +121,7 @@ function Pill({children}){return <View style={s.pill}><Text style={s.pillText}>{
 
 function FeatureCard({title,subtitle,icon,accent,onPress,image}){
  const body=<>
-   <View style={[s.featureIcon,{borderColor:accent}]}><Text style={[s.featureIconText,{color:accent}]}>{icon}</Text></View>
+   <View style={[s.featureIcon,{borderColor:accent}]}><AppIcon name={{'i':'info','⚙':'settings','▤':'learn','?':'help','…':'feedback','◇':'evidence'}[icon]||icon} size={20} color={accent}/></View>
    <View style={s.featureCopy}><Text style={s.featureTitle}>{title}</Text><Text style={s.featureSub}>{subtitle}</Text></View>
    <Text style={s.featureArrow}>›</Text>
   </>;
@@ -132,8 +132,8 @@ function FeatureCard({title,subtitle,icon,accent,onPress,image}){
 
 function Home({openCore,setScreen}){
  return <>
-  <CinematicHero image={ART.home} kicker="GOOD EVENING" title="You’re in the right place."
-   body="A calm place to understand what’s happening, keep your choices and decide what comes next." height={410}>
+  <CinematicHero image={ART.home} kicker="WELCOME TO ESS" title="You’re in the right place."
+   body="A calm place to understand what’s happening, keep your choices and decide what comes next." height={360}>
    <View style={s.heroMeta}><Pill>You stay in control</Pill><Pill>No judgement</Pill></View>
    <Pressable accessibilityRole="button" accessibilityLabel="Start a reflection" accessibilityHint="Open the ESS Core guided reflection" onPress={openCore} style={({pressed})=>[s.primary,pressed&&s.pressed]}>
     <Text style={s.primaryText}>Start a reflection</Text><Text style={s.primaryArrow}>→</Text>
@@ -141,10 +141,10 @@ function Home({openCore,setScreen}){
   </CinematicHero>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>EXPLORE</Text><Text style={s.sectionHeading}>What do you need right now?</Text></View>
   <View style={s.homeGrid}>
-   <Pressable accessibilityRole="button" accessibilityLabel="Understand your situation" onPress={openCore} style={s.homeTile}><Text style={[s.tileGlyph,{color:T.eucalyptus}]}>◒</Text><Text style={s.tileTitle}>Understand</Text><Text style={s.tileSub}>your situation</Text></Pressable>
-   <Pressable accessibilityRole="button" accessibilityLabel="Learn and explore" onPress={()=>setScreen('learn')} style={s.homeTile}><Text style={[s.tileGlyph,{color:T.ochre}]}>▤</Text><Text style={s.tileTitle}>Learn</Text><Text style={s.tileSub}>and explore</Text></Pressable>
-   <Pressable accessibilityRole="button" accessibilityLabel="Find support when needed" onPress={()=>setScreen('support')} style={s.homeTile}><Text style={[s.tileGlyph,{color:T.clay}]}>◉</Text><Text style={s.tileTitle}>Find support</Text><Text style={s.tileSub}>when needed</Text></Pressable>
-   <Pressable accessibilityRole="button" accessibilityLabel="How ESS reached this" onPress={()=>setScreen('more')} style={s.homeTile}><Text style={[s.tileGlyph,{color:T.eucalyptus}]}>◇</Text><Text style={s.tileTitle}>How ESS</Text><Text style={s.tileSub}>reached this</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="Understand your situation" onPress={openCore} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="understand" size={23} color={T.eucalyptus}/></View><Text style={s.tileTitle}>Understand</Text><Text style={s.tileSub}>your situation</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="Learn and explore" onPress={()=>setScreen('learn')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="learn" size={23} color={T.ochre}/></View><Text style={s.tileTitle}>Learn</Text><Text style={s.tileSub}>and explore</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="Find support when needed" onPress={()=>setScreen('support')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="support" size={23} color={T.clay}/></View><Text style={s.tileTitle}>Find support</Text><Text style={s.tileSub}>when needed</Text></Pressable>
+   <Pressable accessibilityRole="button" accessibilityLabel="How ESS reached this" onPress={()=>setScreen('more')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="evidence" size={23} color={T.eucalyptus}/></View><Text style={s.tileTitle}>How ESS</Text><Text style={s.tileSub}>reached this</Text></Pressable>
   </View>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Human on the surface. Rigorous underneath.</Text><View style={s.signatureLine}/></View>
  </>;
@@ -226,7 +226,7 @@ function Learn({initialTrail,onConsumeInitialTrail}){
   <View style={s.learnPurpose}><Text style={s.fieldLabel}>WHAT IS THIS HELPING ME DO?</Text><Text style={s.learnPurposeText}>Find context or knowledge that helps you understand something better — without forcing a conclusion.</Text></View>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>EXPLORE</Text><Text style={s.sectionHeading}>Learning paths</Text></View>
   <View style={s.stack}>{filtered.map(trail=><Pressable key={trail.id} accessibilityRole="button" accessibilityLabel={`${trail.title} learning trail`} onPress={()=>setSelectedTrail(trail)} style={({pressed})=>[s.learnTrailCard,pressed&&s.pressed]}>
-   <ImageBackground source={trail.image} resizeMode="cover" style={s.learnTrailImage} imageStyle={s.learnTrailImageRadius}><View style={s.cardShade}/><View style={s.learnTrailContent}><Text style={s.learnTrailIcon}>{trail.icon}</Text><View style={s.rowCopy}><Text style={s.learnTrailTitle}>{trail.title}</Text><Text style={s.learnTrailSub}>{trail.subtitle}</Text><Text style={s.learnTrailHelp}>{trail.helps}</Text></View><Text style={s.featureArrow}>›</Text></View></ImageBackground>
+   <View style={s.learnTrailContent}><Image source={trail.image} resizeMode="cover" style={s.learnThumbnail}/><View style={s.rowCopy}><Text style={s.learnTrailTitle}>{trail.title}</Text><Text style={s.learnTrailSub}>{trail.subtitle}</Text></View><Text style={s.featureArrow}>›</Text></View>
   </Pressable>)}</View>
  </>;
 }
