@@ -9,6 +9,7 @@ import {processSituation} from './src/core/essCore.cjs';
 import {buildReflectionReview} from './src/core/reflectionReview.cjs';
 import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
 import {CURATED_MODULES} from './src/data/knowledgeLibrary.cjs';
+import {CONNECTION_STEPS} from './src/data/connectionPath.cjs';
 import supportDirectory from './src/data/supportDirectory.json';
 
 // ESS_V2_2027_FULL_APP_VISUAL_CONTRACT: new offline photography, not old imagery.
@@ -259,6 +260,14 @@ function Learn({initialTrail,onConsumeInitialTrail,onNavigate}){
 }
 
 function LearnTrail({trail,onBack,onRelated,onNavigate}){
+ const [clueIndex,setClueIndex]=useState(0);
+ React.useEffect(()=>setClueIndex(0),[trail.id]);
+ const selectedClue=CONNECTION_STEPS[clueIndex];
+ const openClue=clue=>{
+  if(clue.destination==='learn'&&clue.target){onRelated(clue.target);return;}
+  if(clue.destination==='core'){onNavigate?.('core');return;}
+  onNavigate?.(clue.destination);
+ };
  const openSource=url=>{
   if(!/^https:\/\//.test(url))return Alert.alert('Source unavailable','The source address was not accepted.');
   Linking.openURL(url).catch(()=>Alert.alert('Could not open source','The original website could not open. You can copy the displayed address and try again.'));
@@ -271,6 +280,33 @@ function LearnTrail({trail,onBack,onRelated,onNavigate}){
    <View style={s.learnDetailCopy}><Text style={s.kicker}>WHAT THIS HELPS YOU UNDERSTAND</Text><Text style={s.learnDetailTitle}>{trail.helps}</Text></View>
   </View>
   {!!trail.scope&&<View style={s.sourceScope}><Text style={s.sourceScopeText}>SCOPE: {trail.scope}</Text></View>}
+  {trail.id==='connection-trail'&&<View style={s.learnSection}>
+   <Text style={s.fieldLabel}>FOLLOW THE CONNECTION TRAIL · OPTIONAL</Text>
+   <Text style={s.learnBody}>Choose any clue in any order. No progress score, surveillance or automatic saving.</Text>
+   <View style={s.connectionChapters}>
+    {CONNECTION_STEPS.map((clue,i)=><Pressable key={clue.id} accessibilityRole="button" accessibilityLabel={'Open clue '+(i+1)+': '+clue.title}
+     accessibilityState={{selected:clueIndex===i}} onPress={()=>setClueIndex(i)}
+     style={[s.connectionChip,clueIndex===i&&s.connectionChipOn]}><Text style={[s.connectionChipText,clueIndex===i&&s.connectionChipTextOn]}>{i+1}. {clue.title}</Text></Pressable>)}
+   </View>
+   <View style={s.connectionSelected}>
+    <Text style={s.kicker}>CLUE {clueIndex+1} OF {CONNECTION_STEPS.length}</Text>
+    <Text style={s.supportModeTitle}>{selectedClue.title}</Text>
+    <Text style={s.body}>{selectedClue.prompt}</Text>
+    <Text style={s.stageNote}>{selectedClue.helps}</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel={selectedClue.label} onPress={()=>openClue(selectedClue)} style={s.secondary}>
+     <Text style={s.secondaryText}>{selectedClue.label}</Text><Text style={s.secondaryArrow}>→</Text>
+    </Pressable>
+    <Text style={s.stageNote}>{selectedClue.hint}</Text>
+   </View>
+   <View style={s.coreNavRow}>
+    <Pressable accessibilityRole="button" accessibilityLabel="Previous clue" disabled={clueIndex===0}
+      onPress={()=>setClueIndex(i=>Math.max(0,i-1))} style={[s.coreBackButton,clueIndex===0&&s.disabledStep]}><Text style={s.coreBackButtonText}>Previous</Text></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="Next clue" disabled={clueIndex===CONNECTION_STEPS.length-1}
+      onPress={()=>setClueIndex(i=>Math.min(CONNECTION_STEPS.length-1,i+1))}
+      style={[s.coreNextButton,clueIndex===CONNECTION_STEPS.length-1&&s.disabledStep]}><Text style={s.coreNextText}>Next clue</Text><Text style={s.coreNextText}>→</Text></Pressable>
+   </View>
+   <Pressable accessibilityRole="button" accessibilityLabel="Leave connection trail" onPress={onBack} style={s.leaveOpenButton}><Text style={s.leaveOpenText}>Leave the trail</Text></Pressable>
+  </View>}
   <View style={s.learnSection}><Text style={s.fieldLabel}>KEY IDEAS</Text>{trail.ideas.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}</View>
   <View style={s.learnSection}><Text style={s.fieldLabel}>WHAT IS STILL UNCERTAIN?</Text><Text style={s.learnBody}>{trail.unknown}</Text></View>
   <View style={s.learnSection}><Text style={s.fieldLabel}>SOURCE STATUS</Text><View style={s.sourceBadge}><Text style={s.sourceBadgeText}>SOURCE DISCIPLINE ON</Text></View><Text style={s.learnBody}>{trail.sourceStatus}</Text>
@@ -289,6 +325,7 @@ function LearnTrail({trail,onBack,onRelated,onNavigate}){
    </View>)}
   </View>}
   <Pressable onPress={()=>onRelated(trail.related)} style={s.crossLinkButton}><View><Text style={s.crossLinkEyebrow}>RELATED TRAIL</Text><Text style={s.crossLinkTitle}>{trail.related}</Text><Text style={s.crossLinkSub}>Keep following the knowledge path if it helps.</Text></View><Text style={s.crossLinkArrow}>→</Text></Pressable>
+  <Pressable accessibilityRole="button" accessibilityLabel="Start a reflection in ESS Core" onPress={()=>onNavigate?.('core')} style={s.secondary}><Text style={s.secondaryText}>Reflect on my own question</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <Pressable accessibilityRole="button" accessibilityLabel="View support options if needed" onPress={()=>onNavigate?.('support')} style={s.secondary}><Text style={s.secondaryText}>Support options, when you need them</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Learn for context · not forced conclusions</Text><View style={s.signatureLine}/></View>
  </>;
@@ -697,7 +734,14 @@ function AppRoot(){
  const [pendingSupportMode,setPendingSupportMode]=useState(null);
  const [pendingMoreDetail,setPendingMoreDetail]=useState(null);
  const [journalEntries,setJournalEntries]=useState([]);
- const go=(id,detail)=>{setCoreOpen(false);if(id==='learn'&&detail)setPendingLearnTrail(detail);if(id==='support'&&detail)setPendingSupportMode(detail);if(id==='more'&&detail)setPendingMoreDetail(detail);setScreen(id);};
+ const go=(id,detail)=>{
+  if(id==='core'){setScreen('home');setCoreOpen(true);return;}
+  setCoreOpen(false);
+  if(id==='learn'&&detail)setPendingLearnTrail(detail);
+  if(id==='support'&&detail)setPendingSupportMode(detail);
+  if(id==='more'&&detail)setPendingMoreDetail(detail);
+  setScreen(id);
+ };
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go}>
   {coreOpen?<Core onBack={()=>setCoreOpen(false)} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
