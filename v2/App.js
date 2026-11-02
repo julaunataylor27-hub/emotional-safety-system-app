@@ -392,6 +392,16 @@ function More({initialDetail,onConsumeInitialDetail}){
   ['Share feedback','Feedback channel not connected yet','…',T.eucalyptus],
   ['Photography credits','Creators, licenses and source images','i',T.sand]
  ];
+ if(detail) return <>
+  <View style={s.coreHeader}><Pressable accessibilityRole="button" accessibilityLabel="Back to More menu" onPress={()=>setDetail('')} style={s.back}><Text style={s.backText}>‹</Text></Pressable><View style={s.rowCopy}><Text style={s.sectionEyebrow}>ESS TRANSPARENCY & HELP</Text><Text style={s.coreTitle}>{detail}</Text></View></View>
+  <View style={[s.learnSection,{marginTop:12}]}>
+
+   <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>ABOUT THIS SECTION</Text><Text style={s.supportModeTitle}>{detail}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close More details" onPress={()=>setDetail('')} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
+   <Text style={s.learnBody}>{details[detail].description}</Text>
+   {details[detail].points.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
+   {detail==='Photography credits'&&<Pressable accessibilityRole="link" accessibilityLabel="Open photography credits and source licenses" onPress={()=>Linking.openURL('https://github.com/julaunataylor27-hub/emotional-safety-system-app/blob/ess-v2-clean-rebuild/docs/ESS_V2_PHOTO_CREDITS.md').catch(()=>Alert.alert('Link unavailable','See the ESS v2 source repository for photo credits.'))} style={s.secondary}><Text style={s.secondaryText}>View image sources and licences</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
+  </View>
+ </>;
  return <>
   <CinematicHero image={ART.more} kicker="MORE" title="The system behind the calm." body="Understand ESS, adjust your expectations and see how the system is being developed." height={225}/>
   <View style={s.sectionIntro}><Text style={s.sectionEyebrow}>ESS</Text><Text style={s.sectionHeading}>Explore the system</Text></View>
@@ -399,12 +409,7 @@ function More({initialDetail,onConsumeInitialDetail}){
    <FeatureCard title="How ESS reached this" subtitle="Rules, versions and transparency" icon="◇" accent={T.eucalyptus} onPress={()=>setDetail('How ESS reached this')}/>
    {items.map(([title,subtitle,icon,accent])=><FeatureCard key={title} title={title} subtitle={subtitle} icon={icon} accent={accent} onPress={()=>setDetail(title)}/>)}
   </View>
-  {!!detail&&<View style={[s.learnSection,{marginTop:12}]}>
-   <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>ABOUT THIS SECTION</Text><Text style={s.supportModeTitle}>{detail}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close More details" onPress={()=>setDetail('')} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
-   <Text style={s.learnBody}>{details[detail].description}</Text>
-   {details[detail].points.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
-   {detail==='Photography credits'&&<Pressable accessibilityRole="link" accessibilityLabel="Open photography credits and source licenses" onPress={()=>Linking.openURL('https://github.com/julaunataylor27-hub/emotional-safety-system-app/blob/ess-v2-clean-rebuild/docs/ESS_V2_PHOTO_CREDITS.md').catch(()=>Alert.alert('Link unavailable','See the ESS v2 source repository for photo credits.'))} style={s.secondary}><Text style={s.secondaryText}>View image sources and licences</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
-  </View>}
+
  </>;
 }
 
