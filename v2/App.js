@@ -372,7 +372,7 @@ function More({openCore}){
   },
   'Photography credits':{
    description:'Visuals are independently credited Creative Commons photographs. They are not proof of cultural affiliation, stories or events. Original image URLs, permissions and transformations are documented for review.',
-   points:['Leon Durrant · The Gap, Albany (CC BY-SA 4.0)','Heidi la Tanguera · Banksia (CC BY-SA 4.0)','Bjørn Christian Tørrissen · Kalbarri coast (CC BY-SA 3.0)','Iktoh · Joffre Gorge (CC BY-SA 4.0)','Leonel Padron · Leeman stars (CC BY 2.0)','Geoff Derrin · Banksia obovata (CC BY-SA 4.0)','Orderinchaos · Kalbarri road (CC BY-SA 3.0)','Hesperian · Banksia media (CC BY-SA 3.0)','Ryan Wick · Parliament House (CC BY 2.0)','Zoharby · Pinnacles Desert (CC BY-SA 3.0)']
+   points:['Jakub Michankow · Kalbarri Cliffs (CC BY 2.0)','Heidi la Tanguera · Banksia (CC BY-SA 4.0)','Bjørn Christian Tørrissen · Kalbarri coast (CC BY-SA 3.0)','Iktoh · Joffre Gorge (CC BY-SA 4.0)','Leonel Padron · Leeman stars (CC BY 2.0)','Geoff Derrin · Banksia obovata (CC BY-SA 4.0)','Orderinchaos · Kalbarri road (CC BY-SA 3.0)','Hesperian · Banksia media (CC BY-SA 3.0)','Ryan Wick · Parliament House (CC BY 2.0)','Zoharby · Pinnacles Desert (CC BY-SA 3.0)']
   }
  };
  const items=[
