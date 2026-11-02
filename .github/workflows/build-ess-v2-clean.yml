@@ -28,6 +28,12 @@ jobs:
           java-version: '17'
       - name: Install v2 dependencies
         run: npm install
+      - name: Prepare attributed 2027 photographic assets
+        run: npm run prepare:art
+      - name: Verify all offline 2027 scenes were prepared
+        run: |
+          test "$(find assets/scenes -maxdepth 1 -name '*.jpg' | wc -l)" -eq 10
+          test ! -d assets/graphics
       - name: Test v2 core and clean structure
         run: npm test
       - name: Generate clean Android project
