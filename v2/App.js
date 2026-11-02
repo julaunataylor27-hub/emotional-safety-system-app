@@ -200,11 +200,11 @@ function Journal({entries,setEntries}){
 
   <View style={s.sectionHeader}><View><Text style={s.sectionEyebrow}>REFLECTION HISTORY</Text><Text style={s.sectionHeading}>Recent entries</Text></View><Text style={s.sectionLink}>{visible.length} shown</Text></View>
   <View style={s.filterRow}>{filters.map(x=><Pressable key={x} accessibilityRole="button" accessibilityState={{selected:filter===x}} accessibilityLabel={`${x} journal filter`} onPress={()=>setFilter(x)} style={[s.filterChip,filter===x&&s.filterChipOn]}><Text style={[s.filterChipText,filter===x&&s.filterChipTextOn]}>{x}</Text></Pressable>)}</View>
-  <View style={s.stack}>{visible.length?visible.map((item,i)=><JournalEntryCard key={i} item={item} accent={i===0?T.eucalyptus:T.sand}/>):<View style={s.emptyState}><Text style={s.emptyTitle}>Nothing saved here yet.</Text><Text style={s.emptyText}>You can change the filter or add a new reflection whenever you want.</Text></View>}</View>
+  <View style={s.stack}>{visible.length?visible.map((item,i)=><JournalEntryCard key={i} item={item} accent={i===0?T.eucalyptus:T.sand} onDelete={()=>setEntries(current=>current.filter(x=>x!==item))}/>):<View style={s.emptyState}><Text style={s.emptyTitle}>Nothing saved here yet.</Text><Text style={s.emptyText}>You can change the filter or add a new reflection whenever you want.</Text></View>}</View>
  </>;
 }
 
-function JournalEntryCard({item,accent}){
+function JournalEntryCard({item,accent,onDelete}){
  const [expanded,setExpanded]=useState(false);
  return <Pressable accessibilityRole="button" accessibilityLabel="Review saved journal entry" accessibilityState={{expanded}}
   onPress={()=>setExpanded(v=>!v)} style={({pressed})=>[s.journalEntry,pressed&&s.pressed]}>
@@ -220,6 +220,13 @@ function JournalEntryCard({item,accent}){
     {item.review?.uncertainties?.map((x,i)=><Text key={'u'+i} style={s.reviewSummaryLine}>• {x.status}: {x.text}</Text>)}
     {item.review?.focused_option&&<Text style={s.body}>Option you explored: {item.review.focused_option}</Text>}
     <Text style={s.stageNote}>This is your session-only note and personal review, not a verified record of events.</Text>
+    <Pressable accessibilityRole="button" accessibilityLabel="Delete this saved reflection" onPress={event=>{
+     event.stopPropagation();
+     Alert.alert('Delete this reflection?','This removes the entry from the current session.',[
+      {text:'Cancel',style:'cancel'},
+      {text:'Delete',style:'destructive',onPress:()=>onDelete?.()}
+     ]);
+    }} style={s.deleteEntryButton}><Text style={s.deleteEntryText}>Delete this entry</Text></Pressable>
    </View>}
   </View>
   <Text style={s.featureArrow}>{expanded?'⌃':'›'}</Text>
