@@ -49,6 +49,17 @@ Imported the project's **73 dated public directory entries**, with region and te
 - Test in `tests/encouragement.test.cjs` verifies source attribution, no forced positivity, route actions, explicit clear/leave and safety precedence.
 - Editorial sources and language were checked for this draft on 2 November 2026. A clinical or safeguarding assessment of ESS effectiveness has **not** been conducted.
 
+## ESS purpose statement — founder-selected (2 November 2026)
+> “Strength isn't always pushing forward. Sometimes it's recognising your effort, allowing yourself to recover, and choosing what comes next.”
+
+- **Reason ESS exists:** provide a supportive, educational environment where people can recognise effort, recover safely, understand experiences, examine what is known, choose their next step and seek human help when they want it.
+- **User's direction:** treat the above as the central purpose driving the system, beyond a decorative encouragement quote.
+- **Honest historical note:** user selected this precise public purpose wording on 2 November 2026. The repository does **not** claim these exact words appeared in the original earliest project materials. It is the founder's current articulation of why ESS was developed.
+- Stored as the single `ESS_PURPOSE` record in `src/data/essPurpose.cjs`, displayed via Home's compact `Why ESS exists` entry, and the full `More → Why ESS Exists` explanation.
+- Accompanied by the user-selected principles: `The system guides. The human decides.`, `One question can open many doors. The person chooses which door to enter.`, and learning/positive growth with free choice.
+- Safety rule: the word “strength” must never mean enduring danger, pressure, coercion or abuse. Rest, boundaries and asking for help are positive options; no forced positivity or emotional stamina scoring.
+- Add `tests/purpose.test.cjs` to protect quote accuracy, transparency, working navigation, and safety boundaries. No changes to personal journal handling, decision engine or locked original layout.
+
 ## Next content migrations (not yet included)
 - Full interactive legal reading from the vetted 25-source register after legal review and fresh source checks.
 - Individually attributed cultural comparisons after relevant knowledge-holder review and permission checks.
