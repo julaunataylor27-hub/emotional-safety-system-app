@@ -1,22 +1,33 @@
 import React,{useMemo,useState} from 'react';
-import {SafeAreaView,ScrollView,View,Text,TextInput,Pressable,StyleSheet,ImageBackground,Linking,Alert} from 'react-native';
+import {ScrollView,View,Text,TextInput,Pressable,StyleSheet,ImageBackground,Image,Linking,Alert} from 'react-native';
 import {StatusBar} from 'expo-status-bar';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {SafeAreaProvider,SafeAreaView} from 'react-native-safe-area-context';
+import {House,BookOpen,NotebookPen,HeartHandshake,Menu,ShieldCheck,Info,Settings,MessageCircle,HelpCircle,Compass,Scale,Leaf,LockKeyhole} from 'lucide-react-native';
 import {T} from './src/theme';
+import {V} from './src/visual2027';
 import {processSituation} from './src/core/essCore.cjs';
 import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
 
-// ADVERT_DESIGN_LOCKED: the approved 2027 advertising frame is the visual source of truth.
-// The app must feel cinematic and premium on the surface while ESS Core remains rigorous underneath.
+// ESS_V2_2027_FULL_APP_VISUAL_CONTRACT: new offline photography, not old imagery.
 const ART={
- home:require('../assets/graphics/australian-humanity/home-hero.webp'),
- journal:require('../assets/graphics/australian-humanity/my-journey-bg.webp'),
- learn:require('../assets/graphics/australian-humanity/knowledge-card.webp'),
- support:require('../assets/graphics/australian-humanity/support-services-card.webp'),
- more:require('../assets/graphics/australian-humanity/culture-humanity-bg.webp'),
- evidence:require('../assets/graphics/australian-humanity/evidence-truth-card.webp'),
- emotional:require('../assets/graphics/australian-humanity/emotional-safety-card.webp')
+ home:require('./assets/scenes/home-coast.jpg'),
+ journal:require('./assets/scenes/journal-banksia.jpg'),
+ learn:require('./assets/scenes/learn-coast.jpg'),
+ support:require('./assets/scenes/support-gorge.jpg'),
+ more:require('./assets/scenes/more-stars.jpg'),
+ culture:require('./assets/scenes/culture-flora.jpg'),
+ evidence:require('./assets/scenes/history-country.jpg'),
+ emotional:require('./assets/scenes/emotions-flower.jpg'),
+ rights:require('./assets/scenes/rights-parliament.jpg'),
+ everyday:require('./assets/scenes/everyday-landscape.jpg')
 };
+const ICONS={home:House,journal:NotebookPen,learn:BookOpen,support:HeartHandshake,more:Menu,
+ understand:Compass,evidence:ShieldCheck,info:Info,settings:Settings,feedback:MessageCircle,
+ help:HelpCircle,rights:Scale,culture:Leaf,privacy:LockKeyhole};
+function AppIcon({name,size=22,color=T.sand}){
+ const Icon=ICONS[name]||ShieldCheck;
+ return <Icon size={size} color={color} strokeWidth={1.85}/>;
+}
 
 const TABS=[
  ['home','Home','⌂'],
@@ -28,7 +39,7 @@ const TABS=[
 
 const LEARN_TRAILS=[
  {
-  id:'culture-country',title:'Culture & Country',subtitle:'Connection, belonging and stronger futures',icon:'⌁',image:ART.more,
+  id:'culture-country',title:'Culture & Country',subtitle:'Connection, belonging and stronger futures',icon:'⌁',image:ART.culture,
   helps:'Understand how identity, place, relationships and cultural context can shape how people experience safety and belonging.',
   ideas:['Context matters before conclusions.','Different communities can hold different knowledge systems and responsibilities.','Respectful learning means checking whose knowledge is being shared and how.'],
   unknown:'Some cultural knowledge is local, community-held or not appropriate to generalise.',
@@ -52,7 +63,7 @@ const LEARN_TRAILS=[
   related:'Everyday Tools'
  },
  {
-  id:'rights-systems',title:'Rights & Systems',subtitle:'Law, services and what to expect',icon:'§',image:ART.support,
+  id:'rights-systems',title:'Rights & Systems',subtitle:'Law, services and what to expect',icon:'§',image:ART.rights,
   helps:'Understand where rights, services, responsibilities and formal systems may matter.',
   ideas:['Legal information and personal interpretation are different things.','Jurisdiction matters.','A service pathway should explain limits and what a person can expect next.'],
   unknown:'Laws, service eligibility and procedures can change over time.',
@@ -60,7 +71,7 @@ const LEARN_TRAILS=[
   related:'Everyday Tools'
  },
  {
-  id:'everyday-tools',title:'Everyday Tools',subtitle:'Practical guidance for real life',icon:'✦',image:ART.home,
+  id:'everyday-tools',title:'Everyday Tools',subtitle:'Practical guidance for real life',icon:'✦',image:ART.everyday,
   helps:'Turn understanding into small practical actions while preserving choice.',
   ideas:['Separate what happened from what you think it means.','Name what is still unknown.','Compare options before committing to one.','You can leave a decision open.'],
   unknown:'No tool works for every situation; context and safety still matter.',
@@ -70,8 +81,9 @@ const LEARN_TRAILS=[
 ];
 
 function Shell({screen,onTab,children}){
- return <SafeAreaView style={s.safe}>
-  <StatusBar style="light"/>
+ return <SafeAreaView style={s.safe} edges={['top','bottom']}>
+  <StatusBar style="light" backgroundColor="#0D0B09"/>
+  <ImageBackground source={ART[screen]||ART.home} resizeMode="cover" style={StyleSheet.absoluteFillObject} accessible={false}><View style={s.appSceneShade}/></ImageBackground>
   <View style={s.topBar}>
    <View style={s.wordmark}>
     <View style={s.mark}><Text style={s.markText}>ESS</Text></View>
@@ -81,11 +93,11 @@ function Shell({screen,onTab,children}){
     </View>
    </View>
   </View>
-  <ScrollView contentContainerStyle={s.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
+  <ScrollView key={screen} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
   <View style={s.nav}>
    {TABS.map(([id,label,icon])=><Pressable key={id} accessibilityRole="tab" accessibilityState={{selected:screen===id}}
     accessibilityLabel={`${label} tab`} accessibilityHint={`Open ${label}`} onPress={()=>onTab(id)} style={({pressed})=>[s.navItem,pressed&&s.pressed]}>
-    <Text style={[s.navIcon,screen===id&&s.navOn]}>{icon}</Text>
+    <AppIcon name={id} size={21} color={screen===id?'#E4BA84':'#CABAA6'}/>
     <Text style={[s.navText,screen===id&&s.navOn]}>{label}</Text>
     {screen===id&&<View style={s.navLine}/>}
    </Pressable>)}
@@ -94,15 +106,15 @@ function Shell({screen,onTab,children}){
 }
 
 function CinematicHero({image,kicker,title,body,children,height=330,align='bottom'}){
- return <ImageBackground source={image} resizeMode="cover" style={[s.hero,{height}]} imageStyle={s.heroImage}>
-  <View style={s.heroVignette}/>
+ // The active tab already renders its scene; no duplicated image banners.
+ return <View style={[s.hero,{minHeight:height}]}>
   <View style={[s.heroCopy,align==='center'&&s.heroCenter]}>
    {!!kicker&&<Text style={s.kicker}>{kicker}</Text>}
    <Text style={s.heroTitle}>{title}</Text>
    {!!body&&<Text style={s.heroBody}>{body}</Text>}
    {children}
   </View>
- </ImageBackground>;
+ </View>;
 }
 
 function Pill({children}){return <View style={s.pill}><Text style={s.pillText}>{children}</Text></View>}
@@ -577,5 +589,6 @@ const s=StyleSheet.create({
  corePanel:{borderRadius:17,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#14110D',padding:13,marginBottom:9},fieldLabel:{color:T.sand,fontSize:9,fontWeight:'900',letterSpacing:1.6,marginBottom:7},coreInput:{minHeight:135,borderRadius:13,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08',padding:12,color:T.text,fontSize:15,lineHeight:22,textAlignVertical:'top'},
  resultCard:{borderRadius:16,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',padding:13,marginBottom:8},resultLabel:{color:T.sand,fontSize:9,fontWeight:'900',letterSpacing:1.4,textTransform:'uppercase',marginBottom:6},body:{color:T.text,fontSize:12.5,lineHeight:19,marginVertical:1.5},muted:{color:T.muted,fontSize:11.5},coreHint:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:8},feelingWrap:{flexDirection:'row',flexWrap:'wrap',gap:7,marginTop:7},feelingChip:{paddingHorizontal:11,paddingVertical:8,borderRadius:999,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08'},feelingChipOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},feelingChipText:{color:T.muted,fontSize:11,fontWeight:'700',textTransform:'capitalize'},feelingChipTextOn:{color:'#E4EEE2'},feelingInput:{minHeight:46,borderRadius:13,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08',color:T.text,paddingHorizontal:12,fontSize:14},truthBadges:{flexDirection:'row',flexWrap:'wrap',gap:6,marginBottom:9},truthBadge:{paddingHorizontal:8,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A'},truthBadgeText:{color:'#DDE8DC',fontSize:8,fontWeight:'900',letterSpacing:1},truthBadgeMuted:{borderColor:'#5A5147',backgroundColor:'#17130F'},truthBadgeMutedText:{color:'#B5A99B',fontSize:8,fontWeight:'900',letterSpacing:.7},reviewCard:{borderWidth:1,borderColor:'#342C22',borderRadius:13,padding:10,marginTop:8,backgroundColor:'#0D0B08'},reviewText:{color:T.text,fontSize:12.5,lineHeight:18},reviewActions:{flexDirection:'row',gap:6,marginTop:9,flexWrap:'wrap'},reviewButton:{minHeight:36,paddingHorizontal:10,borderRadius:999,borderWidth:1,borderColor:'#4A4034',alignItems:'center',justifyContent:'center'},reviewButtonOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},reviewButtonNo:{borderColor:'#8A5A4A',backgroundColor:'#2A1712'},reviewButtonKnown:{borderColor:T.ochre,backgroundColor:'#2A2113'},reviewButtonText:{color:T.muted,fontSize:9.5,fontWeight:'800'},reviewButtonTextOn:{color:'#DDE8DC'},reviewButtonTextNo:{color:'#F0C8B9'},reviewButtonTextKnown:{color:'#F1D4A8'},contextBadge:{alignSelf:'flex-start',paddingHorizontal:8,paddingVertical:5,borderRadius:999,borderWidth:1,borderColor:'rgba(216,194,160,.4)',backgroundColor:'rgba(0,0,0,.12)',marginBottom:8},contextBadgeText:{color:T.sand,fontSize:8,fontWeight:'900',letterSpacing:1},contextCalm:{borderColor:T.eucalyptus,backgroundColor:'#111811'},contextWatch:{borderColor:T.ochre,backgroundColor:'#211A10'},contextUrgent:{borderColor:T.clay,backgroundColor:'#281511'},stageItem:{flexDirection:'row',gap:8,alignItems:'flex-start',marginVertical:4},stageBullet:{color:T.sand,fontSize:16,lineHeight:19},stageText:{color:T.text,fontSize:13,lineHeight:19,flex:1},stageNote:{color:T.muted,fontSize:10.5,lineHeight:15,marginTop:10,paddingTop:9,borderTopWidth:1,borderTopColor:'#2E281F'},contextTitle:{color:T.text,fontFamily:SERIF,fontSize:19,fontWeight:'700',marginBottom:4},choiceCard:{flexDirection:'row',alignItems:'flex-start',gap:10,borderWidth:1,borderColor:'#342C22',borderRadius:13,padding:10,marginTop:7,backgroundColor:'#0D0B08'},choiceCardOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},choiceNumber:{width:24,height:24,borderRadius:12,borderWidth:1,borderColor:T.sand,color:T.sand,textAlign:'center',lineHeight:22,fontSize:10,fontWeight:'900'},choiceNumberOn:{borderColor:T.eucalyptus,color:'#DDE8DC'},choiceCopy:{flex:1},choiceText:{color:T.text,fontSize:12.5,lineHeight:18},choiceTextOn:{fontWeight:'800'},choiceHint:{color:T.muted,fontSize:9.5,lineHeight:14,marginTop:3},nextLead:{color:T.muted,fontSize:11.5,lineHeight:17,marginBottom:7},nextOption:{minHeight:48,borderWidth:1,borderColor:'#3A3025',borderRadius:13,padding:10,flexDirection:'row',alignItems:'center',gap:9,marginTop:7,backgroundColor:'#0D0B08'},nextOptionOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},nextRadio:{width:18,height:18,borderRadius:9,borderWidth:1,borderColor:'#6F6253'},nextRadioOn:{borderWidth:5,borderColor:T.eucalyptus,backgroundColor:'#F1E9DA'},nextOptionText:{color:'#D8CBBA',fontSize:12.5,lineHeight:18,flex:1},nextOptionTextOn:{color:T.text,fontWeight:'700'},finishDivider:{height:1,backgroundColor:'#2E281F',marginVertical:12},saveJournalButton:{minHeight:46,borderRadius:13,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A',alignItems:'center',justifyContent:'center',paddingHorizontal:12},saveJournalButtonDone:{opacity:.7},saveJournalText:{color:'#DDE8DC',fontSize:11.5,fontWeight:'900'},crossLinkButton:{marginTop:10,minHeight:62,borderRadius:14,borderWidth:1,borderColor:'#4B4338',backgroundColor:'#100E0A',padding:11,flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10},crossLinkEyebrow:{color:T.sand,fontSize:7.5,fontWeight:'900',letterSpacing:1.2},crossLinkTitle:{color:T.text,fontFamily:SERIF,fontSize:14,fontWeight:'700',marginTop:2},crossLinkSub:{color:T.muted,fontSize:9.5,lineHeight:14,marginTop:2,maxWidth:250},crossLinkArrow:{color:T.sand,fontSize:19},finishHeading:{color:T.text,fontFamily:SERIF,fontSize:17,fontWeight:'700',marginTop:14,marginBottom:7},destinationGrid:{flexDirection:'row',flexWrap:'wrap',gap:7},destinationCard:{width:'48.8%',minHeight:92,borderRadius:14,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#0D0B08',padding:10,justifyContent:'flex-end'},destinationCardSuggested:{borderColor:T.eucalyptus,backgroundColor:'#111811'},suggestedBadge:{position:'absolute',top:8,right:8,paddingHorizontal:6,paddingVertical:3,borderRadius:999,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#17221A'},suggestedBadgeText:{color:'#DDE8DC',fontSize:6.5,fontWeight:'900',letterSpacing:.8},destinationIcon:{color:T.sand,fontSize:17,marginBottom:6},destinationTitle:{color:T.text,fontFamily:SERIF,fontSize:13.5,fontWeight:'700'},destinationSub:{color:T.muted,fontSize:9.5,lineHeight:13,marginTop:2},leaveOpenButton:{minHeight:42,borderRadius:13,borderWidth:1,borderColor:'#4A4034',alignItems:'center',justifyContent:'center',marginTop:8},leaveOpenButtonOn:{borderColor:T.eucalyptus,backgroundColor:'#17221A'},leaveOpenText:{color:T.muted,fontSize:10.5,fontWeight:'800'},coreNavRow:{flexDirection:'row',gap:8,marginTop:2,marginBottom:10},coreBackButton:{minHeight:47,minWidth:88,borderRadius:14,borderWidth:1,borderColor:'#3A3025',backgroundColor:'#15120D',alignItems:'center',justifyContent:'center',paddingHorizontal:14},coreBackButtonText:{color:T.muted,fontWeight:'800',fontSize:12},coreNextButton:{minHeight:47,borderRadius:14,backgroundColor:T.sand,flex:1,alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14},coreNextText:{color:'#15100A',fontWeight:'900',fontSize:12.5},
  secondary:{minHeight:46,borderRadius:14,borderWidth:1,borderColor:T.eucalyptus,backgroundColor:'#111711',alignItems:'center',justifyContent:'space-between',flexDirection:'row',paddingHorizontal:14,marginTop:2,marginBottom:10},secondaryText:{color:T.text,fontWeight:'800',fontSize:12.5},secondaryArrow:{color:T.eucalyptus,fontSize:15},techCard:{borderColor:T.eucalyptus,backgroundColor:'#111711'},techKicker:{color:T.eucalyptus,fontSize:9,fontWeight:'900',letterSpacing:1.5,marginBottom:7},
- pressed:{opacity:.72},accessibleTap:{minHeight:44,minWidth:44}
+ pressed:{opacity:.72},accessibleTap:{minHeight:44,minWidth:44},
+ ...V
 });
