@@ -11,6 +11,7 @@ import {SERVICES,getSupportAction} from './src/data/supportResources.cjs';
 import {CURATED_MODULES} from './src/data/knowledgeLibrary.cjs';
 import {CONNECTION_STEPS} from './src/data/connectionPath.cjs';
 import {ENCOURAGEMENT_LESSON,ENCOURAGEMENT_CHOICES,encouragementChoice} from './src/data/encouragementGuide.cjs';
+import {ESS_PURPOSE} from './src/data/essPurpose.cjs';
 import supportDirectory from './src/data/supportDirectory.json';
 
 // ESS_V2_2027_FULL_APP_VISUAL_CONTRACT: new offline photography, not old imagery.
@@ -151,6 +152,13 @@ function Home({openCore,setScreen}){
    <Pressable accessibilityRole="button" accessibilityLabel="Find support when needed" onPress={()=>setScreen('support')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="support" size={23} color={T.clay}/></View><Text style={s.tileTitle}>Find support</Text><Text style={s.tileSub}>when needed</Text></Pressable>
    <Pressable accessibilityRole="button" accessibilityLabel="How ESS reached this" onPress={()=>setScreen('more','How ESS reached this')} style={s.homeTile}><View style={s.tileIcon}><AppIcon name="evidence" size={23} color={T.eucalyptus}/></View><Text style={s.tileTitle}>How ESS</Text><Text style={s.tileSub}>reached this</Text></Pressable>
   </View>
+  <Pressable accessibilityRole="button" accessibilityLabel="Why the Emotional Safety System exists"
+   accessibilityHint="Read the purpose behind ESS" onPress={()=>setScreen('more','Why ESS Exists')}
+   style={s.purposeHomeLink}>
+   <View style={s.rowCopy}><Text style={s.purposeHomeEyebrow}>WHY ESS EXISTS</Text>
+    <Text style={s.purposeHomeText}>Strength includes recognising effort, allowing recovery and choosing what comes next.</Text>
+   </View><Text style={s.featureArrow}>›</Text>
+  </Pressable>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Human on the surface. Rigorous underneath.</Text><View style={s.signatureLine}/></View>
  </>;
 }
@@ -527,6 +535,10 @@ function More({initialDetail,onConsumeInitialDetail,onNavigate}){
  const [detail,setDetail]=useState('');
  React.useEffect(()=>{if(initialDetail){setDetail(initialDetail);onConsumeInitialDetail?.();}},[initialDetail]);
  const details={
+  [ESS_PURPOSE.title]:{
+   description:ESS_PURPOSE.mission,
+   points:ESS_PURPOSE.commitments
+  },
   'System Map':{
    description:'One connected Emotional Safety System: use what helps, leave anything open, and remain in control. None of these pathways automatically saves or sends your personal information.',
    points:['Understand: begin your own reflection and examine how ESS separates reported words from interpretation.','Check evidence: consider sources, what is known and what remains uncertain.','Learn: follow public topics with attributed sources and honest limits.','Reflect: keep a session-only Journal entry if you deliberately choose.','Support: browse options without an automatic referral or contact.','Explore: follow the six-step Connection Trail in any order.']
@@ -536,7 +548,7 @@ function More({initialDetail,onConsumeInitialDetail,onNavigate}){
    points:['ESS does not independently verify events or determine another person’s intentions.','Feelings you select are separate from language cues identified by ESS.','Reviewing or rejecting an interpretation affects your summary, not the safety classification.','No decision is forced. You can leave questions and choices open.','Safety routing is limited wording analysis, not a professional risk assessment.']
   },
   'About ESS':{
-   description:'ESS helps a person reflect on feelings, reported experiences, possible interpretations, uncertainty and next steps. It does not independently determine what happened, diagnose anyone or replace professional advice.',
+   description:ESS_PURPOSE.mission+' ESS does not independently determine what happened, diagnose anyone or replace professional advice.',
    points:['Feelings are meaningful but do not prove another person’s intentions.','Evidence and interpretation should be kept separate.','The person can disagree, leave questions open or choose not to proceed.']
   },
   'Settings':{
@@ -561,6 +573,7 @@ function More({initialDetail,onConsumeInitialDetail,onNavigate}){
   }
  };
  const items=[
+  [ESS_PURPOSE.title,'The reason this system was created','◇',T.eucalyptus],
   ['System Map','One system · six useful pathways','◇',T.eucalyptus],
   ['About ESS','Purpose, limits and principles','i',T.eucalyptus],
   ['Settings','Privacy, accessibility and preferences','⚙',T.sand],
@@ -574,7 +587,17 @@ function More({initialDetail,onConsumeInitialDetail,onNavigate}){
   <View style={[s.learnSection,{marginTop:12}]}>
 
    <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>ABOUT THIS SECTION</Text><Text style={s.supportModeTitle}>{detail}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close More details" onPress={()=>setDetail('')} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
+   {detail===ESS_PURPOSE.title&&<View style={s.purposeStatement}>
+    <Text style={s.purposeEyebrow}>THE PURPOSE BEHIND ESS</Text>
+    <Text style={s.purposeQuote}>“{ESS_PURPOSE.statement}”</Text>
+    <Text style={s.purposeAttribution}>Purpose statement adopted {ESS_PURPOSE.adopted}</Text>
+   </View>}
    <Text style={s.learnBody}>{details[detail].description}</Text>
+   {detail===ESS_PURPOSE.title&&<View style={s.purposePrinciples}>
+    <Text style={s.fieldLabel}>THE PRINCIPLES THAT GUIDE US</Text>
+    {ESS_PURPOSE.principles.map((principle,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{principle}</Text></View>)}
+    <Text style={s.stageNote}>{ESS_PURPOSE.status}</Text>
+   </View>}
    {details[detail].points.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
    {detail==='System Map'&&<View style={s.systemMap}>
     {[
