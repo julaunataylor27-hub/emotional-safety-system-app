@@ -38,7 +38,7 @@ test('new routes connect blank Core, Learn, Journal and Support without text tra
  assert.match(app,/const \[text,setText\]=useState\(''\)/);
  assert.match(app,/routeRevision=\{routeRevision\}/);
  assert.match(app,/key=\{screen\+"-"\+routeRevision\}/);
- assert.match(app,/onBack=\{\(\)=>go\('home'\)\}/);
+ assert.match(app,/onBack=\{\(\)=>returnTrail\?go\('learn',returnTrail\):go\('home'\)\}/);
  assert.ok(!app.includes('setText(clue.prompt)'));
 });
 test('connection navigation shares the complete 2027 visual identity',()=>{
