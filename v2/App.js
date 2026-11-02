@@ -265,7 +265,7 @@ function LearnTrail({trail,onBack,onRelated,onNavigate}){
  const selectedClue=CONNECTION_STEPS[clueIndex];
  const openClue=clue=>{
   if(clue.destination==='learn'&&clue.target){onRelated(clue.target);return;}
-  if(clue.destination==='core'){onNavigate?.('core');return;}
+  if(clue.destination==='core'){onNavigate?.('core',trail.title);return;}
   onNavigate?.(clue.destination);
  };
  const openSource=url=>{
@@ -325,7 +325,7 @@ function LearnTrail({trail,onBack,onRelated,onNavigate}){
    </View>)}
   </View>}
   <Pressable onPress={()=>onRelated(trail.related)} style={s.crossLinkButton}><View><Text style={s.crossLinkEyebrow}>RELATED TRAIL</Text><Text style={s.crossLinkTitle}>{trail.related}</Text><Text style={s.crossLinkSub}>Keep following the knowledge path if it helps.</Text></View><Text style={s.crossLinkArrow}>→</Text></Pressable>
-  <Pressable accessibilityRole="button" accessibilityLabel="Start a reflection in ESS Core" onPress={()=>onNavigate?.('core')} style={s.secondary}><Text style={s.secondaryText}>Reflect on my own question</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
+  <Pressable accessibilityRole="button" accessibilityLabel="Start a reflection in ESS Core" onPress={()=>onNavigate?.('core',trail.title)} style={s.secondary}><Text style={s.secondaryText}>Reflect on my own question</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <Pressable accessibilityRole="button" accessibilityLabel="View support options if needed" onPress={()=>onNavigate?.('support')} style={s.secondary}><Text style={s.secondaryText}>Support options, when you need them</Text><Text style={s.secondaryArrow}>→</Text></Pressable>
   <View style={s.signature}><View style={s.signatureLine}/><Text style={s.signatureText}>Learn for context · not forced conclusions</Text><View style={s.signatureLine}/></View>
  </>;
@@ -577,7 +577,7 @@ function More({initialDetail,onConsumeInitialDetail,onNavigate}){
  </>;
 }
 
-function Core({onBack,onSaveJournal,onNavigate}){
+function Core({onBack,onSaveJournal,onNavigate,returnTrail}){
  const [text,setText]=useState('');
  const [step,setStep]=useState(0);
  const [selectedNext,setSelectedNext]=useState('');
@@ -611,7 +611,7 @@ function Core({onBack,onSaveJournal,onNavigate}){
   if(stage.id==='uncertainty') return <UncertaintyStage items={result.uncertainty.unknowns} checks={unknownChecks} onCheck={(item,value)=>setUnknownChecks(v=>({...v,[item]:value}))} onLearn={()=>{const rec=result.recommendations?.find(x=>x.destination==='learn');onNavigate?.('learn',rec?.trail)}} recommendation={result.recommendations?.find(x=>x.destination==='learn')}/>;
   if(stage.id==='context') return <ContextStage result={result} onSupport={()=>onNavigate?.('support',result.safety.urgent?'urgent':result.safety.classification==='coercion'?'coercion':result.safety.classification==='pressure'?'boundary':'calm')} recommendation={result.recommendations?.find(x=>x.destination==='support')}/>;
   if(stage.id==='choice') return <ChoiceCompare options={result.choice.options} value={choicePreview} onChange={setChoicePreview}/>;
-  return <FinishStage result={result} review={review} selectedNext={selectedNext} setSelectedNext={setSelectedNext}
+  return <FinishStage result={result} review={review} returnTrail={returnTrail} selectedNext={selectedNext} setSelectedNext={setSelectedNext}
    saved={savedToJournal} onSave={()=>{
     onSaveJournal?.({when:'Just now',text:text.trim()||'No situation details provided.',
       change:selectedNext||choicePreview||'Decision left open.',tag:'Choice',icon:'◇',review});
@@ -698,7 +698,7 @@ function ChoiceCompare({options,value,onChange}){
  </View>;
 }
 
-function FinishStage({result,review,selectedNext,setSelectedNext,saved,onSave,onNavigate,recommendations}){
+function FinishStage({result,review,returnTrail,selectedNext,setSelectedNext,saved,onSave,onNavigate,recommendations}){
  return <View style={s.corePanel}>
   <Text style={s.fieldLabel}>YOU DECIDE</Text>
   <Text style={s.nextLead}>Choose one if it fits, or leave the decision open for now.</Text>
@@ -721,7 +721,7 @@ function FinishStage({result,review,selectedNext,setSelectedNext,saved,onSave,on
   <Text style={s.finishHeading}>Where would you like to go next?</Text>
   <View style={s.destinationGrid}>
    <DestinationCard icon="✎" title="Journal" subtitle="Review what you saved" suggested={recommendations.some(x=>x.destination==='journal')} onPress={()=>onNavigate?.('journal')}/>
-   <DestinationCard icon="▤" title="Learn" subtitle="Explore more context" suggested={recommendations.some(x=>x.destination==='learn')} onPress={()=>onNavigate?.('learn')}/>
+   <DestinationCard icon="▤" title="Learn" subtitle={returnTrail?'Return to '+returnTrail:'Explore more context'} suggested={recommendations.some(x=>x.destination==='learn')} onPress={()=>onNavigate?.('learn',returnTrail)}/>
    <DestinationCard icon="♡" title="Support" subtitle="See support options" suggested={recommendations.some(x=>x.destination==='support')} onPress={()=>onNavigate?.('support')}/>
    <DestinationCard icon="⌂" title="Home" subtitle="Return to the start" onPress={()=>onNavigate?.('home')}/>
   </View>
@@ -754,10 +754,11 @@ function AppRoot(){
  const [pendingLearnTrail,setPendingLearnTrail]=useState(null);
  const [pendingSupportMode,setPendingSupportMode]=useState(null);
  const [pendingMoreDetail,setPendingMoreDetail]=useState(null);
+ const [returnTrail,setReturnTrail]=useState(null);
  const [journalEntries,setJournalEntries]=useState([]);
  const go=(id,detail)=>{
   setRouteRevision(v=>v+1);
-  if(id==='core'){setScreen('home');setCoreOpen(true);return;}
+  if(id==='core'){setReturnTrail(detail||null);setScreen('home');setCoreOpen(true);return;}
   setCoreOpen(false);
   if(id==='learn'&&detail)setPendingLearnTrail(detail);
   if(id==='support'&&detail)setPendingSupportMode(detail);
@@ -766,7 +767,7 @@ function AppRoot(){
  };
  const saveCoreToJournal=item=>setJournalEntries(v=>[item,...v]);
  return <Shell screen={screen} onTab={go} routeRevision={routeRevision}>
-  {coreOpen?<Core onBack={()=>go('home')} onSaveJournal={saveCoreToJournal} onNavigate={go}/>:
+  {coreOpen?<Core onBack={()=>returnTrail?go('learn',returnTrail):go('home')} onSaveJournal={saveCoreToJournal} onNavigate={go} returnTrail={returnTrail}/>:
    screen==='home'?<Home openCore={()=>setCoreOpen(true)} setScreen={go}/>:
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
    screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)} onNavigate={go}/>:
