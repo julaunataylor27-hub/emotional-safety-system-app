@@ -495,10 +495,14 @@ function SupportCard({title,subtitle,icon,tone,selected,onPress}){
  </Pressable>
 }
 
-function More({initialDetail,onConsumeInitialDetail}){
+function More({initialDetail,onConsumeInitialDetail,onNavigate}){
  const [detail,setDetail]=useState('');
  React.useEffect(()=>{if(initialDetail){setDetail(initialDetail);onConsumeInitialDetail?.();}},[initialDetail]);
  const details={
+  'System Map':{
+   description:'One connected Emotional Safety System: use what helps, leave anything open, and remain in control. None of these pathways automatically saves or sends your personal information.',
+   points:['Understand: begin your own reflection and examine how ESS separates reported words from interpretation.','Check evidence: consider sources, what is known and what remains uncertain.','Learn: follow public topics with attributed sources and honest limits.','Reflect: keep a session-only Journal entry if you deliberately choose.','Support: browse options without an automatic referral or contact.','Explore: follow the six-step Connection Trail in any order.']
+  },
   'How ESS reached this':{
    description:'ESS uses local, deterministic rules to separate reported words, possible interpretations, uncertainty and optional next steps. For the rule IDs used in your own reflection, use the final reflection step.',
    points:['ESS does not independently verify events or determine another person’s intentions.','Feelings you select are separate from language cues identified by ESS.','Reviewing or rejecting an interpretation affects your summary, not the safety classification.','No decision is forced. You can leave questions and choices open.','Safety routing is limited wording analysis, not a professional risk assessment.']
@@ -529,6 +533,7 @@ function More({initialDetail,onConsumeInitialDetail}){
   }
  };
  const items=[
+  ['System Map','One system · six useful pathways','◇',T.eucalyptus],
   ['About ESS','Purpose, limits and principles','i',T.eucalyptus],
   ['Settings','Privacy, accessibility and preferences','⚙',T.sand],
   ['Research & development','Testing, sources and improvements','▤',T.ochre],
@@ -543,6 +548,21 @@ function More({initialDetail,onConsumeInitialDetail}){
    <View style={s.sectionHeader}><View style={s.rowCopy}><Text style={s.fieldLabel}>ABOUT THIS SECTION</Text><Text style={s.supportModeTitle}>{detail}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close More details" onPress={()=>setDetail('')} style={s.accessibleTap}><Text style={s.sectionLink}>Close</Text></Pressable></View>
    <Text style={s.learnBody}>{details[detail].description}</Text>
    {details[detail].points.map((x,i)=><View key={i} style={s.stageItem}><Text style={s.stageBullet}>•</Text><Text style={s.stageText}>{x}</Text></View>)}
+   {detail==='System Map'&&<View style={s.systemMap}>
+    {[
+     ['Understand','Open a blank guided reflection','core'],
+     ['Evidence','Explore reported information and sources','learn','Evidence & Truth Lab'],
+     ['Learn','Browse public learning paths','learn'],
+     ['Reflect','Open my session-only Journal','journal'],
+     ['Support','Browse human support options','support'],
+     ['Connection Trail','Follow six clues at your pace','learn','Connection Trail']
+    ].map(([name,description,target,subtarget])=><Pressable key={name} accessibilityRole="button" accessibilityLabel={'Open '+name+' pathway'}
+      onPress={()=>onNavigate?.(target,subtarget)} style={s.systemMapAction}>
+      <View style={s.rowCopy}><Text style={s.supportTitle}>{name}</Text><Text style={s.supportSub}>{description}</Text></View>
+      <Text style={s.featureArrow}>›</Text>
+    </Pressable>)}
+    <Text style={s.stageNote}>ESS is an educational prototype: it cannot verify an event, diagnose someone, or substitute for emergency or professional help.</Text>
+   </View>}
    {detail==='Photography credits'&&<Pressable accessibilityRole="link" accessibilityLabel="Open photography credits and source licenses" onPress={()=>Linking.openURL('https://github.com/julaunataylor27-hub/emotional-safety-system-app/blob/ess-v2-clean-rebuild/docs/ESS_V2_PHOTO_CREDITS.md').catch(()=>Alert.alert('Link unavailable','See the ESS v2 source repository for photo credits.'))} style={s.secondary}><Text style={s.secondaryText}>View image sources and licences</Text><Text style={s.secondaryArrow}>→</Text></Pressable>}
   </View>
  </>;
@@ -751,7 +771,7 @@ function AppRoot(){
    screen==='journal'?<Journal entries={journalEntries} setEntries={setJournalEntries}/>:
    screen==='learn'?<Learn initialTrail={pendingLearnTrail} onConsumeInitialTrail={()=>setPendingLearnTrail(null)} onNavigate={go}/>:
    screen==='support'?<Support initialMode={pendingSupportMode} onConsumeInitialMode={()=>setPendingSupportMode(null)} onNavigate={go}/>:
-   <More initialDetail={pendingMoreDetail} onConsumeInitialDetail={()=>setPendingMoreDetail(null)}/>}
+   <More initialDetail={pendingMoreDetail} onConsumeInitialDetail={()=>setPendingMoreDetail(null)} onNavigate={go}/>}
  </Shell>;
 }
 
